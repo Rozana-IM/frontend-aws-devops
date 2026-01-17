@@ -1,1 +1,12 @@
+{
+  "name": "frontend",
+  "version": "1.0.0",
+  "description": "Microservices Frontend",
+  "scripts": {
+    "start": "serve -s public -l 3000"
+  },
+  "dependencies": {
+    "serve": "^14.2.0"
+  }
+}
 
