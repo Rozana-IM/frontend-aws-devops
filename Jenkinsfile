@@ -12,7 +12,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 git branch: 'main',
-                    url: 'https://github.com/Indyalamounika/frontendproject.git'
+                    url: 'git@github.com:Rozana-IM/frontend-aws-devops.git'
             }
         }
 
