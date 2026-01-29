@@ -2,18 +2,51 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>AWS Microservices App project</title>
+  <title>Lucci Store | Microservices DevOps Project</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <h1>AWS DevOps Microservices Project</h1>
-  <h2>Understanding through Jenkins pipelines </br> Added GitHub Webhook for complete automation</h2>
 
-  <button onclick="loadUsers()">Load Users</button>
-  <button onclick="loadOrders()">Load Orders</button>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="logo">LUCCI</div>
+    <ul class="nav-links">
+      <li>Home</li>
+      <li>About</li>
+      <li>Services</li>
+      <li>Orders</li>
+      <li>Users</li>
+    </ul>
+  </nav>
 
-  <pre id="result"></pre>
+  <!-- Hero Section -->
+  <section class="hero">
+    <h1>E-Commerce Microservices Platform</h1>
+    <p>Built with AWS, Jenkins, Docker & Microservices Architecture</p>
+  </section>
 
+  <!-- Services -->
+  <section class="cards">
+    <div class="card">
+      <h3>User Service</h3>
+      <p>Manages users and profiles</p>
+      <button onclick="loadUsers()">Load Users</button>
+    </div>
+
+    <div class="card">
+      <h3>Order Service</h3>
+      <p>Handles order lifecycle</p>
+      <button onclick="loadOrders()">Load Orders</button>
+    </div>
+  </section>
+
+  <!-- Output -->
+  <section class="output">
+    <h3>Service Response</h3>
+    <pre id="result">Click a service to load data...</pre>
+  </section>
+
+  <!-- JS -->
   <script src="../src/app.js"></script>
 </body>
 </html>
-
