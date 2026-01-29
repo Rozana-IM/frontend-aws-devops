@@ -9,8 +9,9 @@ echo "===================================="
 rm -rf build
 mkdir -p build
 
-# Copy static files
-cp public/index.html build/
+# Copy all public assets (HTML + CSS)
+cp -r public/* build/
+
 
 # (Optional) copy JS if needed later
 cp -r src build/
