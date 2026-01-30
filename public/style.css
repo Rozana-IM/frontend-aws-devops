@@ -210,3 +210,47 @@ body {
   margin: auto;
   color: #555;
 }
+
+/* ================= ADMIN PAGE ================= */
+.admin-body {
+  background: linear-gradient(to right, #1c2b33, #243b55);
+  color: white;
+  padding: 40px;
+}
+
+.admin-title {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.admin-cards {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+}
+
+.admin-card {
+  background: rgba(255,255,255,0.1);
+  padding: 30px;
+  border-radius: 8px;
+  width: 260px;
+  text-align: center;
+}
+
+.admin-card button {
+  margin-top: 15px;
+  background: #ff9800;
+  border: none;
+  padding: 10px 15px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.admin-result {
+  margin-top: 40px;
+  background: #111;
+  padding: 20px;
+  border-radius: 6px;
+  color: #0f0;
+}
+
