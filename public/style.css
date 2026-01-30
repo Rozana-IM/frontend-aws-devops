@@ -36,16 +36,26 @@ body {
   font-weight: 500;
 }
 
-.nav-search input {
-  width: 380px;
-  padding: 8px 12px;
+.nav-search {
+  position: relative;
 }
 
-.nav-right {
-  display: flex;
-  align-items: center;
-  gap: 20px;
+.nav-search input {
+  width: 380px;
+  padding: 8px 12px 8px 36px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
 }
+
+.search-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 14px;
+  color: #777;
+}
+
 
 /* PROFILE DROPDOWN */
 .profile-menu {
@@ -81,26 +91,25 @@ body {
 .hero-container {
   position: relative;
 }
-
-/* HERO BANNER FULL SCREEN */
+/* hero-banner */
 .hero-banner {
   position: relative;
-  height: calc(100vh - 70px); /* adjust if navbar height differs */
+  height: calc(100vh - 70px);
   background: linear-gradient(to right, #1c2b33, #243b55);
   color: white;
   display: flex;
-  flex-direction: column;
+  align-items: flex-start;
   justify-content: center;
-  padding: 60px;
+  padding-top: 120px;
 }
 
-/* HERO TEXT */
-.hero-content {
-  max-width: 600px;
+.hero-content.centered {
+  text-align: center;
+  max-width: 700px;
 }
 
 .hero-content h1 {
-  font-size: 42px;
+  font-size: 44px;
   margin-bottom: 15px;
 }
 
@@ -109,6 +118,7 @@ body {
   line-height: 1.6;
   opacity: 0.9;
 }
+
 
 /* PRODUCTS OVERLAY */
 .hero-products {
@@ -121,13 +131,68 @@ body {
   gap: 25px;
 }
 
-/* PRODUCT CARDS */
 .product-card {
   background: white;
   color: #000;
-  padding: 40px 20px;
-  text-align: center;
   border-radius: 8px;
   box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+
+  /* 🔥 THIS is the key */
+  height: 380px;          /* adjust: 360–420px as you like */
+  
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 18px;
   font-weight: 500;
 }
+
+ body {
+  padding-bottom: 300px;
+}
+
+
+/* ADMIN PAGE */
+.admin-body {
+  background: linear-gradient(to right, #1c2b33, #243b55);
+  color: white;
+  padding: 40px;
+}
+
+.admin-title {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.admin-cards {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+}
+
+.admin-card {
+  background: rgba(255,255,255,0.1);
+  padding: 30px;
+  border-radius: 8px;
+  width: 260px;
+  text-align: center;
+}
+
+.admin-card button {
+  margin-top: 15px;
+  background: #ff9800;
+  border: none;
+  padding: 10px 15px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.admin-result {
+  margin-top: 40px;
+  background: #111;
+  padding: 20px;
+  border-radius: 6px;
+  color: #0f0;
+}
+
