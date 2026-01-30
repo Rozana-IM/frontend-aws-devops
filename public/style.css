@@ -56,7 +56,6 @@ body {
   color: #777;
 }
 
-
 /* PROFILE DROPDOWN */
 .profile-menu {
   position: relative;
@@ -88,19 +87,14 @@ body {
   background: #f5f5f5;
 }
 
-.hero-container {
-  position: relative;
-}
-/* hero-banner */
+/* HERO BANNER */
 .hero-banner {
-  position: relative;
-  height: calc(100vh - 70px);
+  height: 70vh; /* reduced for realistic ecommerce feel */
   background: linear-gradient(to right, #1c2b33, #243b55);
   color: white;
   display: flex;
-  align-items: flex-start;
   justify-content: center;
-  padding-top: 120px;
+  align-items: center;
 }
 
 .hero-content.centered {
@@ -119,39 +113,48 @@ body {
   opacity: 0.9;
 }
 
-
-/* PRODUCTS OVERLAY */
+/* PRODUCTS SECTION (NORMAL FLOW — SCROLLS) */
 .hero-products {
-  position: absolute;
-  bottom: 40px;
-  left: 60px;
-  right: 60px;
+  margin-top: 40px; /* space below hero */
+  padding: 0 60px 80px;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 25px;
 }
 
+/* PRODUCT CARD */
 .product-card {
   background: white;
   color: #000;
   border-radius: 8px;
   box-shadow: 0 6px 18px rgba(0,0,0,0.15);
-
-  /* 🔥 THIS is the key */
-  height: 380px;          /* adjust: 360–420px as you like */
-  
+  height: 380px;
   display: flex;
   align-items: center;
   justify-content: center;
-
   font-size: 18px;
   font-weight: 500;
 }
 
- body {
-  padding-bottom: 300px;
+/* ABOUT US SECTION */
+.about-section {
+  background: #f7f7f7;
+  padding: 80px 120px;
+  text-align: center;
 }
 
+.about-section h2 {
+  font-size: 28px;
+  margin-bottom: 20px;
+}
+
+.about-section p {
+  font-size: 16px;
+  line-height: 1.8;
+  max-width: 900px;
+  margin: auto;
+  color: #555;
+}
 
 /* ADMIN PAGE */
 .admin-body {
@@ -193,6 +196,5 @@ body {
   background: #111;
   padding: 20px;
   border-radius: 6px;
-  color: #0f0;
+  color: white;
 }
-
