@@ -248,9 +248,9 @@ body {
 
 .admin-result {
   margin-top: 40px;
-  background: white;
+  background: black;
   padding: 20px;
   border-radius: 6px;
-  color: #0f0;
+  color: white;
 }
 
