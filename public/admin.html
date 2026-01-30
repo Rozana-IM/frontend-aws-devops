@@ -5,18 +5,27 @@
   <title>Admin Dashboard | LUCCI</title>
   <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body class="admin-body">
 
-<header class="simple-header">
-  <h2>Dev / Microservices Dashboard</h2>
-</header>
+<h1 class="admin-title">Dev / Microservices Dashboard</h1>
 
-<section class="content">
-  <button onclick="loadUsers()">User Service</button>
-  <button onclick="loadOrders()">Order Service</button>
+<div class="admin-cards">
+  <div class="admin-card">
+    <h3>User Service</h3>
+    <p>Manages users and profiles</p>
+    <button onclick="loadUsers()">Load Users</button>
+  </div>
 
-  <pre id="result">Service responses appear here</pre>
-</section>
+  <div class="admin-card">
+    <h3>Order Service</h3>
+    <p>Handles order lifecycle</p>
+    <button onclick="loadOrders()">Load Orders</button>
+  </div>
+</div>
+
+<pre id="result" class="admin-result">
+Service responses appear here
+</pre>
 
 <script src="app.js"></script>
 </body>
