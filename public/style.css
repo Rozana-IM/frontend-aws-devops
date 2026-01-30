@@ -82,48 +82,52 @@ body {
   position: relative;
 }
 
-/* Full-page hero */
+/* HERO BANNER FULL SCREEN */
 .hero-banner {
-  height: calc(100vh - 70px); /* navbar height */
+  position: relative;
+  height: calc(100vh - 70px); /* adjust if navbar height differs */
   background: linear-gradient(to right, #1c2b33, #243b55);
   color: white;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: center;
-  text-align: center;
-  padding: 40px;
+  padding: 60px;
 }
 
-.hero-banner h1 {
+/* HERO TEXT */
+.hero-content {
+  max-width: 600px;
+}
+
+.hero-content h1 {
   font-size: 42px;
-  margin-bottom: 12px;
+  margin-bottom: 15px;
 }
 
-.hero-banner p {
+.hero-content p {
   font-size: 16px;
+  line-height: 1.6;
   opacity: 0.9;
 }
 
-
-.product-section {
+/* PRODUCTS OVERLAY */
+.hero-products {
   position: absolute;
-  bottom: 40px;              /* pulls products onto hero */
-  width: 100%;
-  padding: 0 60px;
-}
-
-.product-grid {
+  bottom: 40px;
+  left: 60px;
+  right: 60px;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 25px;
 }
 
+/* PRODUCT CARDS */
 .product-card {
   background: white;
-  padding: 50px 20px;
+  color: #000;
+  padding: 40px 20px;
   text-align: center;
   border-radius: 8px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.15);
   font-weight: 500;
 }
