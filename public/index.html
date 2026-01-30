@@ -2,51 +2,71 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Lucci Store | Microservices DevOps Project</title>
-  <link rel="stylesheet" href="style.css" />
+  <title>LUCCI | Online Shopping</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <!-- Navbar -->
-  <nav class="navbar">
+<!-- TOP NAVBAR -->
+<header class="top-nav">
+  <div class="nav-left">
     <div class="logo">LUCCI</div>
-    <ul class="nav-links">
-      <li>Home</li>
-      <li>About</li>
-      <li>Services</li>
-      <li>Orders</li>
-      <li>Users</li>
+    <a href="#">Men</a>
+    <a href="#">Women</a>
+    <a href="#">Kids</a>
+    <a href="#">Home</a>
+  </div>
+
+  <div class="nav-search">
+    <input type="text" placeholder="Search for products, brands and more">
+  </div>
+
+  <div class="nav-right">
+    <a href="#">Products</a>
+    <a href="#">Wishlist</a>
+    <a href="#">Bag</a>
+
+    <div class="profile-menu">
+      <span>Profile ▾</span>
+      <div class="profile-dropdown">
+        <a href="profile.html">My Profile</a>
+        <a href="orders.html">Orders</a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- MAIN LAYOUT -->
+<div class="layout">
+
+  <!-- LEFT SIDEBAR -->
+  <aside class="sidebar">
+    <h4>Categories</h4>
+    <ul>
+      <li>Men</li>
+      <li>Women</li>
+      <li>Kids</li>
+      <li>Beauty</li>
+      <li>Home & Living</li>
     </ul>
-  </nav>
+  </aside>
 
-  <!-- Hero Section -->
-  <section class="hero">
-    <h1>E-Commerce Microservices Platform</h1>
-    <p>Built with AWS, Jenkins, Docker & Microservices Architecture</p>
-  </section>
-
-  <!-- Services -->
-  <section class="cards">
-    <div class="card">
-      <h3>User Service</h3>
-      <p>Manages users and profiles</p>
-      <button onclick="loadUsers()">Load Users</button>
+  <!-- MAIN CONTENT -->
+  <main class="content">
+    <div class="banner">
+      <h1>E-Commerce Microservices Platform</h1>
+      <p>Built with AWS, Jenkins, Docker & Microservices</p>
     </div>
 
-    <div class="card">
-      <h3>Order Service</h3>
-      <p>Handles order lifecycle</p>
-      <button onclick="loadOrders()">Load Orders</button>
+    <div class="product-grid">
+      <div class="product-card">Product 1</div>
+      <div class="product-card">Product 2</div>
+      <div class="product-card">Product 3</div>
+      <div class="product-card">Product 4</div>
     </div>
-  </section>
+  </main>
 
-  <!-- Output -->
-  <section class="output">
-    <h3>Service Response</h3>
-    <pre id="result">Click a service to load data...</pre>
-  </section>
+</div>
 
-  <!-- JS -->
-  <script src="../src/app.js"></script>
 </body>
 </html>
