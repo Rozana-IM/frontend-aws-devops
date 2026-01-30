@@ -10,6 +10,7 @@ rm -rf build
 mkdir -p build
 
 # Copy all public assets (HTML + CSS)
+# Copy all frontend files
 cp -r public/* build/
 
 
