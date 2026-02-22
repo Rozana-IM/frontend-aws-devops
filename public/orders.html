@@ -7,16 +7,21 @@
 </head>
 <body>
 
+<script>
+  if (!localStorage.getItem("user")) {
+    alert("Please login first");
+    window.location.href = "profile.html";
+  }
+</script>
+
 <header class="simple-header">
   <a href="index.html">← Back to Home</a>
   <h2>My Orders</h2>
 </header>
 
 <section class="content">
-  <button onclick="loadOrders()">Load Orders</button>
-  <pre id="ordersResult">No orders loaded</pre>
+  <p>No orders yet.</p>
 </section>
 
-<script src="app.js"></script>
 </body>
 </html>
