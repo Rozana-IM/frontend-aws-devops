@@ -37,19 +37,28 @@
       <span class="label">Profile</span>
 
       <div class="profile-dropdown">
-        <div class="profile-header">
-          <p class="welcome">Welcome</p>
-          <p class="sub-text">To access account and manage orders</p>
-          <a href="#" class="login-btn">LOGIN / SIGNUP</a>
-        </div>
+  <div class="profile-header">
+    <p class="welcome" id="welcomeText">Welcome</p>
+    <p class="sub-text">To access account and manage orders</p>
 
-        <a href="orders.html">Orders</a>
-        <a href="#">Wishlist</a>
-        <a href="#">Cart</a>
-        <a href="#">Products</a>
-        <a href="#">Gift Cards</a>
-        <a href="#">Contact Us</a>
-      </div>
+    <!-- LOGIN / SIGNUP -->
+    <a href="profile.html" class="login-btn" id="loginBtn">
+      LOGIN / SIGNUP
+    </a>
+  </div>
+
+  <a href="orders.html">Orders</a>
+  <a href="#">Wishlist</a>
+  <a href="#">Cart</a>
+  <a href="#">Products</a>
+  <a href="#">Gift Cards</a>
+  <a href="#">Contact Us</a>
+
+  <!-- LOGOUT (hidden by default) -->
+  <a href="#" id="logoutBtn" style="display:none; color:red;">
+    Logout
+  </a>
+</div>
     </div>
   </div>
 </header>
