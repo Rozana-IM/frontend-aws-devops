@@ -1,24 +1,128 @@
-<div class="nav-item profile-menu" id="profileMenu">
-  <span class="icon">👤</span>
-  <span class="label">Profile</span>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Login / Signup | LUCCI</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .auth-box {
+      max-width: 400px;
+      margin: 80px auto;
+      background: white;
+      padding: 30px;
+      border-radius: 6px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+    }
 
-  <div class="profile-dropdown">
-    <div class="profile-header">
-      <p class="welcome">Welcome</p>
-      <p class="sub-text">To access account and manage orders</p>
+    .auth-box h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
 
-<div id="loginBox">
-  <input id="loginEmail" placeholder="Email" />
-  <input id="loginPassword" type="password" placeholder="Password" />
-  <button onclick="loginUser()" class="login-btn">LOGIN</button>
-</div>    </div>
+    .auth-box input {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 12px;
+    }
 
-    <a href="orders.html">Orders</a>
-    <a href="#">Wishlist</a>
-    <a href="#">Cart</a>
-    <a href="#">Products</a>
-    <a href="#">Gift Cards</a>
-    <a href="#">Contact Us</a>
+    .auth-box button {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
+      background: #ff3f6c;
+      color: white;
+      border: none;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .msg {
+      text-align: center;
+      font-size: 14px;
+      margin-top: 10px;
+      color: red;
+    }
+  </style>
+</head>
+<body>
+
+<div class="auth-box">
+  <h2 id="title">Login</h2>
+
+  <!-- SIGN UP -->
+  <div id="signupBox">
+    <input id="regName" placeholder="Name">
+    <input id="regEmail" placeholder="Email">
+    <input id="regPassword" type="password" placeholder="Password">
+    <button onclick="register()">SIGN UP</button>
   </div>
+
+  <!-- LOGIN -->
+  <div id="loginBox">
+    <input id="loginEmail" placeholder="Email">
+    <input id="loginPassword" type="password" placeholder="Password">
+    <button onclick="login()">LOGIN</button>
+  </div>
+
+  <div class="msg" id="msg"></div>
 </div>
 
+<script>
+const API_BASE_URL = "http://api.rozana-projects.online";
+
+const user = localStorage.getItem("user");
+if (user) {
+  document.getElementById("signupBox").style.display = "none";
+  document.getElementById("title").innerText = "Welcome Back";
+}
+
+// SIGN UP
+async function register() {
+  const name = regName.value;
+  const email = regEmail.value;
+  const password = regPassword.value;
+
+  if (!name || !email || !password) {
+    msg.innerText = "All fields required";
+    return;
+  }
+
+  const res = await fetch(`${API_BASE_URL}/register`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ name, email, password })
+  });
+
+  const data = await res.json();
+  msg.innerText = data.message || data.error;
+}
+
+// LOGIN
+async function login() {
+  const email = loginEmail.value;
+  const password = loginPassword.value;
+
+  if (!email || !password) {
+    msg.innerText = "Enter email and password";
+    return;
+  }
+
+  const res = await fetch(`${API_BASE_URL}/login`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, password })
+  });
+
+  const data = await res.json();
+
+  if (data.error) {
+    msg.innerText = "Create an account first";
+  } else {
+    localStorage.setItem("user", JSON.stringify(data.user));
+    window.location.href = "index.html";
+  }
+}
+</script>
+
+</body>
+</html>
