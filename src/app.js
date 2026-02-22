@@ -4,7 +4,7 @@ const API_BASE_URL = "https://api.rozana-projects.online";
 async function loadUsers() {
   const result = document.getElementById("result");
   result.innerText = "Loading users...";
-  
+
   try {
     const res = await fetch(`${API_BASE_URL}/users`);
     const data = await res.json();
@@ -14,7 +14,10 @@ async function loadUsers() {
       return;
     }
 
-    result.innerText = JSON.stringify(data, null, 2);
+    // ✅ HANDLE BOTH FORMATS
+    const users = data.users || data;
+    result.innerText = JSON.stringify(users, null, 2);
+
   } catch (error) {
     console.error(error);
     result.innerText = "Server error while loading users";
@@ -35,7 +38,10 @@ async function loadOrders() {
       return;
     }
 
-    result.innerText = JSON.stringify(data, null, 2);
+    // ✅ HANDLE BOTH FORMATS
+    const orders = data.orders || data;
+    result.innerText = JSON.stringify(orders, null, 2);
+
   } catch (error) {
     console.error(error);
     result.innerText = "Server error while loading orders";
