@@ -1,4 +1,4 @@
-const API_BASE_URL = "http://api.rozana-projects.online";
+const API_BASE_URL = "https://api.rozana-projects.online";
 
 // LOGIN USER
 async function loginUser() {
