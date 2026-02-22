@@ -4,7 +4,7 @@ const API_BASE_URL = "https://api.rozana-projects.online";
 async function loadUsers() {
   const result = document.getElementById("result");
   result.innerText = "Loading users...";
-
+  
   try {
     const res = await fetch(`${API_BASE_URL}/users`);
     const data = await res.json();
