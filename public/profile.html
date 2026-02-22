@@ -70,56 +70,82 @@
 <script>
 const API_BASE_URL = "http://api.rozana-projects.online";
 
-const user = localStorage.getItem("user");
-if (user) {
+// hide signup if already logged in
+const existingUser = localStorage.getItem("user");
+if (existingUser) {
   document.getElementById("signupBox").style.display = "none";
   document.getElementById("title").innerText = "Welcome Back";
 }
 
-// SIGN UP
+// ================= SIGN UP =================
 async function register() {
-  const name = regName.value;
-  const email = regEmail.value;
-  const password = regPassword.value;
+  console.log("Register button clicked");
+
+  const name = document.getElementById("regName").value;
+  const email = document.getElementById("regEmail").value;
+  const password = document.getElementById("regPassword").value;
+  const msg = document.getElementById("msg");
 
   if (!name || !email || !password) {
     msg.innerText = "All fields required";
     return;
   }
 
-  const res = await fetch(`${API_BASE_URL}/register`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ name, email, password })
-  });
+  try {
+    const res = await fetch(`${API_BASE_URL}/register`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, email, password })
+    });
 
-  const data = await res.json();
-  msg.innerText = data.message || data.error;
+    const data = await res.json();
+    console.log("Register response:", data);
+
+    if (!res.ok || data.error) {
+      msg.innerText = data.error || "Registration failed";
+      return;
+    }
+
+    msg.style.color = "green";
+    msg.innerText = "Signup successful. Please login.";
+
+  } catch (error) {
+    console.error("Register error:", error);
+    msg.innerText = "Server error";
+  }
 }
 
-// LOGIN
+// ================= LOGIN =================
 async function login() {
-  const email = loginEmail.value;
-  const password = loginPassword.value;
+  const email = document.getElementById("loginEmail").value;
+  const password = document.getElementById("loginPassword").value;
+  const msg = document.getElementById("msg");
 
   if (!email || !password) {
     msg.innerText = "Enter email and password";
     return;
   }
 
-  const res = await fetch(`${API_BASE_URL}/login`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email, password })
-  });
+  try {
+    const res = await fetch(`${API_BASE_URL}/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password })
+    });
 
-  const data = await res.json();
+    const data = await res.json();
 
-  if (data.error) {
-    msg.innerText = "Create an account first";
-  } else {
+    if (!res.ok || data.error) {
+      msg.innerText = "Create an account first";
+      return;
+    }
+
     localStorage.setItem("user", JSON.stringify(data.user));
     window.location.href = "index.html";
+
+  } catch (error) {
+    console.error("Login error:", error);
+    msg.innerText = "Server error";
   }
 }
 </script>
