@@ -13,18 +13,15 @@
       border-radius: 6px;
       box-shadow: 0 6px 18px rgba(0,0,0,0.15);
     }
-
     .auth-box h2 {
       text-align: center;
       margin-bottom: 20px;
     }
-
     .auth-box input {
       width: 100%;
       padding: 10px;
       margin-bottom: 12px;
     }
-
     .auth-box button {
       width: 100%;
       padding: 10px;
@@ -35,7 +32,6 @@
       font-weight: bold;
       cursor: pointer;
     }
-
     .msg {
       text-align: center;
       font-size: 14px;
@@ -47,18 +43,20 @@
 <body>
 
 <div class="auth-box">
-  <h2 id="title">Login</h2>
+  <h2>Create Account / Login</h2>
 
   <!-- SIGN UP -->
-  <div id="signupBox">
+  <div>
     <input id="regName" placeholder="Name">
     <input id="regEmail" placeholder="Email">
     <input id="regPassword" type="password" placeholder="Password">
     <button onclick="register()">SIGN UP</button>
   </div>
 
+  <hr>
+
   <!-- LOGIN -->
-  <div id="loginBox">
+  <div>
     <input id="loginEmail" placeholder="Email">
     <input id="loginPassword" type="password" placeholder="Password">
     <button onclick="login()">LOGIN</button>
@@ -70,20 +68,11 @@
 <script>
 const API_BASE_URL = "https://api.rozana-projects.online";
 
-// hide signup if already logged in
-const existingUser = localStorage.getItem("user");
-if (existingUser) {
-  document.getElementById("signupBox").style.display = "none";
-  document.getElementById("title").innerText = "Welcome Back";
-}
-
-// ================= SIGN UP =================
+// ================= SIGN UP (AUTO LOGIN) =================
 async function register() {
-  console.log("Register button clicked");
-
-  const name = document.getElementById("regName").value;
-  const email = document.getElementById("regEmail").value;
-  const password = document.getElementById("regPassword").value;
+  const name = regName.value;
+  const email = regEmail.value;
+  const password = regPassword.value;
   const msg = document.getElementById("msg");
 
   if (!name || !email || !password) {
@@ -99,30 +88,36 @@ async function register() {
     });
 
     const data = await res.json();
-    console.log("Register response:", data);
 
-    if (!res.ok || data.error) {
-      msg.innerText = data.error || "Registration failed";
+    // user already exists
+    if (res.status === 409) {
+      msg.innerText = "Account already exists. Please login.";
       return;
     }
 
-    msg.style.color = "green";
-    msg.innerText = "Signup successful. Please login.";
+    if (!res.ok) {
+      msg.innerText = data.error || "Signup failed";
+      return;
+    }
 
-  } catch (error) {
-    console.error("Register error:", error);
+    // ✅ SIGNUP = LOGIN
+    localStorage.setItem("user", JSON.stringify(data.user));
+    window.location.href = "index.html";
+
+  } catch (err) {
+    console.error(err);
     msg.innerText = "Server error";
   }
 }
 
 // ================= LOGIN =================
 async function login() {
-  const email = document.getElementById("loginEmail").value;
-  const password = document.getElementById("loginPassword").value;
+  const email = loginEmail.value;
+  const password = loginPassword.value;
   const msg = document.getElementById("msg");
 
   if (!email || !password) {
-    msg.innerText = "Enter email and password";
+    msg.innerText = "Email and password required";
     return;
   }
 
@@ -136,15 +131,15 @@ async function login() {
     const data = await res.json();
 
     if (!res.ok || data.error) {
-      msg.innerText = "Create an account first";
+      msg.innerText = "Invalid email or password";
       return;
     }
 
     localStorage.setItem("user", JSON.stringify(data.user));
     window.location.href = "index.html";
 
-  } catch (error) {
-    console.error("Login error:", error);
+  } catch (err) {
+    console.error(err);
     msg.innerText = "Server error";
   }
 }
