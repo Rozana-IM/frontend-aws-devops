@@ -22,19 +22,17 @@
   </div>
 
   <div class="nav-right">
-    <!-- WISHLIST -->
+
     <div class="nav-item" onclick="requireLogin()">
       <span class="icon">❤</span>
       <span class="label">Wishlist</span>
     </div>
 
-    <!-- BAG -->
     <div class="nav-item" onclick="requireLogin()">
       <span class="icon">👜</span>
       <span class="label">Bag</span>
     </div>
 
-    <!-- PROFILE -->
     <div class="nav-item profile-menu">
       <span class="icon">👤</span>
       <span class="label">Profile</span>
@@ -52,9 +50,6 @@
         <a href="orders.html" onclick="return requireLogin()">Orders</a>
         <a href="#" onclick="return requireLogin()">Wishlist</a>
         <a href="#" onclick="return requireLogin()">Cart</a>
-        <a href="#">Products</a>
-        <a href="#">Gift Cards</a>
-        <a href="#">Contact Us</a>
 
         <a href="#" id="logoutBtn" style="display:none; color:red;">Logout</a>
       </div>
@@ -69,13 +64,6 @@
   </div>
 </section>
 
-<section class="hero-products">
-  <div class="product-card">Product 1</div>
-  <div class="product-card">Product 2</div>
-  <div class="product-card">Product 3</div>
-  <div class="product-card">Product 4</div>
-</section>
-
 <script>
   const user = JSON.parse(localStorage.getItem("user"));
   const loginBtn = document.getElementById("loginBtn");
@@ -86,16 +74,20 @@
     loginBtn.style.display = "none";
     logoutBtn.style.display = "block";
     welcomeText.innerText = `Hello, ${user.name}`;
+  } else {
+    loginBtn.style.display = "block";
+    logoutBtn.style.display = "none";
+    welcomeText.innerText = "Welcome";
   }
 
   logoutBtn.onclick = () => {
     localStorage.removeItem("user");
-    location.reload();
+    window.location.href = "index.html";
   };
 
   function requireLogin() {
     if (!localStorage.getItem("user")) {
-      alert("Please login or create an account first");
+      alert("Please login first");
       window.location.href = "profile.html";
       return false;
     }
