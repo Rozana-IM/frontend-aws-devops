@@ -4,63 +4,22 @@
   <meta charset="UTF-8">
   <title>Login / Signup | LUCCI</title>
   <link rel="stylesheet" href="style.css">
-  <style>
-    .auth-box {
-      max-width: 400px;
-      margin: 80px auto;
-      background: white;
-      padding: 30px;
-      border-radius: 6px;
-      box-shadow: 0 6px 18px rgba(0,0,0,0.15);
-    }
-    .auth-box h2 {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-    .auth-box input {
-      width: 100%;
-      padding: 10px;
-      margin-bottom: 12px;
-    }
-    .auth-box button {
-      width: 100%;
-      padding: 10px;
-      margin-bottom: 10px;
-      background: #ff3f6c;
-      color: white;
-      border: none;
-      font-weight: bold;
-      cursor: pointer;
-    }
-    .msg {
-      text-align: center;
-      font-size: 14px;
-      margin-top: 10px;
-      color: red;
-    }
-  </style>
 </head>
 <body>
 
 <div class="auth-box">
   <h2>Create Account / Login</h2>
 
-  <!-- SIGN UP -->
-  <div>
-    <input id="regName" placeholder="Name">
-    <input id="regEmail" placeholder="Email">
-    <input id="regPassword" type="password" placeholder="Password">
-    <button onclick="register()">SIGN UP</button>
-  </div>
+  <input id="regName" placeholder="Name">
+  <input id="regEmail" placeholder="Email">
+  <input id="regPassword" type="password" placeholder="Password">
+  <button onclick="register()">SIGN UP</button>
 
   <hr>
 
-  <!-- LOGIN -->
-  <div>
-    <input id="loginEmail" placeholder="Email">
-    <input id="loginPassword" type="password" placeholder="Password">
-    <button onclick="login()">LOGIN</button>
-  </div>
+  <input id="loginEmail" placeholder="Email">
+  <input id="loginPassword" type="password" placeholder="Password">
+  <button onclick="login()">LOGIN</button>
 
   <div class="msg" id="msg"></div>
 </div>
@@ -68,7 +27,6 @@
 <script>
 const API_BASE_URL = "https://api.rozana-projects.online";
 
-// ================= SIGN UP (AUTO LOGIN) =================
 async function register() {
   const name = regName.value;
   const email = regEmail.value;
@@ -80,68 +38,41 @@ async function register() {
     return;
   }
 
-  try {
-    const res = await fetch(`${API_BASE_URL}/register`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, email, password })
-    });
+  const res = await fetch(`${API_BASE_URL}/register`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ name, email, password })
+  });
 
-    const data = await res.json();
-
-    // user already exists
-    if (res.status === 409) {
-      msg.innerText = "Account already exists. Please login.";
-      return;
-    }
-
-    if (!res.ok) {
-      msg.innerText = data.error || "Signup failed";
-      return;
-    }
-
-    // ✅ SIGNUP = LOGIN
-    localStorage.setItem("user", JSON.stringify(data.user));
-    window.location.href = "index.html";
-
-  } catch (err) {
-    console.error(err);
-    msg.innerText = "Server error";
+  if (res.status === 409) {
+    msg.innerText = "User already exists. Please login.";
+    return;
   }
+
+  const data = await res.json();
+  localStorage.setItem("user", JSON.stringify(data.user));
+  window.location.href = "index.html";
 }
 
-// ================= LOGIN =================
 async function login() {
   const email = loginEmail.value;
   const password = loginPassword.value;
   const msg = document.getElementById("msg");
 
-  if (!email || !password) {
-    msg.innerText = "Email and password required";
+  const res = await fetch(`${API_BASE_URL}/login`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, password })
+  });
+
+  if (!res.ok) {
+    msg.innerText = "Invalid email or password";
     return;
   }
 
-  try {
-    const res = await fetch(`${API_BASE_URL}/login`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password })
-    });
-
-    const data = await res.json();
-
-    if (!res.ok || data.error) {
-      msg.innerText = "Invalid email or password";
-      return;
-    }
-
-    localStorage.setItem("user", JSON.stringify(data.user));
-    window.location.href = "index.html";
-
-  } catch (err) {
-    console.error(err);
-    msg.innerText = "Server error";
-  }
+  const data = await res.json();
+  localStorage.setItem("user", JSON.stringify(data.user));
+  window.location.href = "index.html";
 }
 </script>
 
