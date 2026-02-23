@@ -1,6 +1,6 @@
 const API_BASE_URL = "https://api.rozana-projects.online";
 
-// ====== LOCAL STORAGE HELPERS ======
+/* ================= AUTH STATE ================= */
 function getUser() {
   return JSON.parse(localStorage.getItem("user"));
 }
