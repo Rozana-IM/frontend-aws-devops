@@ -1,71 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <title>LUCCI | Online Shopping</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-
-<header class="top-nav">
-  <div class="nav-left">
-    <div class="logo">LUCCI</div>
-    <a href="#">Men</a>
-    <a href="#">Women</a>
-    <a href="#">Kids</a>
-    <a href="#">Home</a>
-  </div>
-
-  <div class="nav-search">
-    <span class="search-icon">🔍</span>
-    <input type="text" placeholder="Search for products, brands and more">
-  </div>
-
-  <div class="nav-right">
-
-    <div class="nav-item" onclick="requireLogin()">
-      <span class="icon">❤</span>
-      <span class="label">Wishlist</span>
-    </div>
-
-    <div class="nav-item" onclick="requireLogin()">
-      <span class="icon">👜</span>
-      <span class="label">Bag</span>
-    </div>
-
-    <div class="nav-item profile-menu">
-      <span class="icon">👤</span>
-      <span class="label">Profile</span>
-
-      <div class="profile-dropdown">
-        <div class="profile-header">
-          <p class="welcome" id="welcomeText">Welcome</p>
-          <p class="sub-text">To access account and manage orders</p>
-
-          <a href="profile.html" class="login-btn" id="loginBtn">
-            LOGIN / SIGNUP
-          </a>
-        </div>
-
-        <a href="orders.html" onclick="return requireLogin()">Orders</a>
-        <a href="#" onclick="return requireLogin()">Wishlist</a>
-        <a href="#" onclick="return requireLogin()">Cart</a>
-
-        <a href="#" id="logoutBtn" style="display:none; color:red;">Logout</a>
-      </div>
-    </div>
-  </div>
-</header>
-
-<section class="hero-banner">
-  <div class="hero-content">
-    <h1>LUCCI E-Commerce Platform</h1>
-    <p>Discover the latest fashion, lifestyle essentials, and everyday trends.</p>
-  </div>
-</section>
-
+<script src="../src/app.js"></script>
 <script>
-  const user = JSON.parse(localStorage.getItem("user"));
+  const user = getUser();
   const loginBtn = document.getElementById("loginBtn");
   const logoutBtn = document.getElementById("logoutBtn");
   const welcomeText = document.getElementById("welcomeText");
@@ -77,23 +12,7 @@
   } else {
     loginBtn.style.display = "block";
     logoutBtn.style.display = "none";
-    welcomeText.innerText = "Welcome";
   }
 
-  logoutBtn.onclick = () => {
-    localStorage.removeItem("user");
-    window.location.href = "index.html";
-  };
-
-  function requireLogin() {
-    if (!localStorage.getItem("user")) {
-      alert("Please login first");
-      window.location.href = "profile.html";
-      return false;
-    }
-    return true;
-  }
+  logoutBtn.onclick = logout;
 </script>
-
-</body>
-</html>
