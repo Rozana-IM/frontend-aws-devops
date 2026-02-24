@@ -1,17 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>LUCCI | Online Shopping</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ================= HEADER ================= -->
+<header class="top-nav">
+  <div class="nav-left">
+    <div class="logo">LUCCI</div>
+    <a href="#">Men</a>
+    <a href="#">Women</a>
+    <a href="#">Kids</a>
+    <a href="#">Home</a>
+  </div>
+
+  <div class="nav-search">
+    <span class="search-icon">🔍</span>
+    <input type="text" placeholder="Search for products, brands and more">
+  </div>
+
+  <div class="nav-right">
+
+    <!-- Wishlist -->
+    <div class="nav-item">
+      <span class="icon">❤</span>
+      <span class="label">Wishlist</span>
+    </div>
+
+    <!-- Bag -->
+    <div class="nav-item">
+      <span class="icon">👜</span>
+      <span class="label">Bag</span>
+    </div>
+
+    <!-- Profile -->
+    <div class="nav-item profile-menu">
+      <span class="icon">👤</span>
+      <span class="label">Profile</span>
+
+      <div class="profile-dropdown">
+        <div class="profile-header">
+          <p class="welcome" id="welcomeText">Welcome</p>
+          <p class="sub-text">To access account and manage orders</p>
+
+          <a href="profile.html" class="login-btn" id="loginBtn">
+            LOGIN / SIGNUP
+          </a>
+        </div>
+
+        <a href="orders.html">Orders</a>
+        <a href="#">Wishlist</a>
+        <a href="#">Cart</a>
+        <a href="#">Products</a>
+        <a href="#">Gift Cards</a>
+        <a href="#">Contact Us</a>
+
+        <a href="#" id="logoutBtn" style="display:none; color:red;">
+          Logout
+        </a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ================= HERO ================= -->
+<section class="hero-banner">
+  <div class="hero-content">
+    <h1>LUCCI E-Commerce Platform</h1>
+    <p>Discover the latest fashion, lifestyle essentials, and everyday trends.</p>
+  </div>
+</section>
+
+<!-- ================= PRODUCTS ================= -->
+<section class="hero-products">
+  <div class="product-card">Product 1</div>
+  <div class="product-card">Product 2</div>
+  <div class="product-card">Product 3</div>
+  <div class="product-card">Product 4</div>
+</section>
+
+<!-- ================= JS ================= -->
 <script src="../src/app.js"></script>
+
 <script>
   document.addEventListener("DOMContentLoaded", () => {
+    const user = getUser();
+
     const loginBtn = document.getElementById("loginBtn");
     const logoutBtn = document.getElementById("logoutBtn");
     const welcomeText = document.getElementById("welcomeText");
 
-    // 🛡️ Guard (VERY IMPORTANT)
+    // SAFETY CHECK (prevents blank screen)
     if (!loginBtn || !logoutBtn || !welcomeText) {
-      console.warn("Auth UI elements not found");
+      console.warn("Auth elements not found in DOM");
       return;
     }
-
-    const user = getUser();
 
     if (user) {
       loginBtn.style.display = "none";
@@ -23,6 +109,12 @@
       welcomeText.innerText = "Welcome";
     }
 
-    logoutBtn.onclick = logout;
+    logoutBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      logout();
+    });
   });
 </script>
+
+</body>
+</html>
