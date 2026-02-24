@@ -1,27 +1,19 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>My Orders | LUCCI</title>
+  <title>My Orders</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
+<h2>My Orders</h2>
+
+<div id="ordersContainer">Loading...</div>
+
+<script src="../src/app.js"></script>
 <script>
-  if (!localStorage.getItem("user")) {
-    alert("Please login first");
-    window.location.href = "profile.html";
-  }
+  loadMyOrders();
 </script>
-
-<header class="simple-header">
-  <a href="index.html">← Back to Home</a>
-  <h2>My Orders</h2>
-</header>
-
-<section class="content">
-  <p>No orders yet.</p>
-</section>
 
 </body>
 </html>
