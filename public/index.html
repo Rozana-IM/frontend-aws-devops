@@ -1,18 +1,28 @@
 <script src="../src/app.js"></script>
 <script>
-  const user = getUser();
-  const loginBtn = document.getElementById("loginBtn");
-  const logoutBtn = document.getElementById("logoutBtn");
-  const welcomeText = document.getElementById("welcomeText");
+  document.addEventListener("DOMContentLoaded", () => {
+    const loginBtn = document.getElementById("loginBtn");
+    const logoutBtn = document.getElementById("logoutBtn");
+    const welcomeText = document.getElementById("welcomeText");
 
-  if (user) {
-    loginBtn.style.display = "none";
-    logoutBtn.style.display = "block";
-    welcomeText.innerText = `Hello, ${user.name}`;
-  } else {
-    loginBtn.style.display = "block";
-    logoutBtn.style.display = "none";
-  }
+    // 🛡️ Guard (VERY IMPORTANT)
+    if (!loginBtn || !logoutBtn || !welcomeText) {
+      console.warn("Auth UI elements not found");
+      return;
+    }
 
-  logoutBtn.onclick = logout;
+    const user = getUser();
+
+    if (user) {
+      loginBtn.style.display = "none";
+      logoutBtn.style.display = "block";
+      welcomeText.innerText = `Hello, ${user.name}`;
+    } else {
+      loginBtn.style.display = "block";
+      logoutBtn.style.display = "none";
+      welcomeText.innerText = "Welcome";
+    }
+
+    logoutBtn.onclick = logout;
+  });
 </script>
