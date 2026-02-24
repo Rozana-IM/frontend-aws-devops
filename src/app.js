@@ -30,10 +30,9 @@ async function createOrder(items, totalAmount) {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      userId: user.id,
-      items,
-      totalAmount,
-    }),
+  items,
+  totalAmount
+})
   });
 
   return res.json();
