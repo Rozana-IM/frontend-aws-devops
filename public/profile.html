@@ -6,21 +6,18 @@
   <link rel="stylesheet" href="style.css">
 
   <style>
-    /* ===== THEME VARIABLES ===== */
     :root {
-      --bg-color: #f5f5f5;
-      --card-bg: #ffffff;
-      --text-color: #1c2b33;
-      --input-bg: #ffffff;
-      --border-color: #ccc;
+      --bg: #f5f5f5;
+      --card: #ffffff;
+      --text: #1c2b33;
+      --border: #ccc;
     }
 
     body.dark {
-      --bg-color: #0f172a;
-      --card-bg: #111827;
-      --text-color: #e5e7eb;
-      --input-bg: #1f2933;
-      --border-color: #374151;
+      --bg: #0f172a;
+      --card: #111827;
+      --text: #e5e7eb;
+      --border: #374151;
     }
 
     body {
@@ -29,21 +26,20 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      background: var(--bg-color);
+      background: var(--bg);
+      color: var(--text);
       font-family: Arial, sans-serif;
-      color: var(--text-color);
-      transition: background 0.3s ease;
     }
 
     .auth-box {
       width: 380px;
-      background: var(--card-bg);
+      background: var(--card);
       padding: 30px;
       border-radius: 8px;
       box-shadow: 0 8px 25px rgba(0,0,0,0.15);
     }
 
-    .auth-box h2 {
+    h2 {
       text-align: center;
       margin-bottom: 10px;
     }
@@ -55,59 +51,51 @@
       color: #4f46e5;
     }
 
-    .auth-box input {
+    input {
       width: 100%;
       padding: 10px;
       margin-bottom: 12px;
       border-radius: 4px;
-      border: 1px solid var(--border-color);
-      background: var(--input-bg);
-      color: var(--text-color);
-      font-size: 14px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: inherit;
     }
 
-    .auth-box button {
+    button {
       width: 100%;
       padding: 12px;
-      margin-top: 5px;
       background: linear-gradient(to right, #1c2b33, #243b55);
       color: white;
       border: none;
       border-radius: 4px;
       font-weight: bold;
-      font-size: 14px;
       cursor: pointer;
-      transition: opacity 0.2s ease, transform 0.1s ease;
+      margin-top: 5px;
     }
 
-    .auth-box button:disabled {
+    button:disabled {
       opacity: 0.6;
       cursor: not-allowed;
     }
 
-    .auth-box button:hover:not(:disabled) {
-      opacity: 0.95;
-      transform: translateY(-1px);
-    }
-
-    .auth-box hr {
+    hr {
       margin: 25px 0;
       border: none;
-      border-top: 1px solid var(--border-color);
+      border-top: 1px solid var(--border);
     }
 
     .msg {
       text-align: center;
       margin-top: 15px;
-      font-size: 14px;
       color: red;
+      font-size: 14px;
     }
 
     .dark-toggle {
       text-align: center;
       margin-top: 15px;
-      font-size: 13px;
       cursor: pointer;
+      font-size: 13px;
       color: #6366f1;
     }
   </style>
@@ -116,7 +104,6 @@
 
 <div class="auth-box">
   <h2>Create Account / Login</h2>
-
   <div class="username" id="loggedUser"></div>
 
   <!-- SIGN UP -->
@@ -133,30 +120,26 @@
   <button id="loginBtn" onclick="login()">LOGIN</button>
 
   <div class="msg" id="msg"></div>
-
-  <div class="dark-toggle" onclick="toggleDarkMode()">
-    🌙 Toggle Dark Mode
-  </div>
+  <div class="dark-toggle" onclick="toggleDarkMode()">🌙 Toggle Dark Mode</div>
 </div>
 
 <script src="../src/app.js"></script>
 <script>
   document.addEventListener("DOMContentLoaded", () => {
 
-    /* ===== SHOW LOGGED IN USER ===== */
+    // show logged user if exists
     const user = getUser();
-    const loggedUser = document.getElementById("loggedUser");
-
     if (user) {
-      loggedUser.innerText = `Logged in as ${user.name}`;
+      document.getElementById("loggedUser").innerText =
+        `Logged in as ${user.name}`;
     }
 
-    /* ===== DARK MODE INIT ===== */
+    // dark mode init
     if (localStorage.getItem("theme") === "dark") {
       document.body.classList.add("dark");
     }
 
-    window.toggleDarkMode = function () {
+    window.toggleDarkMode = () => {
       document.body.classList.toggle("dark");
       localStorage.setItem(
         "theme",
@@ -164,22 +147,22 @@
       );
     };
 
-    /* ===== SIGN UP ===== */
+    // SIGN UP
     window.register = async function () {
-      const btn = document.getElementById("signupBtn");
+      const btn = signupBtn;
       btn.disabled = true;
       btn.innerText = "Signing up...";
-
-      const name = regName.value;
-      const email = regEmail.value;
-      const password = regPassword.value;
-      const msg = document.getElementById("msg");
+      msg.innerText = "";
 
       try {
-        const res = await fetch(`${USER_SERVICE_URL}/register`, {
+        const res = await fetch(`${API_BASE_URL}/register`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ name, email, password }),
+          body: JSON.stringify({
+            name: regName.value,
+            email: regEmail.value,
+            password: regPassword.value,
+          }),
         });
 
         const data = await res.json();
@@ -190,6 +173,7 @@
 
         localStorage.setItem("user", JSON.stringify(data.user));
         localStorage.setItem("token", data.token);
+        localStorage.setItem("refreshToken", data.refreshToken);
         window.location.href = "index.html";
       } finally {
         btn.disabled = false;
@@ -197,38 +181,38 @@
       }
     };
 
-    /* ===== LOGIN ===== */
+    // LOGIN
     window.login = async function () {
-      const btn = document.getElementById("loginBtn");
+      const btn = loginBtn;
       btn.disabled = true;
       btn.innerText = "Logging in...";
-
-      const email = loginEmail.value;
-      const password = loginPassword.value;
-      const msg = document.getElementById("msg");
+      msg.innerText = "";
 
       try {
-        const res = await fetch(`${USER_SERVICE_URL}/login`, {
+        const res = await fetch(`${API_BASE_URL}/login`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, password }),
+          body: JSON.stringify({
+            email: loginEmail.value,
+            password: loginPassword.value,
+          }),
         });
 
         const data = await res.json();
         if (!res.ok) {
-          msg.innerText = data.error || "Invalid email or password";
+          msg.innerText = data.error || "Invalid login";
           return;
         }
 
         localStorage.setItem("user", JSON.stringify(data.user));
         localStorage.setItem("token", data.token);
+        localStorage.setItem("refreshToken", data.refreshToken);
         window.location.href = "index.html";
       } finally {
         btn.disabled = false;
         btn.innerText = "LOGIN";
       }
     };
-
   });
 </script>
 
