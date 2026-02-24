@@ -1,7 +1,8 @@
 // ================= SERVICE URLS =================
 const USER_SERVICE_URL = "https://api.rozana-projects.online";
 const ORDER_SERVICE_URL = "https://api.rozana-projects.online";
-// ================= AUTH HELPERS =================
+
+// ================= SAFE HELPERS =================
 function getUser() {
   const user = localStorage.getItem("user");
   if (!user) return null;
@@ -15,13 +16,26 @@ function getUser() {
   }
 }
 
+function getToken() {
+  return localStorage.getItem("token");
+}
+
+function authHeaders() {
+  const token = getToken();
+  return {
+    "Content-Type": "application/json",
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+  };
+}
+
 function logout() {
   localStorage.removeItem("user");
+  localStorage.removeItem("token");
   window.location.href = "index.html";
 }
 
 function requireLogin() {
-  if (!getUser()) {
+  if (!getUser() || !getToken()) {
     alert("Please login first");
     window.location.href = "profile.html";
     return false;
@@ -29,51 +43,62 @@ function requireLogin() {
   return true;
 }
 
+// ================= SAFE FETCH =================
+async function safeFetch(url, options = {}) {
+  try {
+    const res = await fetch(url, options);
+    if (!res.ok) {
+      const text = await res.text();
+      throw new Error(`${res.status}: ${text}`);
+    }
+    return await res.json();
+  } catch (err) {
+    console.error("Fetch failed:", err.message);
+    return null;
+  }
+}
+
 // ================= ORDERS =================
 async function createOrder(items, totalAmount) {
-  const user = getUser();
-  if (!user) return;
+  if (!requireLogin()) return null;
 
-  const res = await fetch(`${ORDER_SERVICE_URL}/orders`, {
+  return await safeFetch(`${ORDER_SERVICE_URL}/orders`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: authHeaders(),
     body: JSON.stringify({
-  items,
-  totalAmount
-})
+      items,
+      totalAmount,
+    }),
   });
-
-  return res.json();
 }
 
 async function fetchUserOrders() {
-  const user = getUser();
-  if (!user) return [];
+  if (!requireLogin()) return [];
 
-  const res = await fetch(
-    `${ORDER_SERVICE_URL}/orders/${user.id}`
+  return (
+    (await safeFetch(`${ORDER_SERVICE_URL}/orders`, {
+      headers: authHeaders(),
+    })) || []
   );
-  return res.json();
 }
 
 // ================= ADMIN =================
 async function fetchAllUsers() {
-  const res = await fetch(`${USER_SERVICE_URL}/admin/users`);
-  return res.json();
+  if (!requireLogin()) return [];
+
+  return (
+    (await safeFetch(`${USER_SERVICE_URL}/admin/users`, {
+      headers: authHeaders(),
+    })) || []
+  );
 }
 
 async function fetchAllOrders() {
-  const res = await fetch(`${ORDER_SERVICE_URL}/admin/orders`);
-  return res.json();
-}
-function authHeaders() {
-  return {
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${localStorage.getItem("token")}`,
-  };
-}
+  if (!requireLogin()) return [];
 
-// Example
-fetch(`${ORDER_SERVICE_URL}/orders`, {
-  headers: authHeaders(),
-});
+  return (
+    (await safeFetch(`${ORDER_SERVICE_URL}/admin/orders`, {
+      headers: authHeaders(),
+    })) || []
+  );
+}
