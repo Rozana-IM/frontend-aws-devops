@@ -1,25 +1,29 @@
-// ================== API BASE URLS ==================
-const USER_SERVICE_URL = "https://api.rozana-projects.online"; 
-const ORDER_SERVICE_URL = "https://api.rozana-projects.online";
+// ================= SERVICE URLS =================
+const USER_SERVICE_URL = "https://api.rozana-projects.online";
+const ORDER_SERVICE_URL = "https://orders.rozana-projects.online";
 
-// ================== AUTH ==================
-function getLoggedInUser() {
+// ================= AUTH HELPERS =================
+function getUser() {
   return JSON.parse(localStorage.getItem("user"));
 }
 
-function requireLogin() {
-  const user = getLoggedInUser();
-  if (!user) {
-    alert("Please login first");
-    window.location.href = "profile.html";
-    return null;
-  }
-  return user;
+function logout() {
+  localStorage.removeItem("user");
+  window.location.href = "index.html";
 }
 
-// ================== CREATE ORDER ==================
+function requireLogin() {
+  if (!getUser()) {
+    alert("Please login first");
+    window.location.href = "profile.html";
+    return false;
+  }
+  return true;
+}
+
+// ================= ORDERS =================
 async function createOrder(items, totalAmount) {
-  const user = requireLogin();
+  const user = getUser();
   if (!user) return;
 
   const res = await fetch(`${ORDER_SERVICE_URL}/orders`, {
@@ -28,55 +32,30 @@ async function createOrder(items, totalAmount) {
     body: JSON.stringify({
       userId: user.id,
       items,
-      totalAmount
-    })
+      totalAmount,
+    }),
   });
 
-  const data = await res.json();
-
-  if (!res.ok) {
-    alert("Failed to create order");
-    return;
-  }
-
-  alert("Order placed successfully!");
-  return data;
+  return res.json();
 }
 
-// ================== GET MY ORDERS ==================
-async function loadMyOrders() {
-  const user = requireLogin();
-  if (!user) return;
+async function fetchUserOrders() {
+  const user = getUser();
+  if (!user) return [];
 
-  const res = await fetch(`${ORDER_SERVICE_URL}/orders/${user.id}`);
-  const orders = await res.json();
-
-  const container = document.getElementById("ordersContainer");
-  container.innerHTML = "";
-
-  if (orders.length === 0) {
-    container.innerHTML = "<p>No orders found</p>";
-    return;
-  }
-
-  orders.forEach(order => {
-    const div = document.createElement("div");
-    div.className = "order-card";
-    div.innerHTML = `
-      <p><b>Order ID:</b> ${order.id}</p>
-      <p><b>Items:</b> ${order.items.join(", ")}</p>
-      <p><b>Total:</b> ₹${order.totalAmount}</p>
-      <hr/>
-    `;
-    container.appendChild(div);
-  });
+  const res = await fetch(
+    `${ORDER_SERVICE_URL}/orders/${user.id}`
+  );
+  return res.json();
 }
 
-// ================== ADMIN ORDERS ==================
-async function loadAllOrders() {
+// ================= ADMIN =================
+async function fetchAllUsers() {
+  const res = await fetch(`${USER_SERVICE_URL}/admin/users`);
+  return res.json();
+}
+
+async function fetchAllOrders() {
   const res = await fetch(`${ORDER_SERVICE_URL}/admin/orders`);
-  const data = await res.json();
-
-  document.getElementById("result").innerText =
-    JSON.stringify(data, null, 2);
+  return res.json();
 }
