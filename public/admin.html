@@ -1,27 +1,38 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Admin</title>
+  <title>Admin Dashboard | LUCCI</title>
+  <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body class="admin-body">
 
-<button onclick="loadUsers()">Load Users</button>
-<button onclick="loadOrders()">Load Orders</button>
-
-<pre id="result"></pre>
+<h1 class="admin-title">Admin Dashboard</h1>
+<div id="adminContent"></div>
 
 <script src="../src/app.js"></script>
 <script>
-async function loadUsers() {
-  const users = await fetchAllUsers();
-  result.innerText = JSON.stringify(users, null, 2);
-}
+  document.addEventListener("DOMContentLoaded", async () => {
+    const user = getUser();
 
-async function loadOrders() {
-  const orders = await fetchAllOrders();
-  result.innerText = JSON.stringify(orders, null, 2);
-}
+    if (!user || user.role !== "admin") {
+      document.body.innerHTML = "<h2>Access Denied</h2>";
+      return;
+    }
+
+    adminContent.innerHTML = `
+      <button onclick="loadUsers()">Load Users</button>
+      <button onclick="loadOrders()">Load Orders</button>
+      <pre id="result"></pre>
+    `;
+  });
+
+  async function loadUsers() {
+    result.innerText = JSON.stringify(await fetchAllUsers(), null, 2);
+  }
+
+  async function loadOrders() {
+    result.innerText = JSON.stringify(await fetchAllOrders(), null, 2);
+  }
 </script>
-
 </body>
 </html>

@@ -1,37 +1,39 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>My Orders</title>
+  <meta charset="UTF-8">
+  <title>My Orders | LUCCI</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<h2>My Orders</h2>
-<div id="orders"></div>
+<h2 style="padding:20px;">My Orders</h2>
+<div id="orders" style="padding:20px;"></div>
 
 <script src="../src/app.js"></script>
 <script>
-if (!requireLogin()) return;
+  document.addEventListener("DOMContentLoaded", async () => {
+    if (!requireLogin()) return;
 
-fetchUserOrders().then(orders => {
-  const container = document.getElementById("orders");
+    const orders = await fetchUserOrders();
+    const container = document.getElementById("orders");
 
-  if (orders.length === 0) {
-    container.innerHTML = "<p>No orders found</p>";
-    return;
-  }
+    if (!orders || orders.length === 0) {
+      container.innerHTML = "<p>No orders found.</p>";
+      return;
+    }
 
-  orders.forEach(o => {
-    const div = document.createElement("div");
-    div.className = "order-card";
-    div.innerHTML = `
-      <p><b>Order ID:</b> ${o.id}</p>
-      <p><b>Items:</b> ${o.items.join(", ")}</p>
-      <p><b>Total:</b> ₹${o.totalAmount}</p>
-    `;
-    container.appendChild(div);
+    orders.forEach(order => {
+      const div = document.createElement("div");
+      div.className = "order-card";
+      div.innerHTML = `
+        <p><b>Order ID:</b> ${order.id}</p>
+        <p><b>Items:</b> ${order.items.join(", ")}</p>
+        <p><b>Total:</b> ₹${order.totalAmount}</p>
+      `;
+      container.appendChild(div);
+    });
   });
-});
 </script>
 
 </body>
