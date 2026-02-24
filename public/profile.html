@@ -1,80 +1,47 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Login / Signup | LUCCI</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-
-<div class="auth-box">
-  <h2>Create Account / Login</h2>
-
-  <input id="regName" placeholder="Name">
-  <input id="regEmail" placeholder="Email">
-  <input id="regPassword" type="password" placeholder="Password">
-  <button onclick="register()">SIGN UP</button>
-
-  <hr>
-
-  <input id="loginEmail" placeholder="Email">
-  <input id="loginPassword" type="password" placeholder="Password">
-  <button onclick="login()">LOGIN</button>
-
-  <div class="msg" id="msg"></div>
-</div>
-
+<script src="../src/app.js"></script>
 <script>
-const API_BASE_URL = "https://api.rozana-projects.online";
+const API = USER_SERVICE_URL;
 
+// SIGNUP
 async function register() {
   const name = regName.value;
   const email = regEmail.value;
   const password = regPassword.value;
-  const msg = document.getElementById("msg");
 
-  if (!name || !email || !password) {
-    msg.innerText = "All fields required";
-    return;
-  }
-
-  const res = await fetch(`${API_BASE_URL}/register`, {
+  const res = await fetch(`${API}/register`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ name, email, password })
   });
 
-  if (res.status === 409) {
-    msg.innerText = "User already exists. Please login.";
+  const data = await res.json();
+  if (!res.ok) {
+    msg.innerText = data.error;
     return;
   }
 
-  const data = await res.json();
   localStorage.setItem("user", JSON.stringify(data.user));
   window.location.href = "index.html";
 }
 
+// LOGIN
 async function login() {
   const email = loginEmail.value;
   const password = loginPassword.value;
-  const msg = document.getElementById("msg");
 
-  const res = await fetch(`${API_BASE_URL}/login`, {
+  const res = await fetch(`${API}/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email, password })
   });
 
+  const data = await res.json();
   if (!res.ok) {
-    msg.innerText = "Invalid email or password";
+    msg.innerText = data.error;
     return;
   }
 
-  const data = await res.json();
   localStorage.setItem("user", JSON.stringify(data.user));
   window.location.href = "index.html";
 }
 </script>
-
-</body>
-</html>
