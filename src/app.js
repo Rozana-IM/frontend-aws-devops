@@ -59,3 +59,14 @@ async function fetchAllOrders() {
   const res = await fetch(`${ORDER_SERVICE_URL}/admin/orders`);
   return res.json();
 }
+function authHeaders() {
+  return {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${localStorage.getItem("token")}`,
+  };
+}
+
+// Example
+fetch(`${ORDER_SERVICE_URL}/orders`, {
+  headers: authHeaders(),
+});
