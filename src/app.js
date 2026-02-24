@@ -4,7 +4,16 @@ const ORDER_SERVICE_URL = "https://orders.rozana-projects.online";
 
 // ================= AUTH HELPERS =================
 function getUser() {
-  return JSON.parse(localStorage.getItem("user"));
+  const user = localStorage.getItem("user");
+  if (!user) return null;
+
+  try {
+    return JSON.parse(user);
+  } catch (e) {
+    console.error("Invalid user JSON in localStorage");
+    localStorage.removeItem("user");
+    return null;
+  }
 }
 
 function logout() {
