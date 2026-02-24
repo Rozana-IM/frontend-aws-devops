@@ -1,7 +1,6 @@
 // ================= SERVICE URLS =================
 const USER_SERVICE_URL = "https://api.rozana-projects.online";
-const ORDER_SERVICE_URL = "https://orders.rozana-projects.online";
-
+const ORDER_SERVICE_URL = "https://api.rozana-projects.online";
 // ================= AUTH HELPERS =================
 function getUser() {
   const user = localStorage.getItem("user");
