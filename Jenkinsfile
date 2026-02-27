@@ -30,7 +30,7 @@ pipeline {
       steps {
         sh '''
           aws cloudfront create-invalidation \
-            --distribution-id $CLOUDFRONT_DIST_ID \
+            --distribution-id EA5V6W75USFXD \
             --paths "/*"
         '''
       }
