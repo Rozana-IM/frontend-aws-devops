@@ -4,7 +4,7 @@ pipeline {
   environment {
     AWS_DEFAULT_REGION = 'us-east-1'
     S3_BUCKET = 'frontend-aws-jenkins-rozana'
-    CLOUDFRONT_DIST_ID = 'YOUR_DISTRIBUTION_ID'
+    CLOUDFRONT_DIST_ID = 'EA5V6W75USFXD'
   }
 
   stages {
@@ -30,7 +30,7 @@ pipeline {
       steps {
         sh '''
           aws cloudfront create-invalidation \
-            --distribution-id EA5V6W75USFXD \
+            --distribution-id $CLOUDFRONT_DIST_ID \
             --paths "/*"
         '''
       }
