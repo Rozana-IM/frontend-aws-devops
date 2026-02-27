@@ -26,7 +26,7 @@ pipeline {
       }
     }
 
-    ✅ stage('Invalidate CloudFront Cache') {
+    stage('Invalidate CloudFront Cache') {
       steps {
         sh '''
           aws cloudfront create-invalidation \
