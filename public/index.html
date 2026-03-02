@@ -84,37 +84,5 @@
 
 <!-- ================= JS ================= -->
 <script src="../src/app.js"></script>
-
-<script>
-  document.addEventListener("DOMContentLoaded", () => {
-    const user = getUser();
-
-    const loginBtn = document.getElementById("loginBtn");
-    const logoutBtn = document.getElementById("logoutBtn");
-    const welcomeText = document.getElementById("welcomeText");
-
-    // SAFETY CHECK (prevents blank screen)
-    if (!loginBtn || !logoutBtn || !welcomeText) {
-      console.warn("Auth elements not found in DOM");
-      return;
-    }
-
-    if (user) {
-      loginBtn.style.display = "none";
-      logoutBtn.style.display = "block";
-      welcomeText.innerText = `Hello, ${user.name}`;
-    } else {
-      loginBtn.style.display = "block";
-      logoutBtn.style.display = "none";
-      welcomeText.innerText = "Welcome";
-    }
-
-    logoutBtn.addEventListener("click", (e) => {
-      e.preventDefault();
-      logout();
-    });
-  });
-</script>
-
 </body>
 </html>
