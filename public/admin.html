@@ -88,6 +88,7 @@
   </div>
 
 </div>
+  <div id="healthBox"></div>
 
 <div id="responseBox">
   Service responses appear here
@@ -123,6 +124,22 @@ async function loadOrders() {
       "❌ Failed to load orders";
   }
 }
+
+  /* LOAD HEALTH */
+  async function loadHealth() {
+
+  const results = await checkServiceHealth();
+
+  let html = "<h3>Service Health</h3>";
+
+  results.forEach(s => {
+    html += `<p>${s.ok ? "🟢" : "🔴"} ${s.name}</p>`;
+  });
+
+  document.getElementById("healthBox").innerHTML = html;
+}
+
+loadHealth();
 
 /* TABLE RENDER */
 
