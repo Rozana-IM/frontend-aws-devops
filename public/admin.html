@@ -1,38 +1,161 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Admin Dashboard | LUCCI</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body class="admin-body">
+  <title>Admin Dashboard</title>
 
-<h1 class="admin-title">Admin Dashboard</h1>
-<div id="adminContent"></div>
-
-<script src="../src/app.js"></script>
-<script>
-  document.addEventListener("DOMContentLoaded", async () => {
-    const user = getUser();
-
-    if (!user || user.role !== "admin") {
-      document.body.innerHTML = "<h2>Access Denied</h2>";
-      return;
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial;
+      background: linear-gradient(90deg,#1e2a38,#2c3e50);
+      color: white;
+      text-align: center;
     }
 
-    adminContent.innerHTML = `
-      <button onclick="loadUsers()">Load Users</button>
-      <button onclick="loadOrders()">Load Orders</button>
-      <pre id="result"></pre>
-    `;
+    h1 {
+      margin-top: 40px;
+    }
+
+    .container {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      margin-top: 40px;
+    }
+
+    .card {
+      background: #3b4a5a;
+      padding: 30px;
+      border-radius: 10px;
+      width: 260px;
+    }
+
+    button {
+      background: orange;
+      border: none;
+      padding: 10px 20px;
+      font-weight: bold;
+      cursor: pointer;
+      border-radius: 5px;
+      margin-top: 10px;
+    }
+
+    #responseBox {
+      margin: 40px auto;
+      width: 80%;
+      background: #4a5a6a;
+      padding: 20px;
+      border-radius: 8px;
+      text-align: left;
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      color: black;
+    }
+
+    th, td {
+      padding: 10px;
+      border: 1px solid #ddd;
+    }
+
+    th {
+      background: #2c3e50;
+      color: white;
+    }
+  </style>
+</head>
+
+<body>
+
+<h1>Dev / Microservices Dashboard</h1>
+
+<div class="container">
+
+  <div class="card">
+    <h3>User Service</h3>
+    <p>Manages users and profiles</p>
+    <button onclick="loadUsers()">Load Users</button>
+  </div>
+
+  <div class="card">
+    <h3>Order Service</h3>
+    <p>Handles order lifecycle</p>
+    <button onclick="loadOrders()">Load Orders</button>
+  </div>
+
+</div>
+
+<div id="responseBox">
+  Service responses appear here
+</div>
+
+<script>
+
+const USER_API = "https://api.rozana-projects.online";
+const ORDER_API = "https://api.rozana-projects.online";
+
+/* LOAD USERS */
+
+async function loadUsers() {
+  try {
+    const res = await fetch(`${USER_API}/users`);
+    const data = await res.json();
+    renderTable(data, "Users List");
+  } catch (err) {
+    document.getElementById("responseBox").innerHTML =
+      "❌ Failed to load users";
+  }
+}
+
+/* LOAD ORDERS */
+
+async function loadOrders() {
+  try {
+    const res = await fetch(`${ORDER_API}/orders`);
+    const data = await res.json();
+    renderTable(data, "Orders List");
+  } catch (err) {
+    document.getElementById("responseBox").innerHTML =
+      "❌ Failed to load orders";
+  }
+}
+
+/* TABLE RENDER */
+
+function renderTable(data, title) {
+
+  if (!data || data.length === 0) {
+    document.getElementById("responseBox").innerHTML =
+      "No data available";
+    return;
+  }
+
+  let html = `<h3>${title}</h3><table><tr>`;
+
+  Object.keys(data[0]).forEach(key => {
+    html += `<th>${key}</th>`;
   });
 
-  async function loadUsers() {
-    result.innerText = JSON.stringify(await fetchAllUsers(), null, 2);
-  }
+  html += "</tr>";
 
-  async function loadOrders() {
-    result.innerText = JSON.stringify(await fetchAllOrders(), null, 2);
-  }
+  data.forEach(item => {
+    html += "<tr>";
+    Object.values(item).forEach(val => {
+      html += `<td>${val}</td>`;
+    });
+    html += "</tr>";
+  });
+
+  html += "</table>";
+
+  document.getElementById("responseBox").innerHTML = html;
+}
+
 </script>
+
 </body>
 </html>
