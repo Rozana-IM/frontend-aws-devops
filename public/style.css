@@ -144,6 +144,14 @@ body {
   background: #f5f5f5;
 }
 
+.profile-dropdown {
+  display: none;
+}
+
+.profile-dropdown.open {
+  display: block;
+}
+
 /* ================= HERO ================= */
 .hero-banner {
   height: 70vh;
@@ -253,4 +261,5 @@ body {
   border-radius: 6px;
   color: white;
 }
+
 
