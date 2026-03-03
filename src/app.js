@@ -40,7 +40,7 @@ function logout() {
 }
 
 /* =====================================================
-   AUTO LOGIN (RUNS ON EVERY PAGE)
+   PAGE INIT (AUTO LOGIN)
 ===================================================== */
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -49,7 +49,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 /* =====================================================
-   PROFILE UI STATE
+   PROFILE UI CONTROL
 ===================================================== */
 
 function setupProfileUI() {
@@ -64,27 +64,26 @@ function setupProfileUI() {
   if (!welcomeText) return;
 
   if (user) {
-    if (loginBtn) loginBtn.style.display = "none";
-    if (logoutBtn) logoutBtn.style.display = "block";
+    loginBtn && (loginBtn.style.display = "none");
+    logoutBtn && (logoutBtn.style.display = "block");
 
-welcomeText.innerText = `Hello, ${user.name} 👋`;
+    welcomeText.innerText = `Hello, ${user.name} 👋`;
 
-// second line message
-let subText = document.querySelector(".sub-text");
-
-if (subText) {
-  subText.style.display = "block";
-  subText.innerText = "Explore LUCCI collections";
-}
-    // ✅ hide old message
-    if (subText) subText.style.display = "none";
+    if (subText) {
+      subText.style.display = "block";
+      subText.innerText = "Explore LUCCI collections";
+    }
 
   } else {
-    if (loginBtn) loginBtn.style.display = "block";
-    if (logoutBtn) logoutBtn.style.display = "none";
+    loginBtn && (loginBtn.style.display = "block");
+    logoutBtn && (logoutBtn.style.display = "none");
 
     welcomeText.innerText = "Welcome";
-    if (subText) subText.style.display = "block";
+
+    if (subText) {
+      subText.style.display = "block";
+      subText.innerText = "To access account and manage orders";
+    }
   }
 
   logoutBtn?.addEventListener("click", e => {
@@ -94,7 +93,7 @@ if (subText) {
 }
 
 /* =====================================================
-   CLICK DROPDOWN (NO HOVER)
+   DROPDOWN CLICK BEHAVIOR
 ===================================================== */
 
 function setupDropdown() {
@@ -115,7 +114,7 @@ function setupDropdown() {
 }
 
 /* =====================================================
-   LOADING SPINNER
+   GLOBAL LOADER
 ===================================================== */
 
 function showLoader() {
@@ -124,7 +123,7 @@ function showLoader() {
   if (!loader) {
     loader = document.createElement("div");
     loader.id = "globalLoader";
-    loader.innerHTML = "Loading...";
+    loader.innerText = "Loading...";
     loader.style =
       "position:fixed;top:0;left:0;width:100%;background:black;color:white;text-align:center;padding:10px;z-index:9999;";
     document.body.appendChild(loader);
@@ -154,9 +153,7 @@ async function safeFetch(url, options = {}) {
 
   let res = await fetch(url, options);
 
-  // token expired → refresh
   if (res.status === 401 && getRefreshToken()) {
-
     const refreshed = await refreshAccessToken();
 
     if (refreshed) {
@@ -193,37 +190,5 @@ async function refreshAccessToken() {
 
   const data = await res.json();
   localStorage.setItem("token", data.token);
-
   return true;
-}
-
-/* =====================================================
-   ORDERS
-===================================================== */
-
-async function fetchUserOrders() {
-  return await safeFetch(`${API_BASE_URL}/orders`);
-}
-
-/* =====================================================
-   ADMIN HEALTH CHECK
-===================================================== */
-
-async function checkServiceHealth() {
-
-  const services = [
-    { name: "User Service", url: `${API_BASE_URL}/health` },
-    { name: "Order Service", url: `${API_BASE_URL}/orders/health` }
-  ];
-
-  return Promise.all(
-    services.map(async s => {
-      try {
-        const r = await fetch(s.url);
-        return { name: s.name, ok: r.ok };
-      } catch {
-        return { name: s.name, ok: false };
-      }
-    })
-  );
 }
