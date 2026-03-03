@@ -67,8 +67,15 @@ function setupProfileUI() {
     if (loginBtn) loginBtn.style.display = "none";
     if (logoutBtn) logoutBtn.style.display = "block";
 
-    welcomeText.innerText = `Welcome back, ${user.name} 👋`;
+welcomeText.innerText = `Hello, ${user.name} 👋`;
 
+// second line message
+let subText = document.querySelector(".sub-text");
+
+if (subText) {
+  subText.style.display = "block";
+  subText.innerText = "Explore LUCCI collections";
+}
     // ✅ hide old message
     if (subText) subText.style.display = "none";
 
