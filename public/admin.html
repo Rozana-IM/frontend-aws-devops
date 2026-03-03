@@ -129,16 +129,18 @@ async function loadUsers() {
 
 async function loadOrders() {
 
-  const data = await safeFetch(`${API}/admin/orders`);
+  const data = await safeFetch(
+    "https://api.rozana-projects.online/admin/orders"
+  );
 
   if (!data) {
-    responseBox.innerHTML = "❌ Failed to load orders";
+    document.getElementById("responseBox").innerHTML =
+      "❌ Failed to load orders";
     return;
   }
 
-  renderTable(data,"Orders List");
+  renderTable(data, "Orders List");
 }
-
 /* ================= SERVICE HEALTH ================= */
 
 async function loadHealth(){
