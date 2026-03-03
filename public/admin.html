@@ -1,72 +1,68 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Admin Dashboard</title>
+<title>Admin Dashboard</title>
 
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial;
-      background: linear-gradient(90deg,#1e2a38,#2c3e50);
-      color: white;
-      text-align: center;
-    }
+<style>
+body{
+  margin:0;
+  font-family:Arial;
+  background:linear-gradient(90deg,#1e2a38,#2c3e50);
+  color:white;
+  text-align:center;
+}
 
-    h1 {
-      margin-top: 40px;
-    }
+h1{ margin-top:40px; }
 
-    .container {
-      display: flex;
-      justify-content: center;
-      gap: 40px;
-      margin-top: 40px;
-    }
+.container{
+  display:flex;
+  justify-content:center;
+  gap:40px;
+  margin-top:40px;
+}
 
-    .card {
-      background: #3b4a5a;
-      padding: 30px;
-      border-radius: 10px;
-      width: 260px;
-    }
+.card{
+  background:#3b4a5a;
+  padding:30px;
+  border-radius:10px;
+  width:260px;
+}
 
-    button {
-      background: orange;
-      border: none;
-      padding: 10px 20px;
-      font-weight: bold;
-      cursor: pointer;
-      border-radius: 5px;
-      margin-top: 10px;
-    }
+button{
+  background:orange;
+  border:none;
+  padding:10px 20px;
+  font-weight:bold;
+  cursor:pointer;
+  border-radius:5px;
+}
 
-    #responseBox {
-      margin: 40px auto;
-      width: 80%;
-      background: #4a5a6a;
-      padding: 20px;
-      border-radius: 8px;
-      text-align: left;
-      overflow-x: auto;
-    }
+#responseBox{
+  margin:40px auto;
+  width:80%;
+  background:#4a5a6a;
+  padding:20px;
+  border-radius:8px;
+  text-align:left;
+}
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      background: white;
-      color: black;
-    }
+table{
+  width:100%;
+  border-collapse:collapse;
+  background:white;
+  color:black;
+}
 
-    th, td {
-      padding: 10px;
-      border: 1px solid #ddd;
-    }
+th,td{
+  padding:10px;
+  border:1px solid #ddd;
+}
 
-    th {
-      background: #2c3e50;
-      color: white;
-    }
-  </style>
+th{
+  background:#2c3e50;
+  color:white;
+}
+</style>
 </head>
 
 <body>
@@ -75,101 +71,125 @@
 
 <div class="container">
 
-  <div class="card">
-    <h3>User Service</h3>
-    <p>Manages users and profiles</p>
-    <button onclick="loadUsers()">Load Users</button>
-  </div>
+<div class="card">
+  <h3>User Service</h3>
+  <p>Manages users and profiles</p>
+  <button onclick="loadUsers()">Load Users</button>
+</div>
 
-  <div class="card">
-    <h3>Order Service</h3>
-    <p>Handles order lifecycle</p>
-    <button onclick="loadOrders()">Load Orders</button>
-  </div>
+<div class="card">
+  <h3>Order Service</h3>
+  <p>Handles order lifecycle</p>
+  <button onclick="loadOrders()">Load Orders</button>
+</div>
 
 </div>
-  <div id="healthBox"></div>
+
+<div id="healthBox"></div>
 
 <div id="responseBox">
-  Service responses appear here
+Service responses appear here
 </div>
+
+<!-- ✅ GLOBAL AUTH + SAFE FETCH -->
+<script src="../src/app.js"></script>
 
 <script>
 
-const USER_API = "https://api.rozana-projects.online";
-const ORDER_API = "https://api.rozana-projects.online";
+/* ================= ADMIN PROTECTION ================= */
 
-/* LOAD USERS */
+const user = getUser();
+
+if (!user || user.role !== "admin") {
+  alert("Admin access only");
+  window.location.href = "index.html";
+}
+
+/* ================= API ================= */
+
+const API = "https://api.rozana-projects.online";
+
+/* ================= LOAD USERS ================= */
 
 async function loadUsers() {
-  try {
-    const res = await fetch(`${USER_API}/users`);
-    const data = await res.json();
-    renderTable(data, "Users List");
-  } catch (err) {
-    document.getElementById("responseBox").innerHTML =
-      "❌ Failed to load users";
+
+  const data = await safeFetch(`${API}/users`);
+
+  if (!data) {
+    responseBox.innerHTML = "❌ Failed to load users";
+    return;
   }
+
+  renderTable(data,"Users List");
 }
 
-/* LOAD ORDERS */
+/* ================= LOAD ORDERS ================= */
 
 async function loadOrders() {
-  try {
-    const res = await fetch(`${ORDER_API}/orders`);
-    const data = await res.json();
-    renderTable(data, "Orders List");
-  } catch (err) {
-    document.getElementById("responseBox").innerHTML =
-      "❌ Failed to load orders";
+
+  const data = await safeFetch(`${API}/admin/orders`);
+
+  if (!data) {
+    responseBox.innerHTML = "❌ Failed to load orders";
+    return;
   }
+
+  renderTable(data,"Orders List");
 }
 
-  /* LOAD HEALTH */
-  async function loadHealth() {
+/* ================= SERVICE HEALTH ================= */
 
-  const results = await checkServiceHealth();
+async function loadHealth(){
 
-  let html = "<h3>Service Health</h3>";
+  const services=[
+    {name:"User Service",url:`${API}/health`},
+    {name:"Order Service",url:`${API}/orders/health`}
+  ];
 
-  results.forEach(s => {
-    html += `<p>${s.ok ? "🟢" : "🔴"} ${s.name}</p>`;
-  });
+  let html="<h3>Service Health</h3>";
 
-  document.getElementById("healthBox").innerHTML = html;
+  for(const s of services){
+    try{
+      const r=await fetch(s.url);
+      html+=`<p>${r.ok?"🟢":"🔴"} ${s.name}</p>`;
+    }catch{
+      html+=`<p>🔴 ${s.name}</p>`;
+    }
+  }
+
+  healthBox.innerHTML=html;
 }
 
 loadHealth();
 
-/* TABLE RENDER */
+/* ================= TABLE ================= */
 
-function renderTable(data, title) {
+function renderTable(data,title){
 
-  if (!data || data.length === 0) {
-    document.getElementById("responseBox").innerHTML =
-      "No data available";
-    return;
-  }
+if(!data || data.length===0){
+  responseBox.innerHTML="No data available";
+  return;
+}
 
-  let html = `<h3>${title}</h3><table><tr>`;
+let html=`<h3>${title}</h3><table><tr>`;
 
-  Object.keys(data[0]).forEach(key => {
-    html += `<th>${key}</th>`;
+Object.keys(data[0]).forEach(key=>{
+  html+=`<th>${key}</th>`;
+});
+
+html+="</tr>";
+
+data.forEach(item=>{
+  html+="<tr>";
+  Object.values(item).forEach(val=>{
+    html+=`<td>${val}</td>`;
   });
+  html+="</tr>";
+});
 
-  html += "</tr>";
+html+="</table>";
 
-  data.forEach(item => {
-    html += "<tr>";
-    Object.values(item).forEach(val => {
-      html += `<td>${val}</td>`;
-    });
-    html += "</tr>";
-  });
-
-  html += "</table>";
-
-  document.getElementById("responseBox").innerHTML = html;
+responseBox.innerHTML=html;
 }
 
 </script>
