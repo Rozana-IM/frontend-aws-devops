@@ -1,4 +1,4 @@
-fetch("https://api.rozana-projects.online/products?category=bags")
+fetch("https://api.rozana-projects.online/products/category/bags")
 .then(res => res.json())
 .then(data => {
 
