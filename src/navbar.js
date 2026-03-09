@@ -75,6 +75,23 @@ logoutBtn.style.display = "block"
 
 }
 
+/* LOGOUT BUTTON */
+
+if(logoutBtn){
+logoutBtn.addEventListener("click", function(e){
+
+e.preventDefault()
+
+localStorage.removeItem("user")
+localStorage.removeItem("token")
+
+alert("Logged out successfully")
+
+window.location = "index.html"
+
+})
+}
+
 /* NAVBAR SHADOW ON SCROLL */
 
 const nav = document.querySelector(".top-nav")
