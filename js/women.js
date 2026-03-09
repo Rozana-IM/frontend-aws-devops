@@ -1,8 +1,10 @@
-fetch("https://api.rozana-projects.online/products?category=women")
+fetch("https://api.rozana-projects.online/products/category/women")
 .then(res => res.json())
 .then(data => {
 
 const container = document.getElementById("products");
+
+container.innerHTML = "";
 
 data.forEach(product => {
 
@@ -20,4 +22,7 @@ container.innerHTML += `
 
 });
 
+})
+.catch(err => {
+console.error("Error loading products:", err);
 });
