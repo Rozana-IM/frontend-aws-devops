@@ -13,48 +13,44 @@
 
 <script>
 
-const API="https://api.rozana-projects.online";
+const API = "https://api.rozana-projects.online";
 
-const params=new URLSearchParams(window.location.search);
-const category=params.get("cat");
+const params = new URLSearchParams(window.location.search);
+const category = params.get("cat");
 
 console.log("Category:", category);
 
-/* Safety check */
-if(!category){
-document.getElementById("title").innerText="Collection";
-return;
-}
+if(category){
 
-document.getElementById("title").innerText=
-category.toUpperCase()+" COLLECTION";
+document.getElementById("title").innerText =
+category.toUpperCase() + " COLLECTION";
 
 fetch(`${API}/products?category=${category}`)
-.then(res=>res.json())
-.then(data=>renderProducts(data));
+.then(res => res.json())
+.then(data => renderProducts(data));
+
+}
 
 function renderProducts(products){
 
-const container=document.getElementById("products");
+const container = document.getElementById("products");
 
-container.innerHTML+=`
+container.innerHTML = "";
 
+products.forEach(p => {
+
+container.innerHTML += `
 <div class="product-card">
 
-<div class="product-img-wrapper">
 <img src="${p.image_url}" class="product-img">
-</div>
 
-<div class="product-info">
 <h3>${p.name}</h3>
-<p class="price">₹${p.price}</p>
 
-<div class="product-actions">
+<p>₹${p.price}</p>
+
 <button onclick="viewProduct(${p.id})">View</button>
-<button onclick="addWishlist(${p.id})">♡</button>
-</div>
 
-</div>
+<button onclick="addWishlist(${p.id})">♡</button>
 
 </div>
 `;
