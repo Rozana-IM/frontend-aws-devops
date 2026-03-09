@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
 <title>Collections</title>
 <link rel="stylesheet" href="style.css">
@@ -15,21 +16,33 @@
 
 const API = "https://api.rozana-projects.online";
 
+/* GET CATEGORY FROM URL */
+
 const params = new URLSearchParams(window.location.search);
 const category = params.get("cat");
 
 console.log("Category:", category);
 
-if(category){
+if(!category){
+document.getElementById("title").innerText = "Collection";
+}else{
 
 document.getElementById("title").innerText =
 category.toUpperCase() + " COLLECTION";
 
-fetch(`${API}/products?category=${category}`)
+/* FETCH PRODUCTS */
+
+fetch(`${API}/products/category/${category}`)
 .then(res => res.json())
-.then(data => renderProducts(data));
+.then(data => renderProducts(data))
+.catch(err => {
+console.error("Error loading products:", err);
+});
 
 }
+
+
+/* RENDER PRODUCTS */
 
 function renderProducts(products){
 
@@ -37,46 +50,72 @@ const container = document.getElementById("products");
 
 container.innerHTML = "";
 
+let html = "";
+
 products.forEach(p => {
 
-container.innerHTML += `
+html += `
 <div class="product-card">
 
+<div class="product-img-wrapper">
 <img src="${p.image_url}" class="product-img">
+</div>
+
+<div class="product-info">
 
 <h3>${p.name}</h3>
 
-<p>₹${p.price}</p>
+<p class="price">₹${p.price}</p>
 
-<button onclick="viewProduct(${p.id})">View</button>
+<div class="product-actions">
 
-<button onclick="addWishlist(${p.id})">♡</button>
+<button onclick="viewProduct(${p.id})">
+View
+</button>
+
+<button onclick="addWishlist(${p.id})">
+♡
+</button>
+
+</div>
+
+</div>
 
 </div>
 `;
 
 });
 
+container.innerHTML = html;
+
 }
+
+
+/* PRODUCT PAGE */
 
 function viewProduct(id){
 window.location=`product-details.html?id=${id}`;
 }
 
+
+/* WISHLIST */
+
 function addWishlist(id){
 
-let list=JSON.parse(localStorage.getItem("wishlist"))||[];
+let list = JSON.parse(localStorage.getItem("wishlist")) || [];
 
 if(!list.includes(id)){
 list.push(id);
 }
 
-localStorage.setItem("wishlist",JSON.stringify(list));
+localStorage.setItem("wishlist", JSON.stringify(list));
 
 alert("Added to wishlist");
 
 }
 
 </script>
+
 </body>
+
 </html>
