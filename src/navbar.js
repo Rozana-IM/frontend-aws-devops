@@ -53,11 +53,22 @@ dropdown.classList.remove("open")
 
 const user = JSON.parse(localStorage.getItem("user"))
 
-if(user){
 const welcome = document.getElementById("welcomeText")
+const loginBtn = document.getElementById("loginBtn")
+const loginText = document.getElementById("loginText")
+const logoutBtn = document.getElementById("logoutBtn")
+
+if(user){
+
 if(welcome){
 welcome.innerText = `Hello, ${user.name} 👋`
 }
+
+if(loginBtn) loginBtn.style.display = "none"
+if(loginText) loginText.style.display = "none"
+
+if(logoutBtn) logoutBtn.style.display = "block"
+
 }
 
 
