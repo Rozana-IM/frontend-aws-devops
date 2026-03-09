@@ -20,18 +20,16 @@ window.location="cart.html"
 
 }
 
-
 /* INITIALIZE NAVBAR */
 
 function initNavbar(){
 
 const profileMenu = document.getElementById("profileMenu")
-
 if(!profileMenu) return
 
 const dropdown = profileMenu.querySelector(".profile-dropdown")
 
-/* profile dropdown */
+/* PROFILE DROPDOWN */
 
 profileMenu.addEventListener("click", function(e){
 
@@ -48,14 +46,13 @@ dropdown.classList.remove("open")
 
 })
 
-
-/* username */
+/* USER LOGIN STATE */
 
 const user = JSON.parse(localStorage.getItem("user"))
 
 const welcome = document.getElementById("welcomeText")
 const loginBtn = document.getElementById("loginBtn")
-const loginText = document.getElementById("loginText")
+const subText = document.getElementById("loginText")
 const logoutBtn = document.getElementById("logoutBtn")
 
 if(user){
@@ -64,13 +61,19 @@ if(welcome){
 welcome.innerText = `Hello, ${user.name} 👋`
 }
 
-if(loginBtn) loginBtn.style.display = "none"
-if(loginText) loginText.style.display = "none"
-
-if(logoutBtn) logoutBtn.style.display = "block"
-
+if(subText){
+subText.innerText = "Explore the LUCCI collections"
 }
 
+if(loginBtn){
+loginBtn.style.display = "none"
+}
+
+if(logoutBtn){
+logoutBtn.style.display = "block"
+}
+
+}
 
 /* NAVBAR SHADOW ON SCROLL */
 
@@ -87,3 +90,20 @@ nav.classList.remove("nav-scroll")
 })
 
 }
+
+/* LOGOUT */
+
+document.addEventListener("click", function(e){
+
+if(e.target && e.target.id === "logoutBtn"){
+
+localStorage.removeItem("user")
+localStorage.removeItem("token")
+
+alert("Logged out successfully")
+
+window.location = "index.html"
+
+}
+
+})
