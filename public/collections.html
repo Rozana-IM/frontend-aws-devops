@@ -37,30 +37,26 @@ function renderProducts(products){
 
 const container=document.getElementById("products");
 
-container.innerHTML="";
-
-products.forEach(p=>{
-
 container.innerHTML+=`
 
 <div class="product-card">
 
+<div class="product-img-wrapper">
 <img src="${p.image_url}" class="product-img">
+</div>
 
+<div class="product-info">
 <h3>${p.name}</h3>
+<p class="price">₹${p.price}</p>
 
-<p>₹${p.price}</p>
-
-<button onclick="viewProduct(${p.id})">
-View
-</button>
-
-<button onclick="addWishlist(${p.id})">
-♡
-</button>
+<div class="product-actions">
+<button onclick="viewProduct(${p.id})">View</button>
+<button onclick="addWishlist(${p.id})">♡</button>
+</div>
 
 </div>
 
+</div>
 `;
 
 });
