@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<meta charset="UTF-8">
+<title>LUCCI Product</title>
+
+<link rel="stylesheet" href="style.css">
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+</head>
+
+<body>
+
+<div id="navbar"></div>
+
+<section class="product-details">
+
+<div class="product-container">
+
+<div class="product-image">
+<img id="productImage">
+</div>
+
+<div class="product-info">
+
+<h1 id="productName"></h1>
+
+<p class="price" id="productPrice"></p>
+
+<p id="productDescription"></p>
+
+<button class="add-cart" onclick="addToCart()">
+Add To Cart
+</button>
+
+<button class="wishlist" onclick="addWishlist()">
+♡ Add To Wishlist
+</button>
+
+</div>
+
+</div>
+
+</section>
+
+
+<script src="../src/navbar.js"></script>
+
+<script>
+
+const API="https://api.rozana-projects.online";
+
+/* GET PRODUCT ID FROM URL */
+
+const params=new URLSearchParams(window.location.search);
+
+const id=params.get("id");
+
+
+/* LOAD PRODUCT */
+
+fetch(`${API}/products/${id}`)
+.then(res=>res.json())
+.then(product=>{
+
+document.getElementById("productImage").src=product.image_url;
+
+document.getElementById("productName").innerText=product.name;
+
+document.getElementById("productPrice").innerText="₹"+product.price;
+
+document.getElementById("productDescription").innerText=
+product.description || "Premium LUCCI product.";
+
+});
+
+
+/* ADD WISHLIST */
+
+function addWishlist(){
+
+let list=JSON.parse(localStorage.getItem("wishlist"))||[];
+
+if(!list.includes(id)){
+list.push(id);
+}
+
+localStorage.setItem("wishlist",JSON.stringify(list));
+
+alert("Added to wishlist");
+
+}
+
+
+/* ADD CART */
+
+function addToCart(){
+
+let cart=JSON.parse(localStorage.getItem("cart"))||[];
+
+cart.push(id);
+
+localStorage.setItem("cart",JSON.stringify(cart));
+
+alert("Added to cart");
+
+}
+
+</script>
+
+</body>
+</html>

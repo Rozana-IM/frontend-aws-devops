@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<meta charset="UTF-8">
+<title>LUCCI Products</title>
+
+<link rel="stylesheet" href="style.css">
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+</head>
+
+<body>
+
+<div id="navbar"></div>
+
+<div id="sideMenu" class="side-menu">
+
+<div class="menu-header">
+<i class="fa-solid fa-xmark close-menu" onclick="openMenu()"></i>
+</div>
+
+<div class="menu-content">
+
+<a href="#">Men</a>
+<a href="#">Women</a>
+<a href="#">Children</a>
+<a href="#">Handbags</a>
+<a href="#">Jewellery & Watches</a>
+<a href="#">New In</a>
+<a href="#">Travel</a>
+<a href="#">Gifts</a>
+
+<hr>
+
+<a class="underline">Sign In</a>
+<a class="underline">About Us</a>
+<a class="underline">Contact Us</a>
+
+</div>
+
+</div>
+
+
+<section class="products-hero"
+style="background-image:url('https://cdn.rozana-projects.online/products-hero/Product_Hero.jpg')">
+
+<div class="hero-arrow-left" onclick="goHome()">
+<i class="fa-solid fa-arrow-left"></i>
+</div>
+
+<button class="collection-btn" onclick="scrollCollections()">
+View My Collections
+</button>
+
+</section>
+
+
+<section id="collections" class="collections">
+
+<h2>Explore Collections</h2>
+
+<div class="collections-grid">
+
+<div class="collection-card"
+onclick="openCollection('women')">
+<img src="https://cdn.rozana-projects.online/categories/Women.jpg">
+<p>Women</p>
+</div>
+
+<div class="collection-card"
+onclick="openCollection('men')">
+<img src="https://cdn.rozana-projects.online/categories/Men.jpg">
+<p>Men</p>
+</div>
+
+<div class="collection-card"
+onclick="openCollection('jewellery')">
+<img src="https://cdn.rozana-projects.online/categories/J.jpg">
+<p>Jewellery</p>
+</div>
+
+<div class="collection-card"
+onclick="openCollection('bags')">
+<img src="https://cdn.rozana-projects.online/categories/Bags.jpg">
+<p>Bags</p>
+</div>
+
+</div>
+
+</section>
+
+
+<script src="../src/navbar.js"></script>
+
+<script>
+
+function goHome(){
+window.location="index.html"
+}
+
+function scrollCollections(){
+document.getElementById("collections")
+.scrollIntoView({behavior:"smooth"})
+}
+
+
+/* LOAD NAVBAR */
+
+fetch("components/navbar.html")
+.then(res => res.text())
+.then(data => {
+
+document.getElementById("navbar").innerHTML = data
+
+initNavbar()
+
+/* FORCE LUCCI LOGO VISIBLE ON PRODUCTS PAGE */
+
+const logo = document.getElementById("navLogo")
+if(logo){
+logo.classList.add("show")
+}
+
+})
+
+function openCollection(category){
+window.location=`collections.html?cat=${category}`;
+}
+
+</script>
+
+</body>
+</html>

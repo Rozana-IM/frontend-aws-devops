@@ -1,0 +1,78 @@
+function openMenu(){
+const menu = document.getElementById("sideMenu")
+if(menu) menu.classList.toggle("open")
+}
+
+function openSearch(){
+window.location="search.html"
+}
+
+function openBag(){
+
+let cart = localStorage.getItem("cart")
+
+if(!cart || cart==="[]"){
+alert("Bag is empty")
+}
+else{
+window.location="cart.html"
+}
+
+}
+
+
+/* INITIALIZE NAVBAR */
+
+function initNavbar(){
+
+const profileMenu = document.getElementById("profileMenu")
+
+if(!profileMenu) return
+
+const dropdown = profileMenu.querySelector(".profile-dropdown")
+
+/* profile dropdown */
+
+profileMenu.addEventListener("click", function(e){
+
+e.stopPropagation()
+dropdown.classList.toggle("open")
+
+})
+
+document.addEventListener("click", function(e){
+
+if(!profileMenu.contains(e.target)){
+dropdown.classList.remove("open")
+}
+
+})
+
+
+/* username */
+
+const user = JSON.parse(localStorage.getItem("user"))
+
+if(user){
+const welcome = document.getElementById("welcomeText")
+if(welcome){
+welcome.innerText = `Hello, ${user.name} 👋`
+}
+}
+
+
+/* NAVBAR SHADOW ON SCROLL */
+
+const nav = document.querySelector(".top-nav")
+
+window.addEventListener("scroll", () => {
+
+if(window.scrollY > 50){
+nav.classList.add("nav-scroll")
+}else{
+nav.classList.remove("nav-scroll")
+}
+
+})
+
+}

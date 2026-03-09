@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Collections</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<h2 id="title"></h2>
+
+<div id="products" class="hero-products"></div>
+
+<script>
+    console.log("Category:", category);
+
+const API="https://api.rozana-projects.online";
+
+const params=new URLSearchParams(window.location.search);
+const category=params.get("cat");
+
+document.getElementById("title").innerText=
+category.toUpperCase()+" COLLECTION";
+
+
+fetch(`${API}/products?category=${category}`)
+.then(res=>res.json())
+.then(data=>renderProducts(data));
+
+function renderProducts(products){
+
+const container=document.getElementById("products");
+
+container.innerHTML="";
+
+products.forEach(p=>{
+
+container.innerHTML+=`
+
+<div class="product-card">
+
+<img src="${p.image_url}" class="product-img">
+
+<h3>${p.name}</h3>
+
+<p>₹${p.price}</p>
+
+<button onclick="viewProduct(${p.id})">
+View
+</button>
+
+<button onclick="addWishlist(${p.id})">
+♡
+</button>
+
+</div>
+
+`;
+
+});
+
+}
+
+function viewProduct(id){
+window.location=`product-details.html?id=${id}`;
+}
+
+function addWishlist(id){
+
+let list=JSON.parse(localStorage.getItem("wishlist"))||[];
+
+if(!list.includes(id)){
+list.push(id);
+}
+
+localStorage.setItem("wishlist",JSON.stringify(list));
+
+alert("Added to wishlist");
+
+}
+
+</script>
+
+</body>
+</html>
