@@ -1,4 +1,9 @@
-fetch("https://api.rozana-projects.online/products/category/women")
+const API = "https://api.rozana-projects.online";
+
+const params = new URLSearchParams(window.location.search);
+const category = params.get("cat");
+
+fetch(`${API}/products/category/${category}`)
 .then(res => res.json())
 .then(data => {
 
