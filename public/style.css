@@ -803,3 +803,28 @@ color:white;
 border:none;
 cursor:pointer;
 }
+
+/* ORDER SUCCESS CSS */
+.order-success{
+text-align:center;
+padding:80px 20px;
+}
+
+.success-icon{
+font-size:70px;
+color:green;
+margin-bottom:20px;
+}
+
+.success-buttons{
+margin-top:30px;
+}
+
+.success-buttons button{
+padding:12px 20px;
+margin:10px;
+background:black;
+color:white;
+border:none;
+cursor:pointer;
+}
