@@ -142,7 +142,11 @@ function updateCartCount(){
 
 let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
-let count = cart.reduce((sum,item)=> sum + item.quantity,0);
+let count = 0;
+
+cart.forEach(item=>{
+count += Number(item.quantity) || 1;
+});
 
 let badge = document.getElementById("cartCount");
 
@@ -151,7 +155,8 @@ if(!badge) return;
 if(count > 0){
 badge.style.display="block";
 badge.innerText=count;
-}else{
+}
+else{
 badge.style.display="none";
 }
 
