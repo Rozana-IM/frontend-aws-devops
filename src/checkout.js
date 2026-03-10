@@ -128,8 +128,7 @@ alert("Order placed successfully 🎉");
 
 localStorage.removeItem("cart");
 
-window.location="orders.html";
-
+window.location="order-success.html?id="+data.orderId;
 }else{
 
 alert(data.error || "Order failed");
