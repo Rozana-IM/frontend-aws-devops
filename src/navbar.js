@@ -1,17 +1,23 @@
+/* ---------------- MENU ---------------- */
+
 function openMenu(){
 const menu = document.getElementById("sideMenu")
 if(menu) menu.classList.toggle("open")
 }
 
+/* ---------------- SEARCH ---------------- */
+
 function openSearch(){
 window.location="search.html"
 }
 
+/* ---------------- BAG ---------------- */
+
 function openBag(){
 
-let cart = localStorage.getItem("cart")
+let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
-if(!cart || cart==="[]"){
+if(cart.length === 0){
 alert("Bag is empty")
 }
 else{
@@ -20,7 +26,7 @@ window.location="cart.html"
 
 }
 
-/* INITIALIZE NAVBAR */
+/* ---------------- INITIALIZE NAVBAR ---------------- */
 
 function initNavbar(){
 
@@ -46,7 +52,8 @@ dropdown.classList.remove("open")
 
 })
 
-/* USER LOGIN STATE */
+
+/* ---------------- USER LOGIN STATE ---------------- */
 
 const user = JSON.parse(localStorage.getItem("user"))
 
@@ -75,7 +82,8 @@ logoutBtn.style.display = "block"
 
 }
 
-/* LOGOUT BUTTON */
+
+/* ---------------- LOGOUT BUTTON ---------------- */
 
 if(logoutBtn){
 logoutBtn.addEventListener("click", function(e){
@@ -92,7 +100,8 @@ window.location = "index.html"
 })
 }
 
-/* NAVBAR SHADOW ON SCROLL */
+
+/* ---------------- NAVBAR SHADOW ---------------- */
 
 const nav = document.querySelector(".top-nav")
 
@@ -106,11 +115,14 @@ nav.classList.remove("nav-scroll")
 
 })
 
-/* UPDATE CART ICON COUNT */
-updateCartCount();
+/* ---------------- CART COUNT ---------------- */
+
+updateCartCount()
 
 }
-/* NAVBAR profile dropdown links */
+
+
+/* ---------------- PROFILE PAGE NAVIGATION ---------------- */
 
 function goPage(page){
 
@@ -136,33 +148,59 @@ window.location="contactus.html"
 
 }
 
-/* Cart count  */
+
+/* ---------------- CART COUNTER ---------------- */
 
 function updateCartCount(){
 
-let cart = JSON.parse(localStorage.getItem("cart")) || [];
+let cart = JSON.parse(localStorage.getItem("cart")) || []
 
-let count = 0;
+let count = 0
 
 cart.forEach(item=>{
-count += Number(item.quantity) || 1;
-});
+count += Number(item.quantity) || 1
+})
 
-let badge = document.getElementById("cartCount");
+let badge = document.getElementById("cartCount")
 
-if(!badge) return;
+if(!badge) return
 
 if(count > 0){
-badge.style.display="block";
-badge.innerText=count;
+
+badge.style.display="block"
+badge.innerText = count
+
 }
 else{
-badge.style.display="none";
-}
+
+badge.style.display="none"
 
 }
 
-/* LOGOUT */
+}
+
+
+/* ---------------- AUTO SYNC CART ---------------- */
+
+window.addEventListener("storage", function(e){
+
+if(e.key === "cart"){
+updateCartCount()
+}
+
+})
+
+
+/* ---------------- PAGE LOAD SYNC ---------------- */
+
+document.addEventListener("DOMContentLoaded", function(){
+
+updateCartCount()
+
+})
+
+
+/* ---------------- GLOBAL LOGOUT SAFETY ---------------- */
 
 document.addEventListener("click", function(e){
 
