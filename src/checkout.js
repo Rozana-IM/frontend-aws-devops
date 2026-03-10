@@ -227,10 +227,16 @@ headers:{
 "Authorization":"Bearer "+token
 },
 
+/* GET SELECTED PAYMENT METHOD */
+
+let method = document.querySelector(
+'input[name="paymentMethod"]:checked'
+).value;
+
 body: JSON.stringify({
 orderId,
 amount: totalAmount,
-method: "razorpay"
+method
 })
 
 });
@@ -243,7 +249,13 @@ if(paymentData.gateway === "razorpay"){
 
 openRazorpay(paymentData.order, orderId, token);
 
-}else{
+}
+else if(paymentData.gateway === "paytm"){
+
+window.location = paymentData.payment.paymentUrl;
+
+}
+else{
 
 alert("Payment gateway error");
 
