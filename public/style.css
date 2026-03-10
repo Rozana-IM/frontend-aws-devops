@@ -685,3 +685,40 @@ cursor:pointer;
 .wishlist-card button:last-child{
 background:#777;
 }
+
+/* CHECKOUT CSS */
+.checkout-page{
+padding:40px;
+}
+
+.checkout-container{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:40px;
+margin-top:30px;
+}
+
+.checkout-item{
+display:flex;
+gap:15px;
+margin-bottom:15px;
+border-bottom:1px solid #eee;
+padding-bottom:10px;
+}
+
+.checkout-address input{
+display:block;
+width:100%;
+padding:10px;
+margin-bottom:12px;
+border:1px solid #ddd;
+}
+
+.checkout-address button{
+width:100%;
+padding:12px;
+background:black;
+color:white;
+border:none;
+cursor:pointer;
+}
