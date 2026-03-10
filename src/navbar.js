@@ -106,6 +106,9 @@ nav.classList.remove("nav-scroll")
 
 })
 
+/* UPDATE CART ICON COUNT */
+updateCartCount();
+
 }
 /* NAVBAR profile dropdown links */
 
