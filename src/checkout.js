@@ -7,6 +7,11 @@ LOAD CHECKOUT CART
 function loadCheckout(){
 
 let cart = JSON.parse(localStorage.getItem("cart")) || [];
+  if(cart.length === 0){
+alert("Your cart is empty");
+window.location="products.html";
+return;
+}
 
 let container = document.getElementById("checkoutItems");
 
@@ -60,6 +65,11 @@ order_id: order.id,
 name: "LUCCI",
 
 description: "Order Payment",
+
+prefill: {
+name: document.getElementById("full_name").value,
+contact: document.getElementById("phone").value
+},  
 
 handler: async function(response){
 
@@ -156,7 +166,7 @@ let cart = JSON.parse(localStorage.getItem("cart")) || [];
 let items = cart.map(item => ({
 product_id: item.id,
 product_name: item.name,
-price: item.price,
+price: Number(item.price),
 quantity: item.quantity,
 image_url: item.image
 }));
