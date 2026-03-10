@@ -201,6 +201,59 @@ updateCartCount()
 
 })
 
+/* ---------------- CloseCart DRAWER  ---------------- */
+
+function closeCart(){
+document.getElementById("cartDrawer").classList.remove("open");
+}
+
+function loadCartDrawer(){
+
+let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+let container = document.getElementById("drawerItems");
+
+container.innerHTML = "";
+
+let total = 0;
+
+cart.forEach(item => {
+
+total += item.price * item.quantity;
+
+container.innerHTML += `
+
+<div class="drawer-item">
+
+<img src="${item.image}">
+
+<div>
+
+<p>${item.name}</p>
+<p>₹${item.price}</p>
+<p>Qty: ${item.quantity}</p>
+
+</div>
+
+</div>
+
+`;
+
+});
+
+document.getElementById("drawerTotal").innerText =
+"Total: ₹"+total;
+
+}
+
+function goToCart(){
+window.location="cart.html";
+}
+
+function goCheckout(){
+window.location="checkout.html";
+}
+
 
 /* ---------------- GLOBAL LOGOUT SAFETY ---------------- */
 
