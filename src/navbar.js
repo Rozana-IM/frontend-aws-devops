@@ -18,11 +18,13 @@ function openBag(){
 let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
 if(cart.length === 0){
-alert("Bag is empty")
+alert("Bag is empty");
+return;
 }
-else{
-window.location="cart.html"
-}
+
+document.getElementById("cartDrawer").classList.add("open");
+
+loadCartDrawer();
 
 }
 
