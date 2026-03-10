@@ -107,6 +107,27 @@ localStorage.setItem("wishlist", JSON.stringify(list));
 updateWishlistIcon();
 }
   
+/* Wishlist Icon Update Function */
+  
+function updateWishlistIcon(){
+
+let list = JSON.parse(localStorage.getItem("wishlist")) || [];
+
+let btn = document.getElementById("wishlistBtn");
+
+if(list.includes(id)){
+
+btn.innerHTML = "❤️ In Wishlist";
+
+}
+else{
+
+btn.innerHTML = "♡ Add To Wishlist";
+
+}
+
+}
+  
 /* ADD CART */
 function addToCart(){
 
