@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<meta charset="UTF-8">
+<title>Order Confirmed | LUCCI</title>
+
+<link rel="stylesheet" href="style.css">
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+</head>
+
+<body>
+
+<div id="navbar"></div>
+
+<section class="order-success">
+
+<i class="fa-solid fa-circle-check success-icon"></i>
+
+<h2>Order Placed Successfully 🎉</h2>
+
+<p>Your LUCCI order has been confirmed.</p>
+
+<p id="orderId"></p>
+
+<div class="success-buttons">
+
+<button onclick="goOrders()">View My Orders</button>
+
+<button onclick="goShopping()">Continue Shopping</button>
+
+</div>
+
+</section>
+
+<script src="../src/navbar.js"></script>
+
+<script>
+
+const params = new URLSearchParams(window.location.search);
+const orderId = params.get("id");
+
+if(orderId){
+document.getElementById("orderId").innerText =
+"Order ID: "+orderId;
+}
+
+function goOrders(){
+window.location = "orders.html";
+}
+
+function goShopping(){
+window.location = "products.html";
+}
+
+</script>
+
+</body>
+
+</html>
