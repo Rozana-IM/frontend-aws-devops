@@ -37,7 +37,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
 Add To Cart
 </button>
 
-<button class="wishlist" onclick="addWishlist()">
+<button class="wishlist" onclick="toggleWishlist()" id="wishlistBtn">
 ♡ Add To Wishlist
 </button>
 
@@ -81,21 +81,32 @@ product.description || "Premium LUCCI product.";
 
 /* ADD WISHLIST */
 
-function addWishlist(){
+function toggleWishlist(){
 
-let list=JSON.parse(localStorage.getItem("wishlist"))||[];
+let list = JSON.parse(localStorage.getItem("wishlist")) || [];
 
-if(!list.includes(id)){
+let index = list.indexOf(id);
+
+if(index === -1){
+
 list.push(id);
-}
 
-localStorage.setItem("wishlist",JSON.stringify(list));
-
-alert("Added to wishlist");
+alert("Added to Wishlist ❤️");
 
 }
+else{
 
+list.splice(index,1);
 
+alert("Removed from Wishlist");
+
+}
+
+localStorage.setItem("wishlist", JSON.stringify(list));
+
+updateWishlistIcon();
+}
+  
 /* ADD CART */
 function addToCart(){
 
