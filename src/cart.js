@@ -19,13 +19,22 @@ container.innerHTML += `
 <img src="${item.image}" width="100">
 
 <div>
-<h3>${item.name}</h3>
-<p>₹${item.price}</p>
-<p>Qty: ${item.quantity}</p>
 
-<button onclick="removeItem(${index})">
-Remove
-</button>
+<h3>${item.name}</h3>
+
+<p>₹${item.price}</p>
+
+<div class="qty-box">
+
+<button onclick="decreaseQty(${index})">-</button>
+
+<span>${item.quantity}</span>
+
+<button onclick="increaseQty(${index})">+</button>
+
+</div>
+
+<button onclick="removeItem(${index})">Remove</button>
 
 </div>
 
@@ -37,6 +46,32 @@ Remove
 
 document.getElementById("cartTotal").innerText =
 "Total: ₹"+total;
+
+}
+
+function increaseQty(index){
+
+let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+cart[index].quantity += 1;
+
+localStorage.setItem("cart", JSON.stringify(cart));
+
+loadCart();
+
+}
+
+function decreaseQty(index){
+
+let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+if(cart[index].quantity > 1){
+cart[index].quantity -= 1;
+}
+
+localStorage.setItem("cart", JSON.stringify(cart));
+
+loadCart();
 
 }
 
