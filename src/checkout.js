@@ -25,10 +25,8 @@ container.innerHTML += `
 <img src="${item.image}" width="80">
 
 <div>
-
 <p>${item.name}</p>
 <p>₹${item.price} x ${item.quantity}</p>
-
 </div>
 
 </div>
@@ -41,6 +39,90 @@ document.getElementById("checkoutTotal").innerText =
 "Total: ₹" + total;
 
 }
+
+
+/* ===============================
+RAZORPAY FUNCTION
+=============================== */
+
+function openRazorpay(order, orderId, token){
+
+const options = {
+
+key: "rzp_test_xxxxxxxxx", // replace with your Razorpay key
+
+amount: order.amount,
+
+currency: "INR",
+
+order_id: order.id,
+
+name: "LUCCI",
+
+description: "Order Payment",
+
+handler: async function(response){
+
+try{
+
+let verifyRes = await fetch(`${API}/payments/verify`,{
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/json",
+"Authorization":"Bearer "+token
+},
+
+body: JSON.stringify({
+orderId: orderId,
+razorpay_order_id: response.razorpay_order_id,
+razorpay_payment_id: response.razorpay_payment_id,
+razorpay_signature: response.razorpay_signature
+})
+
+});
+
+let verifyData = await verifyRes.json();
+
+if(verifyRes.ok){
+
+localStorage.removeItem("cart");
+
+window.location = "order-success.html?id=" + orderId;
+
+}else{
+
+alert(verifyData.error || "Payment verification failed");
+
+}
+
+}catch(err){
+
+console.error(err);
+
+alert("Verification error");
+
+}
+
+},
+
+modal:{
+
+ondismiss:function(){
+alert("Payment cancelled");
+}
+
+}
+
+};
+
+const rzp = new Razorpay(options);
+
+rzp.open();
+
+}
+
 
 /* ===============================
 PLACE ORDER
@@ -63,9 +145,11 @@ return;
 
 }
 
+
 /* GET CART */
 
 let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
 
 /* FORMAT ITEMS FOR API */
 
@@ -77,12 +161,14 @@ quantity: item.quantity,
 image_url: item.image
 }));
 
+
 /* CALCULATE TOTAL */
 
 let totalAmount = cart.reduce(
 (sum,item)=>sum+(item.price*item.quantity),
 0
 );
+
 
 /* ADDRESS */
 
@@ -98,6 +184,7 @@ pincode: document.getElementById("pincode").value,
 country: "India"
 
 };
+
 
 /* CREATE ORDER */
 
@@ -120,15 +207,48 @@ address
 
 });
 
+
 let data = await res.json();
+
 
 if(res.ok){
 
-alert("Order placed successfully 🎉");
+const orderId = data.orderId;
 
-localStorage.removeItem("cart");
 
-window.location="order-success.html?id="+data.orderId;
+/* CREATE PAYMENT */
+
+let payRes = await fetch(`${API}/payments/create`,{
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/json",
+"Authorization":"Bearer "+token
+},
+
+body: JSON.stringify({
+orderId,
+amount: totalAmount,
+method: "razorpay"
+})
+
+});
+
+
+let paymentData = await payRes.json();
+
+
+if(paymentData.gateway === "razorpay"){
+
+openRazorpay(paymentData.order, orderId, token);
+
+}else{
+
+alert("Payment gateway error");
+
+}
+
 }else{
 
 alert(data.error || "Order failed");
@@ -144,5 +264,6 @@ alert("Server error");
 }
 
 });
+
 
 loadCheckout();
