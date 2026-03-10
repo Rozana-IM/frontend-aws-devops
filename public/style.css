@@ -722,3 +722,24 @@ color:white;
 border:none;
 cursor:pointer;
 }
+
+/* ORDERS CSS */
+.orders-page{
+padding:40px;
+}
+
+.order-card{
+border:1px solid #eee;
+padding:20px;
+margin-bottom:20px;
+background:white;
+}
+
+.order-card button{
+margin-top:10px;
+padding:8px 12px;
+background:black;
+color:white;
+border:none;
+cursor:pointer;
+}
