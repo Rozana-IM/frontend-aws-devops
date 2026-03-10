@@ -107,6 +107,31 @@ nav.classList.remove("nav-scroll")
 })
 
 }
+/* NAVBAR profile dropdown links */
+
+function goPage(page){
+
+if(page==="cart"){
+window.location="cart.html"
+}
+
+if(page==="wishlist"){
+window.location="wishlist.html"
+}
+
+if(page==="orders"){
+window.location="orders.html"
+}
+
+if(page==="products"){
+window.location="products.html"
+}
+
+if(page==="contact"){
+window.location="contactus.html"
+}
+
+}
 
 /* LOGOUT */
 
