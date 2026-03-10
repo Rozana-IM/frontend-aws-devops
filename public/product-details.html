@@ -100,13 +100,27 @@ alert("Added to wishlist");
 
 function addToCart(){
 
-let cart=JSON.parse(localStorage.getItem("cart"))||[];
+let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
-cart.push(id);
+const product = {
+product_id: id,
+name: document.getElementById("productName").innerText,
+price: document.getElementById("productPrice").innerText.replace("₹",""),
+image: document.getElementById("productImage").src,
+quantity: 1
+};
 
-localStorage.setItem("cart",JSON.stringify(cart));
+let existing = cart.find(p => p.product_id == id);
 
-alert("Added to cart");
+if(existing){
+existing.quantity += 1;
+}else{
+cart.push(product);
+}
+
+localStorage.setItem("cart", JSON.stringify(cart));
+
+alert("Added to Bag");
 
 }
 
