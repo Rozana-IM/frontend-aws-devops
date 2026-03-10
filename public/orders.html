@@ -1,39 +1,86 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <title>My Orders | LUCCI</title>
-  <link rel="stylesheet" href="style.css">
+
+<meta charset="UTF-8">
+<title>My Orders | LUCCI</title>
+
+<link rel="stylesheet" href="style.css">
+
 </head>
+
 <body>
 
-<h2 style="padding:20px;">My Orders</h2>
-<div id="orders" style="padding:20px;"></div>
+<div id="navbar"></div>
 
+<section class="orders-page">
+
+<h2>My Orders</h2>
+
+<div id="orders"></div>
+
+</section>
+
+<script src="../src/navbar.js"></script>
 <script src="../src/app.js"></script>
+
 <script>
-  document.addEventListener("DOMContentLoaded", async () => {
-    if (!requireLogin()) return;
 
-    const orders = await fetchUserOrders();
-    const container = document.getElementById("orders");
+document.addEventListener("DOMContentLoaded", async () => {
 
-    if (!orders || orders.length === 0) {
-      container.innerHTML = "<p>No orders found.</p>";
-      return;
-    }
+if (!requireLogin()) return;
 
-    orders.forEach(order => {
-      const div = document.createElement("div");
-      div.className = "order-card";
-      div.innerHTML = `
-        <p><b>Order ID:</b> ${order.id}</p>
-        <p><b>Items:</b> ${order.items.join(", ")}</p>
-        <p><b>Total:</b> ₹${order.totalAmount}</p>
-      `;
-      container.appendChild(div);
-    });
-  });
+const orders = await fetchUserOrders();
+
+const container = document.getElementById("orders");
+
+container.innerHTML = "";
+
+if (!orders || orders.length === 0) {
+
+container.innerHTML = "<p>No orders found.</p>";
+
+return;
+
+}
+
+orders.forEach(order => {
+
+const div = document.createElement("div");
+
+div.className = "order-card";
+
+div.innerHTML = `
+
+<p><b>Order ID:</b> ${order.id}</p>
+
+<p><b>Total:</b> ₹${order.total_amount}</p>
+
+<p><b>Status:</b> ${order.status}</p>
+
+<p><b>Date:</b> ${new Date(order.created_at).toLocaleDateString()}</p>
+
+<button onclick="viewOrder(${order.id})">
+View Details
+</button>
+
+`;
+
+container.appendChild(div);
+
+});
+
+});
+
+/* VIEW ORDER */
+
+function viewOrder(id){
+
+window.location = "order-details.html?id="+id;
+
+}
+
 </script>
 
 </body>
