@@ -828,3 +828,17 @@ color:white;
 border:none;
 cursor:pointer;
 }
+
+/* PAYMENT METHOD CSS */
+.payment-method{
+margin-top:20px;
+padding:15px;
+border:1px solid #eee;
+background:#fafafa;
+}
+
+.payment-method label{
+display:block;
+margin-top:10px;
+cursor:pointer;
+}
