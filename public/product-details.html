@@ -97,29 +97,33 @@ alert("Added to wishlist");
 
 
 /* ADD CART */
-
 function addToCart(){
 
 let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
-const product = {
-product_id: id,
+let product = {
+id: id,
 name: document.getElementById("productName").innerText,
 price: document.getElementById("productPrice").innerText.replace("₹",""),
 image: document.getElementById("productImage").src,
 quantity: 1
-};
+}
 
-let existing = cart.find(p => p.product_id == id);
+let existing = cart.find(p => p.id == id);
 
 if(existing){
 existing.quantity += 1;
-}else{
+}
+else{
 cart.push(product);
 }
 
 localStorage.setItem("cart", JSON.stringify(cart));
+
+/* UPDATE NAVBAR COUNT */
+if(typeof updateCartCount === "function"){
 updateCartCount();
+}
 
 alert("Added to Bag 👜");
 
