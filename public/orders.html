@@ -22,10 +22,30 @@
 
 </section>
 
-<script src="../src/navbar.js"></script>
-<script src="../src/app.js"></script>
+<!-- LOAD NAVBAR -->
+<script src="src/navbar.js"></script>
+
+<!-- APP FUNCTIONS -->
+<script src="src/app.js"></script>
 
 <script>
+
+const API = "https://api.rozana-projects.online";
+
+/* LOAD NAVBAR COMPONENT */
+
+fetch("components/navbar.html")
+.then(res => res.text())
+.then(data => {
+
+document.getElementById("navbar").innerHTML = data
+
+initNavbar()
+
+})
+
+
+/* LOAD ORDERS */
 
 document.addEventListener("DOMContentLoaded", async () => {
 
@@ -55,11 +75,11 @@ div.innerHTML = `
 
 <p><b>Order ID:</b> ${order.id}</p>
 
-<p><b>Total:</b> ₹${order.total_amount}</p>
+<p><b>Total:</b> ₹${order.totalAmount}</p>
 
-<p><b>Status:</b> ${order.status}</p>
+<p><b>Status:</b> ${order.status || "Pending"}</p>
 
-<p><b>Date:</b> ${new Date(order.created_at).toLocaleDateString()}</p>
+<p><b>Date:</b> ${new Date(order.createdAt).toLocaleDateString()}</p>
 
 <button onclick="viewOrder(${order.id})">
 View Details
@@ -73,11 +93,12 @@ container.appendChild(div);
 
 });
 
+
 /* VIEW ORDER */
 
 function viewOrder(id){
 
-window.location = "order-details.html?id="+id;
+window.location = "order-details.html?id=" + id;
 
 }
 
