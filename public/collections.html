@@ -2,31 +2,64 @@
 <html>
 
 <head>
-      <meta charset="UTF-8">
 
-<title>Collections</title>
+<meta charset="UTF-8">
+<title>LUCCI Collections</title>
+
 <link rel="stylesheet" href="style.css">
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
 </head>
 
 <body>
 
-<h2 id="title"></h2>
+<!-- NAVBAR -->
+<div id="navbar"></div>
 
-<div id="products" class="hero-products"></div>
+<section class="collection-page">
+
+<h2 id="title" class="collection-title"></h2>
+
+<div id="products" class="products-grid"></div>
+
+</section>
+
+
+<script src="src/navbar.js"></script>
 
 <script>
 
 const API = "https://api.rozana-projects.online";
 
-/* GET CATEGORY FROM URL */
+/* LOAD NAVBAR */
+
+fetch("components/navbar.html")
+.then(res => res.text())
+.then(data => {
+
+document.getElementById("navbar").innerHTML = data;
+
+if(typeof initNavbar === "function"){
+initNavbar();
+}
+
+});
+
+
+/* GET CATEGORY */
 
 const params = new URLSearchParams(window.location.search);
 const category = params.get("cat");
 
-console.log("Category:", category);
+
+/* PAGE TITLE */
 
 if(!category){
+
 document.getElementById("title").innerText = "Collection";
+
 }else{
 
 document.getElementById("title").innerText =
@@ -37,9 +70,7 @@ category.toUpperCase() + " COLLECTION";
 fetch(`${API}/products/category/${category}`)
 .then(res => res.json())
 .then(data => renderProducts(data))
-.catch(err => {
-console.error("Error loading products:", err);
-});
+.catch(err => console.error(err));
 
 }
 
@@ -52,16 +83,19 @@ const container = document.getElementById("products");
 
 container.innerHTML = "";
 
-let html = "";
-
 products.forEach(p => {
 
-html += `
+let wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
+
+let heart = wishlist.includes(p.id)
+? '<i class="fa-solid fa-heart"></i>'
+: '<i class="fa-regular fa-heart"></i>';
+
+container.innerHTML += `
+
 <div class="product-card">
 
-<div class="product-img-wrapper">
 <img src="${p.image_url}" class="product-img">
-</div>
 
 <div class="product-info">
 
@@ -75,8 +109,9 @@ html += `
 View
 </button>
 
-<button onclick="addWishlist(${p.id})">
-♡
+<button class="wishlist-btn"
+onclick="toggleWishlist(${p.id},this)">
+${heart}
 </button>
 
 </div>
@@ -84,35 +119,46 @@ View
 </div>
 
 </div>
+
 `;
 
 });
 
-container.innerHTML = html;
-
 }
 
 
-/* PRODUCT PAGE */
+/* VIEW PRODUCT */
 
 function viewProduct(id){
-window.location=`product-details.html?id=${id}`;
+
+window.location = `product-details.html?id=${id}`;
+
 }
 
 
-/* WISHLIST */
+/* WISHLIST TOGGLE */
 
-function addWishlist(id){
+function toggleWishlist(id,btn){
 
 let list = JSON.parse(localStorage.getItem("wishlist")) || [];
 
-if(!list.includes(id)){
+let index = list.indexOf(id);
+
+if(index === -1){
+
 list.push(id);
+
+btn.innerHTML = '<i class="fa-solid fa-heart"></i>';
+
+}else{
+
+list.splice(index,1);
+
+btn.innerHTML = '<i class="fa-regular fa-heart"></i>';
+
 }
 
-localStorage.setItem("wishlist", JSON.stringify(list));
-
-alert("Added to wishlist");
+localStorage.setItem("wishlist",JSON.stringify(list));
 
 }
 
