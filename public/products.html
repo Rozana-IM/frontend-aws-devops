@@ -14,8 +14,11 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
 
 <body>
 
+<!-- NAVBAR -->
 <div id="navbar"></div>
 
+
+<!-- SIDE MENU -->
 <div id="sideMenu" class="side-menu">
 
 <div class="menu-header">
@@ -24,25 +27,27 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
 
 <div class="menu-content">
 
-<a href="#">Men</a>
-<a href="#">Women</a>
-<a href="#">Children</a>
-<a href="#">Handbags</a>
-<a href="#">Jewellery & Watches</a>
-<a href="#">New In</a>
-<a href="#">Travel</a>
-<a href="#">Gifts</a>
+<a href="collections.html?cat=men">Men</a>
+<a href="collections.html?cat=women">Women</a>
+<a href="collections.html?cat=children">Children</a>
+<a href="collections.html?cat=bags">Handbags</a>
+<a href="collections.html?cat=jewellery">Jewellery & Watches</a>
+<a href="collections.html?cat=new">New In</a>
+<a href="collections.html?cat=travel">Travel</a>
+<a href="collections.html?cat=gifts">Gifts</a>
 
 <hr>
 
-<a class="underline">Sign In</a>
-<a class="underline">About Us</a>
-<a class="underline">Contact Us</a>
+<a href="profile.html" class="underline">Sign In</a>
+<a href="index.html#about" class="underline">About Us</a>
+<a href="contactus.html" class="underline">Contact Us</a>
 
 </div>
 
 </div>
 
+
+<!-- HERO SECTION -->
 
 <section class="products-hero"
 style="background-image:url('https://cdn.rozana-projects.online/products-hero/Product_Hero.jpg')">
@@ -58,32 +63,30 @@ View My Collections
 </section>
 
 
+<!-- COLLECTIONS -->
+
 <section id="collections" class="collections">
 
 <h2>Explore Collections</h2>
 
 <div class="collections-grid">
 
-<div class="collection-card"
-onclick="openCollection('women')">
+<div class="collection-card" onclick="openCollection('women')">
 <img src="https://cdn.rozana-projects.online/categories/Women.jpg">
 <p>Women</p>
 </div>
 
-<div class="collection-card"
-onclick="openCollection('men')">
+<div class="collection-card" onclick="openCollection('men')">
 <img src="https://cdn.rozana-projects.online/categories/Men.jpg">
 <p>Men</p>
 </div>
 
-<div class="collection-card"
-onclick="openCollection('jewellery')">
+<div class="collection-card" onclick="openCollection('jewellery')">
 <img src="https://cdn.rozana-projects.online/categories/J.jpg">
 <p>Jewellery</p>
 </div>
 
-<div class="collection-card"
-onclick="openCollection('bags')">
+<div class="collection-card" onclick="openCollection('bags')">
 <img src="https://cdn.rozana-projects.online/categories/Bags.jpg">
 <p>Bags</p>
 </div>
@@ -93,13 +96,21 @@ onclick="openCollection('bags')">
 </section>
 
 
+<!-- JS FILES -->
+
 <script src="../src/navbar.js"></script>
+<script src="../src/app.js"></script>
 
 <script>
+
+/* GO BACK HOME */
 
 function goHome(){
 window.location="index.html"
 }
+
+
+/* SCROLL COLLECTIONS */
 
 function scrollCollections(){
 document.getElementById("collections")
@@ -107,7 +118,7 @@ document.getElementById("collections")
 }
 
 
-/* LOAD NAVBAR */
+/* LOAD NAVBAR COMPONENT */
 
 fetch("components/navbar.html")
 .then(res => res.text())
@@ -117,7 +128,7 @@ document.getElementById("navbar").innerHTML = data
 
 initNavbar()
 
-/* FORCE LUCCI LOGO VISIBLE ON PRODUCTS PAGE */
+/* FORCE LUCCI LOGO VISIBLE */
 
 const logo = document.getElementById("navLogo")
 if(logo){
@@ -126,8 +137,11 @@ logo.classList.add("show")
 
 })
 
+
+/* OPEN COLLECTION */
+
 function openCollection(category){
-window.location=`collections.html?cat=${category}`;
+window.location = `collections.html?cat=${category}`
 }
 
 </script>
