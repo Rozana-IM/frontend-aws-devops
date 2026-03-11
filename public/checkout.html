@@ -1,10 +1,12 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
 
 <meta charset="UTF-8">
-<title>LUCCI Checkout</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>LUCCI | Checkout</title>
 
 <link rel="stylesheet" href="style.css">
 
@@ -12,7 +14,9 @@
 
 <body>
 
+<!-- NAVBAR -->
 <div id="navbar"></div>
+
 
 <section class="checkout-page">
 
@@ -20,7 +24,8 @@
 
 <div class="checkout-container">
 
-<!-- CART SUMMARY -->
+
+<!-- ================= CART SUMMARY ================= -->
 
 <div class="checkout-cart">
 
@@ -32,7 +37,8 @@
 
 </div>
 
-<!-- ADDRESS FORM -->
+
+<!-- ================= ADDRESS FORM ================= -->
 
 <div class="checkout-address">
 
@@ -41,20 +47,29 @@
 <form id="addressForm">
 
 <input type="text" id="full_name" placeholder="Full Name" required>
-<input type="text" id="phone" placeholder="Phone Number" required>
+
+<input type="tel" id="phone" placeholder="Phone Number" required>
+
 <input type="text" id="address_line1" placeholder="Address Line 1" required>
+
 <input type="text" id="address_line2" placeholder="Address Line 2">
+
 <input type="text" id="city" placeholder="City" required>
+
 <input type="text" id="state" placeholder="State" required>
+
 <input type="text" id="pincode" placeholder="Pincode" required>
 
-  <div class="payment-method">
+
+<!-- ================= PAYMENT METHOD ================= -->
+
+<div class="payment-method">
 
 <h3>Select Payment Method</h3>
 
 <label>
 <input type="radio" name="paymentMethod" value="razorpay" checked>
-Razorpay (UPI / Card / Netbanking)
+Razorpay (UPI / Card / Netbanking / PhonePe / GPay)
 </label>
 
 <label>
@@ -63,7 +78,11 @@ Paytm Wallet
 </label>
 
 </div>
-<button type="submit">Place Order</button>
+
+
+<button type="submit" class="place-order-btn">
+Place Order
+</button>
 
 </form>
 
@@ -73,10 +92,33 @@ Paytm Wallet
 
 </section>
 
+
+
+<!-- ================= SCRIPTS ================= -->
+
 <script src="/src/navbar.js"></script>
 <script src="/src/checkout.js"></script>
-<script src="https://checkout.razorpay.com/v1/checkout.js"></script>  
+
+<!-- Razorpay SDK -->
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+
+
+<!-- ================= LOAD NAVBAR ================= -->
+
+<script>
+
+fetch("components/navbar.html")
+.then(res => res.text())
+.then(data => {
+
+document.getElementById("navbar").innerHTML = data
+
+initNavbar()
+
+})
+
+</script>
 
 </body>
-
 </html>
