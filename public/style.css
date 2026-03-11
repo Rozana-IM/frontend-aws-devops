@@ -565,6 +565,53 @@ transition:transform 0.4s ease;
 transform:scale(1.1);
 }
 
+.products-grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+gap:30px;
+padding:40px;
+}
+
+.product-card{
+background:#fff;
+border-radius:6px;
+overflow:hidden;
+text-align:center;
+transition:0.3s;
+}
+
+.product-card:hover{
+transform:translateY(-5px);
+}
+
+.product-img{
+width:100%;
+height:320px;
+object-fit:cover;
+}
+
+.product-info{
+padding:15px;
+}
+
+.price{
+font-weight:600;
+margin:10px 0;
+}
+
+.product-actions{
+display:flex;
+justify-content:center;
+gap:10px;
+}
+
+.wishlist-btn{
+background:none;
+border:none;
+font-size:20px;
+cursor:pointer;
+}
+
 /* INFO */
 
 .product-info{
