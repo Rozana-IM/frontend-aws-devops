@@ -7,21 +7,24 @@ LOAD CHECKOUT CART
 function loadCheckout(){
 
 let cart = JSON.parse(localStorage.getItem("cart")) || [];
-  if(cart.length === 0){
+
+if(cart.length === 0){
 alert("Your cart is empty");
-window.location="products.html";
+window.location = "products.html";
 return;
 }
 
 let container = document.getElementById("checkoutItems");
-
 container.innerHTML = "";
 
 let total = 0;
 
 cart.forEach(item => {
 
-total += item.price * item.quantity;
+let price = Number(item.price);
+let qty = Number(item.quantity);
+
+total += price * qty;
 
 container.innerHTML += `
 
@@ -31,7 +34,7 @@ container.innerHTML += `
 
 <div>
 <p>${item.name}</p>
-<p>₹${item.price} x ${item.quantity}</p>
+<p>₹${price} x ${qty}</p>
 </div>
 
 </div>
@@ -45,16 +48,15 @@ document.getElementById("checkoutTotal").innerText =
 
 }
 
-
 /* ===============================
-RAZORPAY FUNCTION
+RAZORPAY POPUP
 =============================== */
 
 function openRazorpay(order, orderId, token){
 
 const options = {
 
-key: "rzp_test_SPry8xdmipoUN8", // replace with your Razorpay key
+key: "rzp_test_SPry8xdmipoUN8",
 
 amount: order.amount,
 
@@ -69,7 +71,7 @@ description: "Order Payment",
 prefill: {
 name: document.getElementById("full_name").value,
 contact: document.getElementById("phone").value
-},  
+},
 
 handler: async function(response){
 
@@ -85,7 +87,7 @@ headers:{
 },
 
 body: JSON.stringify({
-orderId: orderId,
+orderId,
 razorpay_order_id: response.razorpay_order_id,
 razorpay_payment_id: response.razorpay_payment_id,
 razorpay_signature: response.razorpay_signature
@@ -110,7 +112,6 @@ alert(verifyData.error || "Payment verification failed");
 }catch(err){
 
 console.error(err);
-
 alert("Verification error");
 
 }
@@ -118,21 +119,17 @@ alert("Verification error");
 },
 
 modal:{
-
 ondismiss:function(){
 alert("Payment cancelled");
 }
-
 }
 
 };
 
 const rzp = new Razorpay(options);
-
 rzp.open();
 
 }
-
 
 /* ===============================
 PLACE ORDER
@@ -148,20 +145,16 @@ let token = localStorage.getItem("token");
 if(!token){
 
 alert("Please login first");
-
 window.location = "profile.html";
-
 return;
 
 }
-
 
 /* GET CART */
 
 let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
-
-/* FORMAT ITEMS FOR API */
+/* FORMAT ITEMS */
 
 let items = cart.map(item => ({
 product_id: item.id,
@@ -171,13 +164,11 @@ quantity: item.quantity,
 image_url: item.image
 }));
 
-
 /* CALCULATE TOTAL */
 
-let totalAmount = cart.reduce(
-(sum,item)=>sum+(Number(item.price)*item.quantity),
-0
-);
+let totalAmount = cart.reduce((sum,item)=>{
+return sum + (Number(item.price) * item.quantity);
+},0);
 
 /* ADDRESS */
 
@@ -194,10 +185,9 @@ country: "India"
 
 };
 
+try{
 
 /* CREATE ORDER */
-
-try{
 
 let res = await fetch(`${API}/orders`,{
 
@@ -216,27 +206,16 @@ address
 
 });
 
-
 let data = await res.json();
 
-
-if(res.ok){
+if(!res.ok){
+alert(data.error || "Order failed");
+return;
+}
 
 const orderId = data.orderId;
 
-
-/* CREATE PAYMENT */
-
-let payRes = await fetch(`${API}/payments/create`,{
-
-method:"POST",
-
-headers:{
-"Content-Type":"application/json",
-"Authorization":"Bearer "+token
-},
-
-/* GET SELECTED PAYMENT METHOD */
+/* GET PAYMENT METHOD */
 
 let method = document.querySelector(
 'input[name="paymentMethod"]:checked'
@@ -261,9 +240,7 @@ method
 
 });
 
-
 let paymentData = await payRes.json();
-
 
 if(paymentData.gateway === "razorpay"){
 
@@ -281,21 +258,15 @@ alert("Payment gateway error");
 
 }
 
-}else{
-
-alert(data.error || "Order failed");
-
-}
-
 }catch(err){
 
 console.error(err);
-
 alert("Server error");
 
 }
 
 });
 
+/* INITIAL LOAD */
 
 loadCheckout();
