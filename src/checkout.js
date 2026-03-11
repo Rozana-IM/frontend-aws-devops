@@ -54,7 +54,7 @@ function openRazorpay(order, orderId, token){
 
 const options = {
 
-key: "rzp_test_xxxxxxxxx", // replace with your Razorpay key
+key: "rzp_live_SPqHhvSene0j6C", // replace with your Razorpay key
 
 amount: order.amount,
 
