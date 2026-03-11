@@ -94,3 +94,16 @@ window.location="checkout.html"
 }
 
 loadCart();
+
+function goToCheckout(){
+
+let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+if(cart.length === 0){
+alert("Your bag is empty");
+return;
+}
+
+window.location = "checkout.html";
+
+}
