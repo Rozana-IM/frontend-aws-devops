@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
 
@@ -15,6 +15,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
 
 <body>
 
+<!-- NAVBAR -->
 <div id="navbar"></div>
 
 <section class="product-details">
@@ -22,7 +23,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
 <div class="product-container">
 
 <div class="product-image">
-<img id="productImage">
+<img id="productImage" alt="Product Image">
 </div>
 
 <div class="product-info">
@@ -34,11 +35,12 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
 <p id="productDescription"></p>
 
 <button class="add-cart" onclick="addToCart()">
+<i class="fa-solid fa-bag-shopping"></i>
 Add To Cart
 </button>
 
 <button class="wishlist" onclick="toggleWishlist()" id="wishlistBtn">
-♡ Add To Wishlist
+<i class="fa-regular fa-heart"></i>
 </button>
 
 </div>
@@ -47,40 +49,71 @@ Add To Cart
 
 </section>
 
-
 <script src="/src/navbar.js"></script>
+
 <script>
 
-const API="https://api.rozana-projects.online";
+const API = "https://api.rozana-projects.online";
 
-/* GET PRODUCT ID FROM URL */
+/* ================================
+LOAD NAVBAR COMPONENT
+================================ */
 
-const params=new URLSearchParams(window.location.search);
+fetch("/components/navbar.html")
+.then(res => res.text())
+.then(data => {
 
-const id=params.get("id");
+document.getElementById("navbar").innerHTML = data;
 
-
-/* LOAD PRODUCT */
-
-fetch(`${API}/products/${id}`)
-.then(res=>res.json())
-.then(product=>{
-
-document.getElementById("productImage").src=product.image_url;
-
-document.getElementById("productName").innerText=product.name;
-
-document.getElementById("productPrice").innerText="₹"+product.price;
-
-document.getElementById("productDescription").innerText=
-product.description || "Premium LUCCI product.";
- 
-updateWishlistIcon();
+if(typeof initNavbar === "function"){
+initNavbar();
+}
 
 });
 
 
-/* ADD WISHLIST */
+/* ================================
+GET PRODUCT ID
+================================ */
+
+const params = new URLSearchParams(window.location.search);
+const id = params.get("id");
+
+
+/* ================================
+LOAD PRODUCT
+================================ */
+
+fetch(`${API}/products/${id}`)
+.then(res => res.json())
+.then(product => {
+
+if(!product){
+alert("Product not found");
+window.location = "products.html";
+return;
+}
+
+document.getElementById("productImage").src = product.image_url;
+document.getElementById("productName").innerText = product.name;
+document.getElementById("productPrice").innerText = "₹" + product.price;
+document.getElementById("productDescription").innerText =
+product.description || "Premium LUCCI product.";
+
+updateWishlistIcon();
+
+})
+.catch(err => {
+
+console.error(err);
+alert("Failed to load product");
+
+});
+
+
+/* ================================
+WISHLIST
+================================ */
 
 function toggleWishlist(){
 
@@ -92,24 +125,19 @@ if(index === -1){
 
 list.push(id);
 
-alert("Added to Wishlist ❤️");
-
-}
-else{
+}else{
 
 list.splice(index,1);
-
-alert("Removed from Wishlist");
 
 }
 
 localStorage.setItem("wishlist", JSON.stringify(list));
 
 updateWishlistIcon();
+
 }
-  
-/* Wishlist Icon Update Function */
-  
+
+
 function updateWishlistIcon(){
 
 let list = JSON.parse(localStorage.getItem("wishlist")) || [];
@@ -118,42 +146,54 @@ let btn = document.getElementById("wishlistBtn");
 
 if(list.includes(id)){
 
-btn.innerHTML = "❤️ In Wishlist";
+btn.innerHTML = '<i class="fa-solid fa-heart" style="color:red;"></i>';
+
+}else{
+
+btn.innerHTML = '<i class="fa-regular fa-heart"></i>';
 
 }
-else{
-
-btn.innerHTML = "♡ Add To Wishlist";
 
 }
 
-}
-  
-/* ADD CART */
+
+/* ================================
+ADD TO CART
+================================ */
+
 function addToCart(){
 
 let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
+let priceText = document.getElementById("productPrice").innerText.replace("₹","");
+
 let product = {
+
 id: id,
 name: document.getElementById("productName").innerText,
-price: document.getElementById("productPrice").innerText.replace("₹",""),
+price: Number(priceText),
 image: document.getElementById("productImage").src,
 quantity: 1
-}
+
+};
 
 let existing = cart.find(p => p.id == id);
 
 if(existing){
+
 existing.quantity += 1;
-}
-else{
+
+}else{
+
 cart.push(product);
+
 }
 
 localStorage.setItem("cart", JSON.stringify(cart));
 
+
 /* UPDATE NAVBAR COUNT */
+
 if(typeof updateCartCount === "function"){
 updateCartCount();
 }
