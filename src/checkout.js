@@ -175,10 +175,9 @@ image_url: item.image
 /* CALCULATE TOTAL */
 
 let totalAmount = cart.reduce(
-(sum,item)=>sum+(item.price*item.quantity),
+(sum,item)=>sum+(Number(item.price)*item.quantity),
 0
 );
-
 
 /* ADDRESS */
 
@@ -242,6 +241,17 @@ headers:{
 let method = document.querySelector(
 'input[name="paymentMethod"]:checked'
 ).value;
+
+/* CREATE PAYMENT */
+
+let payRes = await fetch(`${API}/payments/create`,{
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/json",
+"Authorization":"Bearer "+token
+},
 
 body: JSON.stringify({
 orderId,
