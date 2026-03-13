@@ -27,18 +27,13 @@ let qty = Number(item.quantity);
 total += price * qty;
 
 container.innerHTML += `
-
 <div class="checkout-item">
-
 <img src="${item.image}" width="80">
-
 <div>
 <p>${item.name}</p>
 <p>₹${price} x ${qty}</p>
 </div>
-
 </div>
-
 `;
 
 });
@@ -100,7 +95,6 @@ let verifyData = await verifyRes.json();
 if(verifyRes.ok){
 
 localStorage.removeItem("cart");
-
 window.location = "order-success.html?id=" + orderId;
 
 }else{
@@ -150,11 +144,7 @@ return;
 
 }
 
-/* GET CART */
-
 let cart = JSON.parse(localStorage.getItem("cart")) || [];
-
-/* FORMAT ITEMS */
 
 let items = cart.map(item => ({
 product_id: item.id,
@@ -164,13 +154,9 @@ quantity: item.quantity,
 image_url: item.image
 }));
 
-/* CALCULATE TOTAL */
-
 let totalAmount = cart.reduce((sum,item)=>{
 return sum + (Number(item.price) * item.quantity);
 },0);
-
-/* ADDRESS */
 
 let address = {
 
@@ -206,7 +192,16 @@ address
 
 });
 
-let data = await res.json();
+let text = await res.text();
+let data;
+
+try{
+data = JSON.parse(text);
+}catch{
+console.error("Invalid JSON:", text);
+alert("Server returned invalid response");
+return;
+}
 
 if(!res.ok){
 alert(data.error || "Order failed");
@@ -217,9 +212,14 @@ const orderId = data.orderId;
 
 /* GET PAYMENT METHOD */
 
-let method = document.querySelector(
-'input[name="paymentMethod"]:checked'
-).value;
+let selected = document.querySelector('input[name="paymentMethod"]:checked');
+
+if(!selected){
+alert("Please select a payment method");
+return;
+}
+
+let method = selected.value;
 
 /* CREATE PAYMENT */
 
@@ -240,7 +240,25 @@ method
 
 });
 
-let paymentData = await payRes.json();
+if(!payRes.ok){
+
+const errText = await payRes.text();
+console.error("Payment API error:", errText);
+alert("Payment creation failed");
+return;
+
+}
+
+let payText = await payRes.text();
+let paymentData;
+
+try{
+paymentData = JSON.parse(payText);
+}catch{
+console.error("Invalid payment response:", payText);
+alert("Payment service returned invalid response");
+return;
+}
 
 if(paymentData.gateway === "razorpay"){
 
