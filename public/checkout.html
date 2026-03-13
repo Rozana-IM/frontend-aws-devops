@@ -9,7 +9,6 @@
 <title>LUCCI | Checkout</title>
 
 <link rel="stylesheet" href="style.css">
-  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
 </head>
 
@@ -18,13 +17,11 @@
 <!-- NAVBAR -->
 <div id="navbar"></div>
 
-
 <section class="checkout-page">
 
 <h2>Checkout</h2>
 
 <div class="checkout-container">
-
 
 <!-- ================= CART SUMMARY ================= -->
 
@@ -61,7 +58,6 @@
 
 <input type="text" id="pincode" placeholder="Pincode" required>
 
-
 <!-- ================= PAYMENT METHOD ================= -->
 
 <div class="payment-method">
@@ -80,7 +76,6 @@ Paytm Wallet
 
 </div>
 
-
 <button type="submit" class="place-order-btn">
 Place Order
 </button>
@@ -93,30 +88,20 @@ Place Order
 
 </section>
 
-
-
 <!-- ================= SCRIPTS ================= -->
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
 <script src="/src/navbar.js"></script>
 <script src="/src/checkout.js"></script>
-
-<!-- Razorpay SDK -->
-<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-
-
-
-<!-- ================= LOAD NAVBAR ================= -->
 
 <script>
 
 fetch("components/navbar.html")
 .then(res => res.text())
 .then(data => {
-
 document.getElementById("navbar").innerHTML = data
-
 initNavbar()
-
 })
 
 </script>
