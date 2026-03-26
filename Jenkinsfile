@@ -3,8 +3,10 @@ pipeline {
 
   environment {
     AWS_DEFAULT_REGION = 'us-east-1'
-    S3_BUCKET = 'rozana-projects.online '
-    CLOUDFRONT_DIST_ID = 'E1QLTMO99TG8ZU'
+    S3_BUCKET = 'rozana-projects.online'
+
+    FRONTEND_DIST_ID = 'E1QLTMO99TG8ZU'
+    IMAGES_DIST_ID   = 'E1I10ME7AU8VDH'
   }
 
   stages {
@@ -26,14 +28,25 @@ pipeline {
       }
     }
 
-    stage('Invalidate CloudFront Cache') {
+    stage('Invalidate CloudFront (Frontend)') {
       steps {
         sh '''
           aws cloudfront create-invalidation \
-            --distribution-id $CLOUDFRONT_DIST_ID \
+            --distribution-id $FRONTEND_DIST_ID \
             --paths "/*"
         '''
       }
     }
+
+    stage('Invalidate CloudFront (Images CDN)') {
+      steps {
+        sh '''
+          aws cloudfront create-invalidation \
+            --distribution-id $IMAGES_DIST_ID \
+            --paths "/*"
+        '''
+      }
+    }
+
   }
 }
