@@ -101,6 +101,28 @@ View My Collections
 <script src="../src/app.js"></script>
 
 <script>
+  
+/* CDN BASE URL */
+
+const CDN = "https://d3402gddkhk6op.cloudfront.net";
+
+/* SET IMAGE URLS FROM CDN */
+
+document.getElementById("heroSection").style.backgroundImage =
+`url(${CDN}/products-hero/Product_Hero.jpg)`;
+
+document.getElementById("womenImg").src =
+`${CDN}/LUCCI+IMAGES/women/Women.jpg`;
+
+document.getElementById("menImg").src =
+`${CDN}/LUCCI+IMAGES/men/Men.jpg`;
+
+document.getElementById("jewelleryImg").src =
+`${CDN}/LUCCI+IMAGES/jewellery/J.jpg`;
+
+document.getElementById("bagsImg").src =
+`${CDN}/LUCCI+IMAGES/bags/Bags.jpg`;
+
 
 /* GO BACK HOME */
 
