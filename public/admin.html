@@ -130,9 +130,7 @@ async function loadUsers() {
 
 async function loadOrders() {
 
-  const data = await safeFetch(
-    "https://api.rozana-projects.online/admin/orders"
-  );
+ const data = await safeFetch(`${API}/orders`);
 
   if (!data) {
     document.getElementById("responseBox").innerHTML =
