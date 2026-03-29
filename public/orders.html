@@ -2,12 +2,9 @@
 <html lang="en">
 
 <head>
-
 <meta charset="UTF-8">
 <title>My Orders | LUCCI</title>
-
 <link rel="stylesheet" href="style.css">
-
 </head>
 
 <body>
@@ -15,11 +12,8 @@
 <div id="navbar"></div>
 
 <section class="orders-page">
-
 <h2>My Orders</h2>
-
 <div id="orders"></div>
-
 </section>
 
 <!-- LOAD NAVBAR -->
@@ -32,74 +26,82 @@
 
 const API = "https://api.rozana-projects.online";
 
-/* LOAD NAVBAR COMPONENT */
+/* ================= LOAD NAVBAR ================= */
 
 fetch("components/navbar.html")
 .then(res => res.text())
 .then(data => {
+  document.getElementById("navbar").innerHTML = data;
+  if (typeof initNavbar === "function") {
+    initNavbar();
+  }
+});
 
-document.getElementById("navbar").innerHTML = data
 
-initNavbar()
+/* ================= REQUIRE LOGIN ================= */
 
-})
+function requireLogin() {
+  const token = localStorage.getItem("token");
+
+  if (!token) {
+    alert("Please login first");
+    window.location = "profile.html";
+    return false;
+  }
+
+  return true;
+}
 
 
-/* LOAD ORDERS */
+/* ================= FETCH USER ORDERS ================= */
+
+async function fetchUserOrders() {
+  return await safeFetch(`${API}/orders`);
+}
+
+
+/* ================= LOAD ORDERS ================= */
 
 document.addEventListener("DOMContentLoaded", async () => {
 
-if (!requireLogin()) return;
+  if (!requireLogin()) return;
 
-const orders = await fetchUserOrders();
+  const orders = await fetchUserOrders();
 
-const container = document.getElementById("orders");
+  const container = document.getElementById("orders");
+  container.innerHTML = "";
 
-container.innerHTML = "";
+  if (!orders || orders.length === 0) {
+    container.innerHTML = "<p>No orders found.</p>";
+    return;
+  }
 
-if (!orders || orders.length === 0) {
+  orders.forEach(order => {
 
-container.innerHTML = "<p>No orders found.</p>";
+    const div = document.createElement("div");
+    div.className = "order-card";
 
-return;
+    div.innerHTML = `
+      <p><b>Order ID:</b> ${order.id}</p>
+      <p><b>Total:</b> ₹${order.total_amount}</p>
+      <p><b>Status:</b> ${order.status || "Pending"}</p>
+      <p><b>Date:</b> ${new Date(order.created_at).toLocaleDateString()}</p>
 
-}
+      <button onclick="viewOrder(${order.id})">
+        View Details
+      </button>
+    `;
 
-orders.forEach(order => {
-
-const div = document.createElement("div");
-
-div.className = "order-card";
-
-div.innerHTML = `
-
-<p><b>Order ID:</b> ${order.id}</p>
-
-<p><b>Total:</b> ₹${order.totalAmount}</p>
-
-<p><b>Status:</b> ${order.status || "Pending"}</p>
-
-<p><b>Date:</b> ${new Date(order.createdAt).toLocaleDateString()}</p>
-
-<button onclick="viewOrder(${order.id})">
-View Details
-</button>
-
-`;
-
-container.appendChild(div);
-
-});
+    container.appendChild(div);
+  });
 
 });
 
 
-/* VIEW ORDER */
+/* ================= VIEW ORDER ================= */
 
 function viewOrder(id){
-
-window.location = "order-details.html?id=" + id;
-
+  window.location = "order-details.html?id=" + id;
 }
 
 </script>
