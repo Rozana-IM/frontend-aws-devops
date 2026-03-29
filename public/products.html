@@ -17,7 +17,6 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
 <!-- NAVBAR -->
 <div id="navbar"></div>
 
-
 <!-- SIDE MENU -->
 <div id="sideMenu" class="side-menu">
 
@@ -43,14 +42,13 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
 <a href="contactus.html" class="underline">Contact Us</a>
 
 </div>
-
 </div>
-
 
 <!-- HERO SECTION -->
 
-<section class="products-hero"
-style="background-image:url('https://cdn.rozana-projects.online/Product_Hero.jpg')"
+<section id="heroSection" class="products-hero"
+style="background-image:url('https://cdn.rozana-projects.online/Product_Hero.jpg')">
+
 <div class="hero-arrow-left" onclick="goHome()">
 <i class="fa-solid fa-arrow-left"></i>
 </div>
@@ -61,7 +59,6 @@ View My Collections
 
 </section>
 
-
 <!-- COLLECTIONS -->
 
 <section id="collections" class="collections">
@@ -71,22 +68,22 @@ View My Collections
 <div class="collections-grid">
 
 <div class="collection-card" onclick="openCollection('women')">
-<img src="https://d3402gddkhk6op.cloudfront.net/LUCCI+IMAGES/women/Women.jpg">
+<img id="womenImg" src="https://cdn.rozana-projects.online/women/Women.jpg">
 <p>Women</p>
 </div>
 
 <div class="collection-card" onclick="openCollection('men')">
-<img src="https://d3402gddkhk6op.cloudfront.net/LUCCI+IMAGES/men/Men.jpg">
+<img id="menImg" src="https://cdn.rozana-projects.online/men/Men.jpg">
 <p>Men</p>
 </div>
 
 <div class="collection-card" onclick="openCollection('jewellery')">
-<img src="https://d3402gddkhk6op.cloudfront.net/LUCCI+IMAGES/jewellery/J.jpg">
+<img id="jewelleryImg" src="https://cdn.rozana-projects.online/jewellery/J.jpg">
 <p>Jewellery</p>
 </div>
 
 <div class="collection-card" onclick="openCollection('bags')">
-<img src="https://d3402gddkhk6op.cloudfront.net/LUCCI+IMAGES/bags/Bags.jpg">
+<img id="bagsImg" src="https://cdn.rozana-projects.online/bags/Bags.jpg">
 <p>Bags</p>
 </div>
 
@@ -94,76 +91,52 @@ View My Collections
 
 </section>
 
-
 <!-- JS FILES -->
 
 <script src="../src/navbar.js"></script>
 <script src="../src/app.js"></script>
 
 <script>
-  
-/* CDN BASE URL */
 
-const CDN = "https://d3402gddkhk6op.cloudfront.net";
+/* CDN BASE */
 
-/* SET IMAGE URLS FROM CDN */
+const CDN = "https://cdn.rozana-projects.online";
+
+/* HERO IMAGE */
 
 document.getElementById("heroSection").style.backgroundImage =
-`url(${CDN}/products-hero/Product_Hero.jpg)`;
+`url(${CDN}/Product_Hero.jpg)`;
 
-document.getElementById("womenImg").src =
-`${CDN}/LUCCI+IMAGES/women/Women.jpg`;
+/* COLLECTION IMAGES */
 
-document.getElementById("menImg").src =
-`${CDN}/LUCCI+IMAGES/men/Men.jpg`;
+document.getElementById("womenImg").src = `${CDN}/women/Women.jpg`;
+document.getElementById("menImg").src = `${CDN}/men/Men.jpg`;
+document.getElementById("jewelleryImg").src = `${CDN}/jewellery/J.jpg`;
+document.getElementById("bagsImg").src = `${CDN}/bags/Bags.jpg`;
 
-document.getElementById("jewelleryImg").src =
-`${CDN}/LUCCI+IMAGES/jewellery/J.jpg`;
-
-document.getElementById("bagsImg").src =
-`${CDN}/LUCCI+IMAGES/bags/Bags.jpg`;
-
-
-/* GO BACK HOME */
+/* NAVIGATION */
 
 function goHome(){
-window.location="index.html"
+window.location = "index.html";
 }
-
-
-/* SCROLL COLLECTIONS */
 
 function scrollCollections(){
 document.getElementById("collections")
-.scrollIntoView({behavior:"smooth"})
+.scrollIntoView({behavior:"smooth"});
 }
 
+function openCollection(category){
+window.location = `collections.html?cat=${category}`;
+}
 
-/* LOAD NAVBAR COMPONENT */
+/* LOAD NAVBAR */
 
 fetch("components/navbar.html")
 .then(res => res.text())
 .then(data => {
-
-document.getElementById("navbar").innerHTML = data
-
-initNavbar()
-
-/* FORCE LUCCI LOGO VISIBLE */
-
-const logo = document.getElementById("navLogo")
-if(logo){
-logo.classList.add("show")
-}
-
-})
-
-
-/* OPEN COLLECTION */
-
-function openCollection(category){
-window.location = `collections.html?cat=${category}`
-}
+document.getElementById("navbar").innerHTML = data;
+initNavbar();
+});
 
 </script>
 
