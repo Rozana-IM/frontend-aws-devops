@@ -115,7 +115,7 @@ const API = "https://api.rozana-projects.online";
 async function loadUsers() {
 
   const data = await safeFetch(
-    "https://api.rozana-projects.online/users"
+    `${API}/users`
   );
 
   if (!data) {
