@@ -115,7 +115,7 @@ const API = "https://api.rozana-projects.online";
 async function loadUsers() {
 
   const data = await safeFetch(
-    `${API}/users`
+    `${API}/users/`
   );
 
   if (!data) {
@@ -130,8 +130,7 @@ async function loadUsers() {
 
 async function loadOrders() {
 
- const data = await safeFetch(`${API}/orders`);
-
+const data = await safeFetch(`${API}/orders/`);
   if (!data) {
     document.getElementById("responseBox").innerHTML =
       "❌ Failed to load orders";
