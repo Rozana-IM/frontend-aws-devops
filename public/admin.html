@@ -154,8 +154,7 @@ async function loadUsers() {
 async function loadOrders() {
 
   // ✅ IMPORTANT FIX HERE
-  const data = await safeFetch(`${API}/orders`);
-
+const data = await safeFetch(`${API}/orders/admin/all`);
   if (!data) {
     responseBox.innerHTML = "❌ Failed to load orders";
     return;
