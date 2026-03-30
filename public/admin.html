@@ -97,7 +97,13 @@ Service responses appear here
 
 <script>
 
-/* ================= ADMIN PROTECTION ================= */
+/* ================= AUTH ================= */
+
+const API = "https://api.rozana-projects.online";
+
+function getUser(){
+  return JSON.parse(localStorage.getItem("user"));
+}
 
 const user = getUser();
 
@@ -106,94 +112,111 @@ if (!user || user.role !== "admin") {
   window.location.href = "index.html";
 }
 
-/* ================= API ================= */
+/* ================= SAFE FETCH ================= */
 
-const API = "https://api.rozana-projects.online";
+async function safeFetch(url) {
+  try {
+    const token = localStorage.getItem("token");
+
+    const res = await fetch(url, {
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      }
+    });
+
+    if (!res.ok) throw new Error("Request failed");
+
+    return await res.json();
+
+  } catch (err) {
+    console.error(err);
+    return null;
+  }
+}
 
 /* ================= LOAD USERS ================= */
 
 async function loadUsers() {
 
-  const data = await safeFetch(
-    `${API}/users/`
-  );
+  const data = await safeFetch(`${API}/users`);
 
   if (!data) {
-    document.getElementById("responseBox").innerHTML =
-      "❌ Failed to load users";
+    responseBox.innerHTML = "❌ Failed to load users";
     return;
   }
 
   renderTable(data, "Users List");
 }
+
 /* ================= LOAD ORDERS ================= */
 
 async function loadOrders() {
 
-const data = await safeFetch(`${API}/orders/`);
+  // ✅ IMPORTANT FIX HERE
+  const data = await safeFetch(`${API}/orders/`);
+
   if (!data) {
-    document.getElementById("responseBox").innerHTML =
-      "❌ Failed to load orders";
+    responseBox.innerHTML = "❌ Failed to load orders";
     return;
   }
 
   renderTable(data, "Orders List");
 }
-/* ================= SERVICE HEALTH ================= */
+
+/* ================= HEALTH ================= */
 
 async function loadHealth(){
 
-  const services=[
-    {name:"User Service",url:`${API}/health`},
-{name:"Order Service",url:`${API}/health`}  ];
+  const services = [
+    { name:"User Service", url:`${API}/health` },
+    { name:"Order Service", url:`${API}/orders/health` } // ✅ FIX
+  ];
 
-  let html="<h3>Service Health</h3>";
+  let html = "<h3>Service Health</h3>";
 
-  for(const s of services){
+  for (const s of services){
     try{
-      const r=await fetch(s.url);
-      html+=`<p>${r.ok?"🟢":"🔴"} ${s.name}</p>`;
-    }catch{
-      html+=`<p>🔴 ${s.name}</p>`;
+      const r = await fetch(s.url);
+      html += `<p>${r.ok ? "🟢" : "🔴"} ${s.name}</p>`;
+    } catch {
+      html += `<p>🔴 ${s.name}</p>`;
     }
   }
 
-  healthBox.innerHTML=html;
+  document.getElementById("healthBox").innerHTML = html;
 }
 
 loadHealth();
 
 /* ================= TABLE ================= */
 
-function renderTable(data,title){
+function renderTable(data, title){
 
-if(!data || data.length===0){
-  responseBox.innerHTML="No data available";
-  return;
-}
+  if (!data || data.length === 0){
+    responseBox.innerHTML = "No data available";
+    return;
+  }
 
-let html=`<h3>${title}</h3><table><tr>`;
+  let html = `<h3>${title}</h3><table><tr>`;
 
-Object.keys(data[0]).forEach(key=>{
-  html+=`<th>${key}</th>`;
-});
-
-html+="</tr>";
-
-data.forEach(item=>{
-  html+="<tr>";
-  Object.values(item).forEach(val=>{
-    html+=`<td>${val}</td>`;
+  Object.keys(data[0]).forEach(key=>{
+    html += `<th>${key}</th>`;
   });
-  html+="</tr>";
-});
 
-html+="</table>";
+  html += "</tr>";
 
-responseBox.innerHTML=html;
+  data.forEach(item=>{
+    html += "<tr>";
+    Object.values(item).forEach(val=>{
+      html += `<td>${val}</td>`;
+    });
+    html += "</tr>";
+  });
+
+  html += "</table>";
+
+  responseBox.innerHTML = html;
 }
 
 </script>
-
-</body>
-</html>
