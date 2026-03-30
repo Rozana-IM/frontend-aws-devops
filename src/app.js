@@ -1,5 +1,6 @@
 // ================= CONFIG =================
-const BASE_URL = "https://api.rozana-projects.online";
+const API_BASE_URL = "https://api.rozana-projects.online";
+
 /* =====================================================
    USER HELPERS
 ===================================================== */
@@ -39,7 +40,7 @@ function logout() {
 }
 
 /* =====================================================
-   PAGE INIT (AUTO LOGIN)
+   PAGE INIT
 ===================================================== */
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -92,7 +93,7 @@ function setupProfileUI() {
 }
 
 /* =====================================================
-   DROPDOWN CLICK BEHAVIOR
+   DROPDOWN
 ===================================================== */
 
 function setupDropdown() {
@@ -113,7 +114,7 @@ function setupDropdown() {
 }
 
 /* =====================================================
-   GLOBAL LOADER
+   LOADER
 ===================================================== */
 
 function showLoader() {
@@ -137,38 +138,47 @@ function hideLoader() {
 }
 
 /* =====================================================
-   SAFE FETCH WITH TOKEN REFRESH
+   SAFE FETCH
 ===================================================== */
 
 async function safeFetch(url, options = {}) {
 
   showLoader();
 
-  options.headers = {
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${getToken()}`,
-    ...(options.headers || {})
-  };
+  try {
 
-  let res = await fetch(url, options);
+    options.headers = {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${getToken()}`,
+      ...(options.headers || {})
+    };
 
-  if (res.status === 401 && getRefreshToken()) {
-    const refreshed = await refreshAccessToken();
+    let res = await fetch(url, options);
 
-    if (refreshed) {
-      options.headers.Authorization = `Bearer ${getToken()}`;
-      res = await fetch(url, options);
-    } else {
-      logout();
-      return null;
+    // 🔁 TOKEN EXPIRED → REFRESH
+    if (res.status === 401 && getRefreshToken()) {
+
+      const refreshed = await refreshAccessToken();
+
+      if (refreshed) {
+        options.headers.Authorization = `Bearer ${getToken()}`;
+        res = await fetch(url, options);
+      } else {
+        logout();
+        return null;
+      }
     }
+
+    if (!res.ok) return null;
+
+    return await res.json();
+
+  } catch (err) {
+    console.error("FETCH ERROR:", err);
+    return null;
+  } finally {
+    hideLoader(); // ✅ always hide loader
   }
-
-  hideLoader();
-
-  if (!res.ok) return null;
-
-  return res.json();
 }
 
 /* =====================================================
@@ -177,17 +187,26 @@ async function safeFetch(url, options = {}) {
 
 async function refreshAccessToken() {
 
-  const res = await fetch(`${API_BASE_URL}/users/auth/refresh`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      refreshToken: getRefreshToken()
-    })
-  });
+  try {
 
-  if (!res.ok) return false;
+    const res = await fetch(`${API_BASE_URL}/users/auth/refresh`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        refreshToken: getRefreshToken()
+      })
+    });
 
-  const data = await res.json();
-  localStorage.setItem("token", data.token);
-  return true;
+    if (!res.ok) return false;
+
+    const data = await res.json();
+
+    localStorage.setItem("token", data.token);
+
+    return true;
+
+  } catch (err) {
+    console.error("REFRESH ERROR:", err);
+    return false;
+  }
 }
