@@ -140,6 +140,9 @@ function hideLoader() {
 /* =====================================================
    SAFE FETCH
 ===================================================== */
+/* =====================================================
+   SAFE FETCH
+===================================================== */
 
 async function safeFetch(url, options = {}) {
 
@@ -147,9 +150,10 @@ async function safeFetch(url, options = {}) {
 
   try {
 
+    // ✅ FIXED HEADERS (NO Bearer null)
     options.headers = {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${getToken()}`,
+      ...(getToken() && { Authorization: `Bearer ${getToken()}` }),
       ...(options.headers || {})
     };
 
@@ -169,10 +173,12 @@ async function safeFetch(url, options = {}) {
       }
     }
 
-if (!res.ok) {
-  console.error("API ERROR:", res.status);
-  return null;
-}
+    // ❌ HANDLE API ERROR PROPERLY
+    if (!res.ok) {
+      console.error("API ERROR:", res.status);
+      return null;
+    }
+
     return await res.json();
 
   } catch (err) {
@@ -182,7 +188,6 @@ if (!res.ok) {
     hideLoader(); // ✅ always hide loader
   }
 }
-
 /* =====================================================
    REFRESH TOKEN
 ===================================================== */
