@@ -169,8 +169,10 @@ async function safeFetch(url, options = {}) {
       }
     }
 
-    if (!res.ok) return null;
-
+if (!res.ok) {
+  console.error("API ERROR:", res.status);
+  return null;
+}
     return await res.json();
 
   } catch (err) {
