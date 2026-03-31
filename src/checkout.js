@@ -175,7 +175,7 @@ try{
 
 /* CREATE ORDER */
 
-let res = await fetch(`${API}/orders`,{
+let res = await fetch(`${API}/orders/create`, {
 
 method:"POST",
 
