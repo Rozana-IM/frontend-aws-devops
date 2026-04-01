@@ -261,14 +261,14 @@ return;
 }
 
 if(paymentData.gateway === "razorpay"){
-
-openRazorpay(paymentData.order, orderId, token);
-
+  openRazorpay(paymentData.order, orderId, token);
 }
 else if(paymentData.gateway === "paytm"){
-
-window.location = paymentData.payment.paymentUrl;
-
+  window.location = paymentData.paymentUrl; 
+}
+else if(paymentData.gateway === "cod"){
+  localStorage.removeItem("cart");
+  window.location = "order-success.html?id=" + orderId;
 }
 else{
 
