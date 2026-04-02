@@ -75,38 +75,42 @@ function openRazorpay(order, orderId, token){
 
     handler: async function(response){
 
-      console.log("✅ Razorpay Success:", response);
+  console.log("✅ Razorpay Success:", response);
 
-      try{
+  try{
 
-        let verifyRes = await fetch(`${API}/payments/verify`,{
-          method:"POST",
-          headers:{
-            "Content-Type":"application/json",
-            "Authorization":"Bearer " + token
-          },
-          body: JSON.stringify({
-            orderId,
-            razorpay_order_id: response.razorpay_order_id,
-            razorpay_payment_id: response.razorpay_payment_id,
-            razorpay_signature: response.razorpay_signature
-          })
-        });
+    let verifyRes = await fetch(`${API}/payments/verify`,{
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json",
+        "Authorization":"Bearer " + token
+      },
+      body: JSON.stringify({
+        orderId: orderId,
+        razorpay_order_id: response.razorpay_order_id,
+        razorpay_payment_id: response.razorpay_payment_id,
+        razorpay_signature: response.razorpay_signature
+      })
+    });
 
-        let verifyData = await verifyRes.json();
+    let verifyData = await verifyRes.json();
 
-        if(verifyRes.ok){
-          localStorage.removeItem("cart");
-          window.location = "order-success.html?id=" + orderId;
-        } else {
-          alert(verifyData.error || "Payment verification failed");
-        }
+    if(verifyRes.ok){
 
-      }catch(err){
-        console.error(err);
-        alert("Verification error");
-      }
-    },
+      // ✅ TEMP (we will improve later)
+      localStorage.removeItem("cart");
+
+      window.location = "order-success.html?id=" + orderId;
+
+    } else {
+      alert(verifyData.error || "Payment verification failed");
+    }
+
+  }catch(err){
+    console.error(err);
+    alert("Verification error");
+  }
+},
 
     modal: {
       ondismiss: function(){
