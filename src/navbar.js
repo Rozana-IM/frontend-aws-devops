@@ -1,17 +1,17 @@
 /* ================= MENU ================= */
 
 function openMenu(){
-const menu = document.getElementById("sideMenu");
-if(menu){
-menu.classList.toggle("open");
-}
+  const menu = document.getElementById("sideMenu");
+  if(menu){
+    menu.classList.toggle("open");
+  }
 }
 
 
 /* ================= SEARCH ================= */
 
 function openSearch(){
-window.location = "search.html";
+  window.location = "search.html";
 }
 
 
@@ -19,19 +19,19 @@ window.location = "search.html";
 
 function openBag(){
 
-let cart = JSON.parse(localStorage.getItem("cart")) || [];
+  let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
-if(cart.length === 0){
-alert("Your bag is empty");
-return;
-}
+  if(cart.length === 0){
+    alert("Your bag is empty");
+    return;
+  }
 
-const drawer = document.getElementById("cartDrawer");
+  const drawer = document.getElementById("cartDrawer");
 
-if(drawer){
-drawer.classList.add("open");
-loadCartDrawer();
-}
+  if(drawer){
+    drawer.classList.add("open");
+    loadCartDrawer();
+  }
 
 }
 
@@ -39,24 +39,25 @@ loadCartDrawer();
 /* ================= CLOSE CART ================= */
 
 function closeCart(){
-const drawer = document.getElementById("cartDrawer");
-if(drawer){
-drawer.classList.remove("open");
-}
+  const drawer = document.getElementById("cartDrawer");
+  if(drawer){
+    drawer.classList.remove("open");
+  }
 }
 
 
 /* ================= INITIALIZE NAVBAR ================= */
+
 function initNavbar() {
 
   /* ================= PAGE DETECTION ================= */
 
-  const path = window.location.pathname;
-let currentPage = path.split("/").pop();
+  let currentPage = window.location.pathname.split("/").pop();
 
-if(currentPage === ""){
-  currentPage = "index.html";
-}
+  if(currentPage === ""){
+    currentPage = "index.html";
+  }
+
   const backBtn = document.getElementById("navBack");
   const contactLink = document.getElementById("contactLink");
 
@@ -68,6 +69,16 @@ if(currentPage === ""){
   } else {
     if(backBtn) backBtn.style.display = "inline";
     if(contactLink) contactLink.style.display = "none";
+  }
+
+  /* ================= DROPDOWN CONTACT ================= */
+
+  const dropdownContact = document.querySelector('[onclick="goPage(\'contact\')"]');
+
+  if (showContactPages.includes(currentPage)) {
+    if(dropdownContact) dropdownContact.style.display = "block";
+  } else {
+    if(dropdownContact) dropdownContact.style.display = "none";
   }
 
   /* ================= BACK BUTTON ================= */
@@ -161,29 +172,31 @@ if(currentPage === ""){
 
   updateCartCount();
 }
+
+
 /* ================= PAGE NAVIGATION ================= */
 
 function goPage(page){
 
-if(page === "cart"){
-window.location = "cart.html";
-}
+  if(page === "cart"){
+    window.location = "cart.html";
+  }
 
-if(page === "wishlist"){
-window.location = "wishlist.html";
-}
+  if(page === "wishlist"){
+    window.location = "wishlist.html";
+  }
 
-if(page === "orders"){
-window.location = "orders.html";
-}
+  if(page === "orders"){
+    window.location = "orders.html";
+  }
 
-if(page === "products"){
-window.location = "products.html";
-}
+  if(page === "products"){
+    window.location = "products.html";
+  }
 
-if(page === "contact"){
-window.location = "contactus.html";
-}
+  if(page === "contact"){
+    window.location = "contactus.html";
+  }
 
 }
 
@@ -192,29 +205,24 @@ window.location = "contactus.html";
 
 function updateCartCount(){
 
-let cart = JSON.parse(localStorage.getItem("cart")) || [];
+  let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
-let count = 0;
+  let count = 0;
 
-cart.forEach(item => {
-count += Number(item.quantity) || 1;
-});
+  cart.forEach(item => {
+    count += Number(item.quantity || 1);
+  });
 
-let badge = document.getElementById("cartCount");
+  let badge = document.getElementById("cartCount");
 
-if(!badge) return;
+  if(!badge) return;
 
-if(count > 0){
-
-badge.style.display = "block";
-badge.innerText = count;
-
-}
-else{
-
-badge.style.display = "none";
-
-}
+  if(count > 0){
+    badge.style.display = "block";
+    badge.innerText = count;
+  } else {
+    badge.style.display = "none";
+  }
 
 }
 
@@ -222,20 +230,16 @@ badge.style.display = "none";
 /* ================= AUTO SYNC CART ================= */
 
 window.addEventListener("storage", function(e){
-
-if(e.key === "cart"){
-updateCartCount();
-}
-
+  if(e.key === "cart"){
+    updateCartCount();
+  }
 });
 
 
 /* ================= PAGE LOAD SYNC ================= */
 
 document.addEventListener("DOMContentLoaded", function(){
-
-updateCartCount();
-
+  updateCartCount();
 });
 
 
@@ -243,48 +247,40 @@ updateCartCount();
 
 function loadCartDrawer(){
 
-let cart = JSON.parse(localStorage.getItem("cart")) || [];
+  let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
-let container = document.getElementById("drawerItems");
+  let container = document.getElementById("drawerItems");
 
-if(!container) return;
+  if(!container) return;
 
-container.innerHTML = "";
+  container.innerHTML = "";
 
-let total = 0;
+  let total = 0;
 
-cart.forEach(item => {
+  cart.forEach(item => {
 
-let price = Number(item.price) || 0;
-let qty = Number(item.quantity) || 1;
+    let price = Number(item.price) || 0;
+    let qty = Number(item.quantity) || 1;
 
-total += price * qty;
+    total += price * qty;
 
-container.innerHTML += `
+    container.innerHTML += `
+      <div class="drawer-item">
+        <img src="${item.image}" width="60">
+        <div>
+          <p>${item.name}</p>
+          <p>₹${price}</p>
+          <p>Qty: ${qty}</p>
+        </div>
+      </div>
+    `;
+  });
 
-<div class="drawer-item">
+  let totalBox = document.getElementById("drawerTotal");
 
-<img src="${item.image}" width="60">
-
-<div>
-
-<p>${item.name}</p>
-<p>₹${price}</p>
-<p>Qty: ${qty}</p>
-
-</div>
-
-</div>
-
-`;
-
-});
-
-let totalBox = document.getElementById("drawerTotal");
-
-if(totalBox){
-totalBox.innerText = "Total: ₹" + total;
-}
+  if(totalBox){
+    totalBox.innerText = "Total: ₹" + total;
+  }
 
 }
 
@@ -292,9 +288,7 @@ totalBox.innerText = "Total: ₹" + total;
 /* ================= GO TO CART ================= */
 
 function goToCart(){
-
-window.location = "cart.html";
-
+  window.location = "cart.html";
 }
 
 
@@ -302,15 +296,12 @@ window.location = "cart.html";
 
 function goCheckout(){
 
-let cart = JSON.parse(localStorage.getItem("cart")) || [];
+  let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
-if(cart.length === 0){
+  if(cart.length === 0){
+    alert("Your bag is empty");
+    return;
+  }
 
-alert("Your bag is empty");
-return;
-
-}
-
-window.location = "checkout.html";
-
+  window.location = "checkout.html";
 }
