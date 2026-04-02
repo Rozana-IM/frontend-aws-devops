@@ -50,13 +50,6 @@ function closeCart(){
 
 function initNavbar() {
 
-  const countEl = document.getElementById("cartCount");
-
-if(countEl){
-  const cart = JSON.parse(localStorage.getItem("cart")) || [];
-  countEl.innerText = cart.length;
-}
-
   /* ===== PAGE DETECTION ===== */
 
   let currentPage = window.location.pathname.split("/").pop();
