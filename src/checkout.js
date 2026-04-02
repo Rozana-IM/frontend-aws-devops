@@ -97,12 +97,23 @@ function openRazorpay(order, orderId, token){
 
     if(verifyRes.ok){
 
-      // ✅ TEMP (we will improve later)
-      localStorage.removeItem("cart");
+  // ✅ CLEAR CART (FINAL FIX)
+  localStorage.removeItem("cart");
 
-      window.location = "order-success.html?id=" + orderId;
+  // ✅ OPTIONAL (good practice)
+  localStorage.setItem("cartCount", 0);
 
-    } else {
+  // ✅ UPDATE NAVBAR INSTANTLY
+  if(typeof updateCartCount === "function"){
+    updateCartCount();
+  }
+
+  // ✅ REDIRECT
+  window.location = "order-success.html?id=" + orderId;
+
+} 
+    
+    else {
       alert(verifyData.error || "Payment verification failed");
     }
 
