@@ -134,8 +134,11 @@ window.location = `collections.html?cat=${category}`;
 fetch("components/navbar.html")
 .then(res => res.text())
 .then(data => {
-document.getElementById("navbar").innerHTML = data;
-initNavbar();
+  document.getElementById("navbar").innerHTML = data;
+
+  if(typeof initNavbar === "function"){
+    initNavbar();
+  }
 });
 
 </script>
