@@ -52,8 +52,11 @@ function initNavbar() {
   /* ================= PAGE DETECTION ================= */
 
   const path = window.location.pathname;
-  const currentPage = path.split("/").pop();
+let currentPage = path.split("/").pop();
 
+if(currentPage === ""){
+  currentPage = "index.html";
+}
   const backBtn = document.getElementById("navBack");
   const contactLink = document.getElementById("contactLink");
 
