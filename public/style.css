@@ -289,6 +289,14 @@ text-decoration:none;
 
 }
 
+.login-back{
+  position:absolute;
+  top:20px;
+  left:20px;
+  font-size:16px;
+  cursor:pointer;
+}
+
 /* MENU ITEMS */
 
 .profile-dropdown a{
