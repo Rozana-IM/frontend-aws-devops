@@ -36,7 +36,7 @@ function isAdmin() {
 
 function logout() {
   localStorage.clear();
-  window.location.href = "index.html";
+  window.location.href = "profile.html";
 }
 
 /* =====================================================
@@ -138,19 +138,15 @@ function hideLoader() {
 }
 
 /* =====================================================
-   SAFE FETCH
-===================================================== */
-/* =====================================================
-   SAFE FETCH
+   API REQUEST (AUTO TOKEN HANDLING)
 ===================================================== */
 
-async function safeFetch(url, options = {}) {
+async function apiRequest(url, options = {}) {
 
   showLoader();
 
   try {
 
-    // ✅ FIXED HEADERS (NO Bearer null)
     options.headers = {
       "Content-Type": "application/json",
       ...(getToken() && { Authorization: `Bearer ${getToken()}` }),
@@ -162,18 +158,43 @@ async function safeFetch(url, options = {}) {
     // 🔁 TOKEN EXPIRED → REFRESH
     if (res.status === 401 && getRefreshToken()) {
 
-      const refreshed = await refreshAccessToken();
+      console.log("🔁 Token expired, refreshing...");
 
-      if (refreshed) {
-        options.headers.Authorization = `Bearer ${getToken()}`;
+      // ❗ IMPORTANT: use fetch here (NOT apiRequest)
+      const refreshRes = await fetch(
+        `${API_BASE_URL}/users/refresh-token`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            refreshToken: getRefreshToken()
+          })
+        }
+      );
+
+      if (!refreshRes.ok) {
+        logout();
+        return null;
+      }
+
+      const data = await refreshRes.json();
+
+      if (data.token) {
+
+        console.log("✅ New token received");
+
+        localStorage.setItem("token", data.token);
+
+        // 🔁 RETRY ORIGINAL REQUEST
+        options.headers.Authorization = `Bearer ${data.token}`;
         res = await fetch(url, options);
+
       } else {
         logout();
         return null;
       }
     }
 
-    // ❌ HANDLE API ERROR PROPERLY
     if (!res.ok) {
       console.error("API ERROR:", res.status);
       return null;
@@ -184,111 +205,44 @@ async function safeFetch(url, options = {}) {
   } catch (err) {
     console.error("FETCH ERROR:", err);
     return null;
+
   } finally {
-    hideLoader(); // ✅ always hide loader
+    hideLoader();
   }
 }
+
 /* =====================================================
-   REFRESH TOKEN
+   SILENT LOGIN (AUTO LOGIN ON PAGE LOAD)
 ===================================================== */
-
-async function refreshAccessToken() {
-
-  try {
-
-    const res = await apiRequest(`${API_BASE_URL}/users/auth/refresh`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        refreshToken: getRefreshToken()
-      })
-    });
-
-    if (!res.ok) return false;
-
-    const data = await res.json();
-
-    localStorage.setItem("token", data.token);
-
-    return true;
-
-  } catch (err) {
-    console.error("REFRESH ERROR:", err);
-    return false;
-  }
-}
-/*   AUTO TOKEN */
-async function apiRequest(url, options = {}) {
-
-  let token = localStorage.getItem("token");
-
-  options.headers = {
-    ...options.headers,
-    "Content-Type": "application/json",
-    "Authorization": `Bearer ${token}`
-  };
-
-  let res = await fetch(url, options);
-
-  // 🔥 IF TOKEN EXPIRED
-  if (res.status === 401) {
-
-    const refreshToken = localStorage.getItem("refreshToken");
-
-    const refreshRes = await apiRequest(
-      "https://api.rozana-projects.online/users/refresh-token",
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ refreshToken })
-      }
-    );
-
-    const data = await refreshRes.json();
-
-    if (data.token) {
-
-      // ✅ SAVE NEW TOKEN
-      localStorage.setItem("token", data.token);
-
-      // 🔁 RETRY ORIGINAL REQUEST
-      options.headers["Authorization"] = `Bearer ${data.token}`;
-      return fetch(url, options);
-
-    } else {
-
-      // ❌ Refresh failed → logout
-      localStorage.clear();
-      window.location = "profile.html";
-    }
-  }
-
-  return res;
-}
-
 
 window.addEventListener("load", async () => {
 
-  const token = localStorage.getItem("token");
-  const refreshToken = localStorage.getItem("refreshToken");
+  const token = getToken();
+  const refreshToken = getRefreshToken();
 
   if (!token && refreshToken) {
 
     console.log("🔁 Silent login...");
 
-    const res = await apiRequest(
-      "https://api.rozana-projects.online/users/refresh-token",
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ refreshToken })
+    try {
+      const res = await fetch(
+        `${API_BASE_URL}/users/refresh-token`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ refreshToken })
+        }
+      );
+
+      const data = await res.json();
+
+      if (data.token) {
+        localStorage.setItem("token", data.token);
+        console.log("✅ Silent login success");
       }
-    );
 
-    const data = await res.json();
-
-    if (data.token) {
-      localStorage.setItem("token", data.token);
+    } catch (err) {
+      console.error("Silent login failed");
     }
   }
 
