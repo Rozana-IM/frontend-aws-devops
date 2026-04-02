@@ -217,3 +217,51 @@ async function refreshAccessToken() {
     return false;
   }
 }
+/*   AUTO TOKEN */
+async function apiRequest(url, options = {}) {
+
+  let token = localStorage.getItem("token");
+
+  options.headers = {
+    ...options.headers,
+    "Content-Type": "application/json",
+    "Authorization": `Bearer ${token}`
+  };
+
+  let res = await fetch(url, options);
+
+  // 🔥 IF TOKEN EXPIRED
+  if (res.status === 401) {
+
+    const refreshToken = localStorage.getItem("refreshToken");
+
+    const refreshRes = await fetch(
+      "https://api.rozana-projects.online/users/refresh-token",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ refreshToken })
+      }
+    );
+
+    const data = await refreshRes.json();
+
+    if (data.token) {
+
+      // ✅ SAVE NEW TOKEN
+      localStorage.setItem("token", data.token);
+
+      // 🔁 RETRY ORIGINAL REQUEST
+      options.headers["Authorization"] = `Bearer ${data.token}`;
+      return fetch(url, options);
+
+    } else {
+
+      // ❌ Refresh failed → logout
+      localStorage.clear();
+      window.location = "profile.html";
+    }
+  }
+
+  return res;
+}
