@@ -59,7 +59,7 @@ const API = "https://api.rozana-projects.online";
 LOAD NAVBAR COMPONENT
 ================================ */
 
-fetch("/components/navbar.html")
+fetch("components/navbar.html")
 .then(res => res.text())
 .then(data => {
 
@@ -81,7 +81,7 @@ const id = params.get("id");
 
 
 /* ================================
-LOAD PRODUCT
+LOAD PRODUCT (PUBLIC → KEEP FETCH)
 ================================ */
 
 fetch(`${API}/products/${id}`)
@@ -191,11 +191,11 @@ cart.push(product);
 
 localStorage.setItem("cart", JSON.stringify(cart));
 
-
 /* UPDATE NAVBAR COUNT */
 
-if(typeof updateCartCount === "function"){
-updateCartCount();
+let countEl = document.getElementById("cartCount");
+if(countEl){
+  countEl.innerText = cart.length;
 }
 
 alert("Added to Bag 👜");
