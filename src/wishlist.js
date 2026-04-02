@@ -10,6 +10,8 @@ let list = JSON.parse(localStorage.getItem("wishlist")) || [];
 
 let container = document.getElementById("wishlistItems");
 
+if(!container) return;
+
 container.innerHTML = "";
 
 if(list.length === 0){
@@ -17,17 +19,19 @@ container.innerHTML = "<p>Your wishlist is empty ❤️</p>";
 return;
 }
 
+let html = "";
+
 for(let id of list){
 
 try{
 
-let res = await fetch(`${API}/products/${id}`);
+let res = await apiRequest(`${API}/products/${id}`);
 
-if(!res.ok) continue;
+if(!res || !res.ok) continue;
 
 let product = await res.json();
 
-container.innerHTML += `
+html += `
 
 <div class="wishlist-card">
 
@@ -62,6 +66,8 @@ console.error("Wishlist product load error:",err);
 
 }
 
+container.innerHTML = html;
+
 }
 
 
@@ -92,9 +98,9 @@ let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
 try{
 
-let res = await fetch(`${API}/products/${id}`);
+let res = await apiRequest(`${API}/products/${id}`);
 
-if(!res.ok){
+if(!res || !res.ok){
 alert("Failed to load product");
 return;
 }
