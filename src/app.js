@@ -196,7 +196,7 @@ async function refreshAccessToken() {
 
   try {
 
-    const res = await fetch(`${API_BASE_URL}/users/auth/refresh`, {
+    const res = await apiRequest(`${API_BASE_URL}/users/auth/refresh`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -235,7 +235,7 @@ async function apiRequest(url, options = {}) {
 
     const refreshToken = localStorage.getItem("refreshToken");
 
-    const refreshRes = await fetch(
+    const refreshRes = await apiRequest(
       "https://api.rozana-projects.online/users/refresh-token",
       {
         method: "POST",
@@ -276,7 +276,7 @@ window.addEventListener("load", async () => {
 
     console.log("🔁 Silent login...");
 
-    const res = await fetch(
+    const res = await apiRequest(
       "https://api.rozana-projects.online/users/refresh-token",
       {
         method: "POST",
