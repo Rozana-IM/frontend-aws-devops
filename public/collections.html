@@ -38,13 +38,11 @@ const API = "https://api.rozana-projects.online";
 fetch("components/navbar.html")
 .then(res => res.text())
 .then(data => {
+  document.getElementById("navbar").innerHTML = data;
 
-document.getElementById("navbar").innerHTML = data;
-
-if(typeof initNavbar === "function"){
-initNavbar();
-}
-
+  if(typeof initNavbar === "function"){
+    initNavbar();
+  }
 });
 
 
