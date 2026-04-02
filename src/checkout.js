@@ -45,12 +45,10 @@ function loadCheckout(){
 RAZORPAY POPUP
 =============================== */
 
-function openRazorpay(order, orderId, token){
-
-  console.log("🧾 Razorpay Order:", order);
+function openRazorpay(order, orderId){
 
   const options = {
-    key: "rzp_test_SPry8xdmipoUN8", // MUST match backend
+    key: "rzp_test_SPry8xdmipoUN8",
 
     amount: order.amount,
     currency: "INR",
@@ -75,49 +73,42 @@ function openRazorpay(order, orderId, token){
 
     handler: async function(response){
 
-  console.log("✅ Razorpay Success:", response);
+      try{
 
-  try{
+        let verifyRes = await apiRequest(`${API}/payments/verify`,{
+          method:"POST",
+          body: JSON.stringify({
+            orderId: orderId,
+            razorpay_order_id: response.razorpay_order_id,
+            razorpay_payment_id: response.razorpay_payment_id,
+            razorpay_signature: response.razorpay_signature
+          })
+        });
 
-    let verifyRes = await apiRequest(`${API}/payments/verify`,{
-      method:"POST",
-      body: JSON.stringify({
-        orderId: orderId,
-        razorpay_order_id: response.razorpay_order_id,
-        razorpay_payment_id: response.razorpay_payment_id,
-        razorpay_signature: response.razorpay_signature
-      })
-    });
+        let verifyData = await verifyRes.json();
 
-    let verifyData = await verifyRes.json();
+        if(verifyRes.ok){
 
-    if(verifyRes.ok){
+          // ✅ CLEAR CART
+          localStorage.removeItem("cart");
 
-  // ✅ CLEAR CART (FINAL FIX)
-  localStorage.removeItem("cart");
+          // ✅ UPDATE NAVBAR COUNT
+          if(typeof updateCartCount === "function"){
+            updateCartCount();
+          }
 
-  // ✅ OPTIONAL (good practice)
-  localStorage.setItem("cartCount", 0);
+          // ✅ REDIRECT
+          window.location = "order-success.html?id=" + orderId;
 
-  // ✅ UPDATE NAVBAR INSTANTLY
-  if(typeof updateCartCount === "function"){
-    updateCartCount();
-  }
+        } else {
+          alert(verifyData.error || "Payment verification failed");
+        }
 
-  // ✅ REDIRECT
-  window.location = "order-success.html?id=" + orderId;
-
-} 
-    
-    else {
-      alert(verifyData.error || "Payment verification failed");
-    }
-
-  }catch(err){
-    console.error(err);
-    alert("Verification error");
-  }
-},
+      }catch(err){
+        console.error(err);
+        alert("Verification error");
+      }
+    },
 
     modal: {
       ondismiss: function(){
@@ -161,8 +152,6 @@ document.getElementById("addressForm")
     return sum + (Number(item.price) * item.quantity);
   },0);
 
-  console.log("💰 TOTAL AMOUNT:", totalAmount);
-
   let address = {
     full_name: document.getElementById("full_name").value,
     phone: document.getElementById("phone").value,
@@ -180,10 +169,6 @@ document.getElementById("addressForm")
 
     let res = await apiRequest(`${API}/orders/create`, {
       method:"POST",
-      headers:{
-        "Content-Type":"application/json",
-        "Authorization":"Bearer " + token
-      },
       body: JSON.stringify({
         items,
         totalAmount,
@@ -200,8 +185,6 @@ document.getElementById("addressForm")
 
     const orderId = data.orderId;
 
-    console.log("📦 ORDER ID:", orderId);
-
     /* ================= PAYMENT METHOD ================= */
 
     let selected = document.querySelector('input[name="paymentMethod"]:checked');
@@ -213,19 +196,13 @@ document.getElementById("addressForm")
 
     let method = selected.value.toLowerCase();
 
-    console.log("💳 PAYMENT METHOD:", method);
-
     /* ================= CREATE PAYMENT ================= */
 
     let payRes = await apiRequest(`${API}/payments/create`,{
       method:"POST",
-      headers:{
-        "Content-Type":"application/json",
-        "Authorization":"Bearer " + token
-      },
       body: JSON.stringify({
         orderId,
-        amount: totalAmount, // MUST match backend
+        amount: totalAmount,
         method
       })
     });
@@ -237,12 +214,10 @@ document.getElementById("addressForm")
       return;
     }
 
-    console.log("💰 PAYMENT DATA:", paymentData);
-
     /* ================= HANDLE PAYMENT ================= */
 
     if(paymentData.gateway === "razorpay"){
-      openRazorpay(paymentData.order, orderId, token);
+      openRazorpay(paymentData.order, orderId);
     }
     else if(paymentData.gateway === "paytm"){
       window.location = paymentData.paymentUrl;
