@@ -79,12 +79,8 @@ function openRazorpay(order, orderId, token){
 
   try{
 
-    let verifyRes = await fetch(`${API}/payments/verify`,{
+    let verifyRes = await apiRequest(`${API}/payments/verify`,{
       method:"POST",
-      headers:{
-        "Content-Type":"application/json",
-        "Authorization":"Bearer " + token
-      },
       body: JSON.stringify({
         orderId: orderId,
         razorpay_order_id: response.razorpay_order_id,
@@ -182,7 +178,7 @@ document.getElementById("addressForm")
 
     /* ================= CREATE ORDER ================= */
 
-    let res = await fetch(`${API}/orders/create`, {
+    let res = await apiRequest(`${API}/orders/create`, {
       method:"POST",
       headers:{
         "Content-Type":"application/json",
@@ -221,7 +217,7 @@ document.getElementById("addressForm")
 
     /* ================= CREATE PAYMENT ================= */
 
-    let payRes = await fetch(`${API}/payments/create`,{
+    let payRes = await apiRequest(`${API}/payments/create`,{
       method:"POST",
       headers:{
         "Content-Type":"application/json",
