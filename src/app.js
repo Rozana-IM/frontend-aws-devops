@@ -265,3 +265,31 @@ async function apiRequest(url, options = {}) {
 
   return res;
 }
+
+
+window.addEventListener("load", async () => {
+
+  const token = localStorage.getItem("token");
+  const refreshToken = localStorage.getItem("refreshToken");
+
+  if (!token && refreshToken) {
+
+    console.log("🔁 Silent login...");
+
+    const res = await fetch(
+      "https://api.rozana-projects.online/users/refresh-token",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ refreshToken })
+      }
+    );
+
+    const data = await res.json();
+
+    if (data.token) {
+      localStorage.setItem("token", data.token);
+    }
+  }
+
+});
