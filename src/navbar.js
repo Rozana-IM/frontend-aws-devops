@@ -73,15 +73,19 @@ function initNavbar() {
     if(contactLink) contactLink.style.display = "none";
   }
 
-  /* ===== BACK BUTTON ===== */
+  /* ===== BACK BUTTON (SMART) ===== */
 
   if(backBtn){
     backBtn.onclick = () => {
-      if(window.history.length > 1){
+
+      const referrer = document.referrer;
+
+      if(referrer && referrer.includes(window.location.origin)){
         window.history.back();
       } else {
         window.location = "index.html";
       }
+
     };
   }
 
@@ -93,10 +97,10 @@ function initNavbar() {
 
     const dropdown = profileMenu.querySelector(".profile-dropdown");
 
-    profileMenu.addEventListener("click", function(e){
+    profileMenu.onclick = function(e){
       e.stopPropagation();
       dropdown.classList.toggle("open");
-    });
+    };
 
     document.addEventListener("click", function(e){
       if(!profileMenu.contains(e.target)){
@@ -107,7 +111,13 @@ function initNavbar() {
 
   /* ===== USER STATE ===== */
 
-  const user = JSON.parse(localStorage.getItem("user"));
+  let user = null;
+
+  try {
+    user = JSON.parse(localStorage.getItem("user"));
+  } catch (e) {
+    user = null;
+  }
 
   const welcome = document.getElementById("welcomeText");
   const loginBtn = document.getElementById("loginBtn");
@@ -135,7 +145,7 @@ function initNavbar() {
 
       localStorage.removeItem("user");
       localStorage.removeItem("token");
-      localStorage.removeItem("refreshToken"); // 🔥 FIXED
+      localStorage.removeItem("refreshToken");
 
       alert("Logged out successfully");
 
@@ -143,7 +153,7 @@ function initNavbar() {
     };
   }
 
-  /* ===== NAVBAR SCROLL (SAFE) ===== */
+  /* ===== NAVBAR SCROLL ===== */
 
   const nav = document.querySelector(".top-nav");
 
@@ -157,12 +167,12 @@ function initNavbar() {
       }
     });
 
-    window.navScrollAdded = true; // 🔥 prevent duplicate listeners
+    window.navScrollAdded = true;
   }
 
   /* ===== CART COUNT ===== */
 
-  updateCartCount();
+  updateCartCount(); // 🔥 important fix
 }
 
 
@@ -175,7 +185,7 @@ function goPage(page){
     wishlist: "wishlist.html",
     orders: "orders.html",
     products: "products.html",
-    contact: "contactus.html"
+    contact: "contact.html" // 🔥 FIXED
   };
 
   if(routes[page]){
@@ -207,7 +217,7 @@ function updateCartCount(){
 }
 
 
-/* ================= AUTO SYNC CART ================= */
+/* ================= AUTO SYNC ================= */
 
 window.addEventListener("storage", function(e){
   if(e.key === "cart"){
@@ -215,8 +225,6 @@ window.addEventListener("storage", function(e){
   }
 });
 
-
-/* ================= PAGE LOAD ================= */
 
 document.addEventListener("DOMContentLoaded", function(){
   updateCartCount();
