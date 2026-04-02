@@ -47,6 +47,39 @@ drawer.classList.remove("open");
 
 
 /* ================= INITIALIZE NAVBAR ================= */
+function initNavbar() {
+
+  const path = window.location.pathname;
+  const currentPage = path.split("/").pop();
+
+  const backBtn = document.getElementById("navBack");
+  const contactLink = document.getElementById("contactLink");
+
+  // Pages where Contact Us should be visible
+  const showContactPages = ["index.html", "products.html"];
+
+  if (showContactPages.includes(currentPage)) {
+    if(backBtn) backBtn.style.display = "none";
+    if(contactLink) contactLink.style.display = "inline";
+  } else {
+    if(backBtn) backBtn.style.display = "inline";
+    if(contactLink) contactLink.style.display = "none";
+  }
+
+  // 🔥 BACK BUTTON FUNCTION (VERY IMPORTANT)
+  if(backBtn){
+    backBtn.onclick = () => {
+      if (window.history.length > 1) {
+        window.history.back();
+      } else {
+        window.location = "index.html";
+      }
+    };
+  }
+
+}
+
+/* ================= INITIALIZE NAVBAR ================= */
 
 function initNavbar(){
 
