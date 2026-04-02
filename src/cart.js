@@ -9,6 +9,8 @@ let cart = JSON.parse(localStorage.getItem("cart")) || [];
 let container = document.getElementById("cartItems");
 let totalBox = document.getElementById("cartTotal");
 
+if(!container) return;
+
 container.innerHTML = "";
 
 if(cart.length === 0){
@@ -130,6 +132,8 @@ function removeItem(index){
 
 let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
+if(!cart[index]) return;
+
 cart.splice(index,1);
 
 localStorage.setItem("cart", JSON.stringify(cart));
@@ -147,6 +151,7 @@ function clearCart(){
 
 localStorage.removeItem("cart");
 
+updateCartCount();
 loadCart();
 
 }
