@@ -49,13 +49,14 @@ drawer.classList.remove("open");
 /* ================= INITIALIZE NAVBAR ================= */
 function initNavbar() {
 
+  /* ================= PAGE DETECTION ================= */
+
   const path = window.location.pathname;
   const currentPage = path.split("/").pop();
 
   const backBtn = document.getElementById("navBack");
   const contactLink = document.getElementById("contactLink");
 
-  // Pages where Contact Us should be visible
   const showContactPages = ["index.html", "products.html"];
 
   if (showContactPages.includes(currentPage)) {
@@ -66,7 +67,8 @@ function initNavbar() {
     if(contactLink) contactLink.style.display = "none";
   }
 
-  // 🔥 BACK BUTTON FUNCTION (VERY IMPORTANT)
+  /* ================= BACK BUTTON ================= */
+
   if(backBtn){
     backBtn.onclick = () => {
       if (window.history.length > 1) {
@@ -77,114 +79,85 @@ function initNavbar() {
     };
   }
 
+  /* ================= PROFILE DROPDOWN ================= */
+
+  const profileMenu = document.getElementById("profileMenu");
+
+  if(profileMenu){
+
+    const dropdown = profileMenu.querySelector(".profile-dropdown");
+
+    profileMenu.addEventListener("click", function(e){
+      e.stopPropagation();
+      dropdown.classList.toggle("open");
+    });
+
+    document.addEventListener("click", function(e){
+      if(!profileMenu.contains(e.target)){
+        dropdown.classList.remove("open");
+      }
+    });
+  }
+
+  /* ================= USER LOGIN STATE ================= */
+
+  const user = JSON.parse(localStorage.getItem("user"));
+
+  const welcome = document.getElementById("welcomeText");
+  const loginBtn = document.getElementById("loginBtn");
+  const subText = document.getElementById("loginText");
+  const logoutBtn = document.getElementById("logoutBtn");
+
+  if(user){
+
+    if(welcome){
+      welcome.innerText = `Hello, ${user.name} 👋`;
+    }
+
+    if(subText){
+      subText.innerText = "Explore the LUCCI collections";
+    }
+
+    if(loginBtn){
+      loginBtn.style.display = "none";
+    }
+
+    if(logoutBtn){
+      logoutBtn.style.display = "block";
+    }
+  }
+
+  /* ================= LOGOUT ================= */
+
+  if(logoutBtn){
+    logoutBtn.addEventListener("click", function(e){
+      e.preventDefault();
+      localStorage.removeItem("user");
+      localStorage.removeItem("token");
+
+      alert("Logged out successfully");
+      window.location = "index.html";
+    });
+  }
+
+  /* ================= NAVBAR SCROLL ================= */
+
+  const nav = document.querySelector(".top-nav");
+
+  window.addEventListener("scroll", () => {
+    if(!nav) return;
+
+    if(window.scrollY > 50){
+      nav.classList.add("nav-scroll");
+    } else {
+      nav.classList.remove("nav-scroll");
+    }
+  });
+
+  /* ================= CART COUNT ================= */
+
+  updateCartCount();
 }
-
-/* ================= INITIALIZE NAVBAR ================= */
-
-function initNavbar(){
-
-const profileMenu = document.getElementById("profileMenu");
-
-if(!profileMenu) return;
-
-const dropdown = profileMenu.querySelector(".profile-dropdown");
-
-
-/* PROFILE DROPDOWN */
-
-profileMenu.addEventListener("click", function(e){
-
-e.stopPropagation();
-
-dropdown.classList.toggle("open");
-
-});
-
-
-document.addEventListener("click", function(e){
-
-if(!profileMenu.contains(e.target)){
-dropdown.classList.remove("open");
-}
-
-});
-
-
-/* ================= USER LOGIN STATE ================= */
-
-const user = JSON.parse(localStorage.getItem("user"));
-
-const welcome = document.getElementById("welcomeText");
-const loginBtn = document.getElementById("loginBtn");
-const subText = document.getElementById("loginText");
-const logoutBtn = document.getElementById("logoutBtn");
-
-if(user){
-
-if(welcome){
-welcome.innerText = `Hello, ${user.name} 👋`;
-}
-
-if(subText){
-subText.innerText = "Explore the LUCCI collections";
-}
-
-if(loginBtn){
-loginBtn.style.display = "none";
-}
-
-if(logoutBtn){
-logoutBtn.style.display = "block";
-}
-
-}
-
-
-/* ================= LOGOUT ================= */
-
-if(logoutBtn){
-
-logoutBtn.addEventListener("click", function(e){
-
-e.preventDefault();
-
-localStorage.removeItem("user");
-localStorage.removeItem("token");
-
-alert("Logged out successfully");
-
-window.location = "index.html";
-
-});
-
-}
-
-
-/* ================= NAVBAR SCROLL SHADOW ================= */
-
-const nav = document.querySelector(".top-nav");
-
-window.addEventListener("scroll", () => {
-
-if(!nav) return;
-
-if(window.scrollY > 50){
-nav.classList.add("nav-scroll");
-}
-else{
-nav.classList.remove("nav-scroll");
-}
-
-});
-
-
-/* ================= CART COUNT ================= */
-
-updateCartCount();
-
-}
-
-
 /* ================= PAGE NAVIGATION ================= */
 
 function goPage(page){
