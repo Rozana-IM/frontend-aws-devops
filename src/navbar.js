@@ -50,20 +50,22 @@ function closeCart(){
 
 function initNavbar() {
 
-  /* ================= PAGE DETECTION ================= */
+  /* ===== PAGE DETECTION ===== */
 
   let currentPage = window.location.pathname.split("/").pop();
 
-  if(currentPage === ""){
+  if(!currentPage){
     currentPage = "index.html";
   }
+
+  const showContactPages = ["index.html", "products.html"];
 
   const backBtn = document.getElementById("navBack");
   const contactLink = document.getElementById("contactLink");
 
-  const showContactPages = ["index.html", "products.html"];
+  /* ===== SHOW/HIDE BACK + CONTACT ===== */
 
-  if (showContactPages.includes(currentPage)) {
+  if(showContactPages.includes(currentPage)){
     if(backBtn) backBtn.style.display = "none";
     if(contactLink) contactLink.style.display = "inline";
   } else {
@@ -71,21 +73,11 @@ function initNavbar() {
     if(contactLink) contactLink.style.display = "none";
   }
 
-  /* ================= DROPDOWN CONTACT ================= */
-
-  const dropdownContact = document.querySelector('[onclick="goPage(\'contact\')"]');
-
-  if (showContactPages.includes(currentPage)) {
-    if(dropdownContact) dropdownContact.style.display = "block";
-  } else {
-    if(dropdownContact) dropdownContact.style.display = "none";
-  }
-
-  /* ================= BACK BUTTON ================= */
+  /* ===== BACK BUTTON ===== */
 
   if(backBtn){
     backBtn.onclick = () => {
-      if (window.history.length > 1) {
+      if(window.history.length > 1){
         window.history.back();
       } else {
         window.location = "index.html";
@@ -93,7 +85,7 @@ function initNavbar() {
     };
   }
 
-  /* ================= PROFILE DROPDOWN ================= */
+  /* ===== PROFILE DROPDOWN ===== */
 
   const profileMenu = document.getElementById("profileMenu");
 
@@ -113,7 +105,7 @@ function initNavbar() {
     });
   }
 
-  /* ================= USER LOGIN STATE ================= */
+  /* ===== USER STATE ===== */
 
   const user = JSON.parse(localStorage.getItem("user"));
 
@@ -124,51 +116,51 @@ function initNavbar() {
 
   if(user){
 
-    if(welcome){
-      welcome.innerText = `Hello, ${user.name} 👋`;
-    }
+    if(welcome) welcome.innerText = `Hello, ${user.name} 👋`;
+    if(subText) subText.innerText = "Explore the LUCCI collections";
+    if(loginBtn) loginBtn.style.display = "none";
+    if(logoutBtn) logoutBtn.style.display = "block";
 
-    if(subText){
-      subText.innerText = "Explore the LUCCI collections";
-    }
+  } else {
 
-    if(loginBtn){
-      loginBtn.style.display = "none";
-    }
-
-    if(logoutBtn){
-      logoutBtn.style.display = "block";
-    }
+    if(loginBtn) loginBtn.style.display = "block";
+    if(logoutBtn) logoutBtn.style.display = "none";
   }
 
-  /* ================= LOGOUT ================= */
+  /* ===== LOGOUT ===== */
 
   if(logoutBtn){
-    logoutBtn.addEventListener("click", function(e){
+    logoutBtn.onclick = function(e){
       e.preventDefault();
+
       localStorage.removeItem("user");
       localStorage.removeItem("token");
+      localStorage.removeItem("refreshToken"); // 🔥 FIXED
 
       alert("Logged out successfully");
+
       window.location = "index.html";
-    });
+    };
   }
 
-  /* ================= NAVBAR SCROLL ================= */
+  /* ===== NAVBAR SCROLL (SAFE) ===== */
 
   const nav = document.querySelector(".top-nav");
 
-  window.addEventListener("scroll", () => {
-    if(!nav) return;
+  if(nav && !window.navScrollAdded){
 
-    if(window.scrollY > 50){
-      nav.classList.add("nav-scroll");
-    } else {
-      nav.classList.remove("nav-scroll");
-    }
-  });
+    window.addEventListener("scroll", () => {
+      if(window.scrollY > 50){
+        nav.classList.add("nav-scroll");
+      } else {
+        nav.classList.remove("nav-scroll");
+      }
+    });
 
-  /* ================= CART COUNT ================= */
+    window.navScrollAdded = true; // 🔥 prevent duplicate listeners
+  }
+
+  /* ===== CART COUNT ===== */
 
   updateCartCount();
 }
@@ -178,26 +170,17 @@ function initNavbar() {
 
 function goPage(page){
 
-  if(page === "cart"){
-    window.location = "cart.html";
-  }
+  const routes = {
+    cart: "cart.html",
+    wishlist: "wishlist.html",
+    orders: "orders.html",
+    products: "products.html",
+    contact: "contactus.html"
+  };
 
-  if(page === "wishlist"){
-    window.location = "wishlist.html";
+  if(routes[page]){
+    window.location = routes[page];
   }
-
-  if(page === "orders"){
-    window.location = "orders.html";
-  }
-
-  if(page === "products"){
-    window.location = "products.html";
-  }
-
-  if(page === "contact"){
-    window.location = "contactus.html";
-  }
-
 }
 
 
@@ -207,11 +190,9 @@ function updateCartCount(){
 
   let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
-  let count = 0;
-
-  cart.forEach(item => {
-    count += Number(item.quantity || 1);
-  });
+  let count = cart.reduce((sum, item) => {
+    return sum + Number(item.quantity || 1);
+  }, 0);
 
   let badge = document.getElementById("cartCount");
 
@@ -223,7 +204,6 @@ function updateCartCount(){
   } else {
     badge.style.display = "none";
   }
-
 }
 
 
@@ -236,14 +216,14 @@ window.addEventListener("storage", function(e){
 });
 
 
-/* ================= PAGE LOAD SYNC ================= */
+/* ================= PAGE LOAD ================= */
 
 document.addEventListener("DOMContentLoaded", function(){
   updateCartCount();
 });
 
 
-/* ================= LOAD CART DRAWER ================= */
+/* ================= CART DRAWER ================= */
 
 function loadCartDrawer(){
 
@@ -281,18 +261,14 @@ function loadCartDrawer(){
   if(totalBox){
     totalBox.innerText = "Total: ₹" + total;
   }
-
 }
 
 
-/* ================= GO TO CART ================= */
+/* ================= NAVIGATION ================= */
 
 function goToCart(){
   window.location = "cart.html";
 }
-
-
-/* ================= GO TO CHECKOUT ================= */
 
 function goCheckout(){
 
