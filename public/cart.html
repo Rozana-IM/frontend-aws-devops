@@ -29,5 +29,17 @@ Checkout
 
 <script src="/src/navbar.js"></script>
 <script src="/src/cart.js"></script>
+<script>
+  fetch("components/navbar.html")
+.then(res => res.text())
+.then(data => {
+  document.getElementById("navbar").innerHTML = data;
+
+  if(typeof initNavbar === "function"){
+    initNavbar();
+  }
+});
+</script>
+  
 </body>
 </html>
