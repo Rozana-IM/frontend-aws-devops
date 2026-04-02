@@ -33,6 +33,9 @@ background:var(--bg);
 color:var(--text);
 font-family:Arial, sans-serif;
 }
+  <div class="login-back" onclick="goBack()">
+  ← Back
+</div>
 
 .auth-box{
 width:380px;
@@ -284,6 +287,14 @@ btn.innerText="LOGIN";
 
 }
 
+}
+/* NAVBAR BACK BUTTON  */
+  function goBack(){
+  if (window.history.length > 1) {
+    window.history.back();
+  } else {
+    window.location = "index.html";
+  }
 }
 
 </script>
