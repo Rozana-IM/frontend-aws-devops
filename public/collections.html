@@ -26,6 +26,8 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
 
 </section>
 
+<!-- ✅ IMPORTANT: ADD THIS (apiRequest comes from here) -->
+<script src="src/app.js"></script>
 
 <script src="src/navbar.js"></script>
 
@@ -65,7 +67,7 @@ category.toUpperCase() + " COLLECTION";
 
 /* FETCH PRODUCTS */
 
-fetch(`${API}/products/category/${category}`)
+apiRequest(`${API}/products/category/${category}`)
 .then(res => res.json())
 .then(data => renderProducts(data))
 .catch(err => console.error(err));
@@ -128,9 +130,7 @@ ${heart}
 /* VIEW PRODUCT */
 
 function viewProduct(id){
-
 window.location = `product-details.html?id=${id}`;
-
 }
 
 
@@ -143,17 +143,11 @@ let list = JSON.parse(localStorage.getItem("wishlist")) || [];
 let index = list.indexOf(id);
 
 if(index === -1){
-
 list.push(id);
-
 btn.innerHTML = '<i class="fa-solid fa-heart"></i>';
-
 }else{
-
 list.splice(index,1);
-
 btn.innerHTML = '<i class="fa-regular fa-heart"></i>';
-
 }
 
 localStorage.setItem("wishlist",JSON.stringify(list));
@@ -163,5 +157,4 @@ localStorage.setItem("wishlist",JSON.stringify(list));
 </script>
 
 </body>
-
 </html>
