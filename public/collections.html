@@ -68,13 +68,12 @@ category.toUpperCase() + " COLLECTION";
 /* FETCH PRODUCTS */
 
 apiRequest(`${API}/products/category/${category}`)
-.then(res => res.json())
-.then(data => renderProducts(data))
+.then(data => {
+  if (!data) return;
+  renderProducts(data);
+})
 .catch(err => console.error(err));
-
-}
-
-
+  
 /* RENDER PRODUCTS */
 
 function renderProducts(products){
