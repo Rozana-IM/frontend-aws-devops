@@ -36,7 +36,6 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
 const API = "https://api.rozana-projects.online";
 
 /* LOAD NAVBAR */
-
 fetch("components/navbar.html")
 .then(res => res.text())
 .then(data => {
@@ -47,110 +46,92 @@ fetch("components/navbar.html")
   }
 });
 
-
 /* GET CATEGORY */
-
 const params = new URLSearchParams(window.location.search);
 const category = params.get("cat");
 
-
 /* PAGE TITLE */
+const titleEl = document.getElementById("title");
 
 if(!category){
+  titleEl.innerText = "Collection";
+} else {
 
-document.getElementById("title").innerText = "Collection";
+  titleEl.innerText = category.toUpperCase() + " COLLECTION";
 
-}else{
+  /* FETCH PRODUCTS */
+  apiRequest(`${API}/products/category/${category}`)
+    .then(res => res.json())   // ✅ FIX HERE
+    .then(data => {
+      renderProducts(data);
+    })
+    .catch(err => console.error(err));
+}
 
-document.getElementById("title").innerText =
-category.toUpperCase() + " COLLECTION";
-
-/* FETCH PRODUCTS */
-
-apiRequest(`${API}/products/category/${category}`)
-.then(data => {
-  if (!data) return;
-  renderProducts(data);
-})
-.catch(err => console.error(err));
-  
 /* RENDER PRODUCTS */
-
 function renderProducts(products){
 
-const container = document.getElementById("products");
+  const container = document.getElementById("products");
+  container.innerHTML = "";
 
-container.innerHTML = "";
+  if(!products || products.length === 0){
+    container.innerHTML = "<p>No products found</p>";
+    return;
+  }
 
-products.forEach(p => {
+  products.forEach(p => {
 
-let wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
+    let wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
 
-let heart = wishlist.includes(p.id)
-? '<i class="fa-solid fa-heart"></i>'
-: '<i class="fa-regular fa-heart"></i>';
+    let heart = wishlist.includes(p.id)
+      ? '<i class="fa-solid fa-heart"></i>'
+      : '<i class="fa-regular fa-heart"></i>';
 
-container.innerHTML += `
+    container.innerHTML += `
+      <div class="product-card">
 
-<div class="product-card">
+        <img src="${p.image_url}" class="product-img">
 
-<img src="${p.image_url}" class="product-img">
+        <div class="product-info">
+          <h3>${p.name}</h3>
+          <p class="price">₹${p.price}</p>
 
-<div class="product-info">
+          <div class="product-actions">
+            <button onclick="viewProduct(${p.id})">View</button>
 
-<h3>${p.name}</h3>
+            <button class="wishlist-btn"
+              onclick="toggleWishlist(${p.id},this)">
+              ${heart}
+            </button>
+          </div>
+        </div>
 
-<p class="price">₹${p.price}</p>
-
-<div class="product-actions">
-
-<button onclick="viewProduct(${p.id})">
-View
-</button>
-
-<button class="wishlist-btn"
-onclick="toggleWishlist(${p.id},this)">
-${heart}
-</button>
-
-</div>
-
-</div>
-
-</div>
-
-`;
-
-});
-
+      </div>
+    `;
+  });
 }
-
 
 /* VIEW PRODUCT */
-
 function viewProduct(id){
-window.location = `product-details.html?id=${id}`;
+  window.location = `product-details.html?id=${id}`;
 }
-
 
 /* WISHLIST TOGGLE */
-
 function toggleWishlist(id,btn){
 
-let list = JSON.parse(localStorage.getItem("wishlist")) || [];
+  let list = JSON.parse(localStorage.getItem("wishlist")) || [];
 
-let index = list.indexOf(id);
+  let index = list.indexOf(id);
 
-if(index === -1){
-list.push(id);
-btn.innerHTML = '<i class="fa-solid fa-heart"></i>';
-}else{
-list.splice(index,1);
-btn.innerHTML = '<i class="fa-regular fa-heart"></i>';
-}
+  if(index === -1){
+    list.push(id);
+    btn.innerHTML = '<i class="fa-solid fa-heart"></i>';
+  } else {
+    list.splice(index,1);
+    btn.innerHTML = '<i class="fa-regular fa-heart"></i>';
+  }
 
-localStorage.setItem("wishlist",JSON.stringify(list));
-
+  localStorage.setItem("wishlist", JSON.stringify(list));
 }
 
 </script>
