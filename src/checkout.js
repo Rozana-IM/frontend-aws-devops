@@ -75,7 +75,8 @@ function openRazorpay(order, orderId){
 
       try{
 
-        let verifyRes = await apiRequest(`${API}/payments/verify`,{
+        // ✅ VERIFY PAYMENT (apiRequest already returns JSON)
+        let verifyData = await apiRequest(`${API}/payments/verify`,{
           method:"POST",
           body: JSON.stringify({
             orderId: orderId,
@@ -85,14 +86,12 @@ function openRazorpay(order, orderId){
           })
         });
 
-        let verifyData = await verifyRes.json();
-
-        if(verifyRes.ok){
+        if(verifyData && verifyData.success){
 
           // ✅ CLEAR CART
           localStorage.removeItem("cart");
 
-          // ✅ UPDATE NAVBAR COUNT
+          // ✅ UPDATE NAVBAR COUNT (if exists)
           if(typeof updateCartCount === "function"){
             updateCartCount();
           }
@@ -101,7 +100,7 @@ function openRazorpay(order, orderId){
           window.location = "order-success.html?id=" + orderId;
 
         } else {
-          alert(verifyData.error || "Payment verification failed");
+          alert(verifyData?.error || "Payment verification failed");
         }
 
       }catch(err){
@@ -167,7 +166,7 @@ document.getElementById("addressForm")
 
     /* ================= CREATE ORDER ================= */
 
-    let res = await apiRequest(`${API}/orders/create`, {
+    let data = await apiRequest(`${API}/orders/create`, {
       method:"POST",
       body: JSON.stringify({
         items,
@@ -176,10 +175,8 @@ document.getElementById("addressForm")
       })
     });
 
-    let data = await res.json();
-
-    if(!res.ok){
-      alert(data.error || "Order failed");
+    if(!data || data.error){
+      alert(data?.error || "Order failed");
       return;
     }
 
@@ -198,7 +195,7 @@ document.getElementById("addressForm")
 
     /* ================= CREATE PAYMENT ================= */
 
-    let payRes = await apiRequest(`${API}/payments/create`,{
+    let paymentData = await apiRequest(`${API}/payments/create`,{
       method:"POST",
       body: JSON.stringify({
         orderId,
@@ -207,10 +204,8 @@ document.getElementById("addressForm")
       })
     });
 
-    let paymentData = await payRes.json();
-
-    if(!payRes.ok){
-      alert(paymentData.error || "Payment failed");
+    if(!paymentData || paymentData.error){
+      alert(paymentData?.error || "Payment failed");
       return;
     }
 
