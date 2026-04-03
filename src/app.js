@@ -149,8 +149,10 @@ async function apiRequest(url, options = {}) {
 
     options.headers = {
       "Content-Type": "application/json",
-      ...(getToken() && { Authorization: `Bearer ${getToken()}` }),
-      ...(options.headers || {})
+...(getToken() && !url.includes("/products") && {
+  Authorization: `Bearer ${getToken()}`
+}),
+       ...(options.headers || {})
     };
 
     let res = await fetch(url, options);
