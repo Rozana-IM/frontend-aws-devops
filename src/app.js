@@ -163,60 +163,57 @@ async function apiRequest(url, options = {}) {
 
     if (res.status === 401 && getRefreshToken()) {
 
-      if (!isRefreshing) {
+  if (!isRefreshing) {
 
-        isRefreshing = true;
+    isRefreshing = true;
 
-        refreshPromise = fetch(`${API_BASE_URL}/users/auth/refresh`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            refreshToken: getRefreshToken()
-          })
-        })
-        .then(async (r) => {
-          if (!r.ok) {
-            logout();
-            return null;
-          }
-          return r.json();
-        })
-        .then(data => {
-  if (data?.token) {
+    refreshPromise = fetch(`${API_BASE_URL}/users/auth/refresh`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        refreshToken: getRefreshToken()
+      })
+    })
+    .then(async (r) => {
+      if (!r.ok) {
+        logout();
+        return null;
+      }
+      return r.json();
+    })
+    .then(data => {
+      if (data?.token) {
+        localStorage.setItem("token", data.token);
+        window.currentToken = data.token;
+        console.log("🔄 Token refreshed");
+        return data.token;
+      } else {
+        logout();
+        return null;
+      }
+    })
+    .finally(() => {
+      isRefreshing = false;
+    });
+  }
 
-    // ✅ STORE TOKEN (PERSIST)
-    localStorage.setItem("token", data.token);
+  const newToken = await refreshPromise;
 
-    // ✅ STORE TOKEN (IN MEMORY - INSTANT USE)
-    window.currentToken = data.token;
-
-    console.log("🔄 Token refreshed");
-
-    return data.token;
-
-  } else {
+  if (!newToken) {
     logout();
     return null;
   }
-})
-        .finally(() => {
-          isRefreshing = false;
-        });
-      }
 
-      const newToken = await refreshPromise;
+  // 🔁 SINGLE retry
+  options.headers.Authorization = `Bearer ${newToken}`;
+res = await fetch(url, options);
 
-      if (!newToken) {
-  console.log("❌ Refresh failed");
+// ✅ ADD THIS
+if (res.status === 401) {
+  console.log("❌ Retry failed → logout");
   logout();
   return null;
-}
-
-      // 🔁 Retry original request
-      options.headers.Authorization = `Bearer ${newToken}`;
-      res = await fetch(url, options);
-    }
-
+}}
     /* ================= FINAL RESPONSE CHECK ================= */
 
     if (!res.ok) {
@@ -237,15 +234,19 @@ async function apiRequest(url, options = {}) {
   return null;
 }
 
-    return await res.json();
+    try {
+  return await res.json();
+} catch {
+  return null;
+}
 
   } catch (err) {
-    console.error("FETCH ERROR:", err);
-    return null;
+  console.error("FETCH ERROR:", err);
+  return null;
 
-  } finally {
-    hideLoader();
-  }
+} finally {
+  if (!options.skipLoader) hideLoader();
+}
 }
 /* =====================================================
    SILENT LOGIN (AUTO LOGIN ON PAGE LOAD)
