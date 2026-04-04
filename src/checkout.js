@@ -78,6 +78,16 @@ RAZORPAY POPUP
 
 function openRazorpay(order, orderId){
 
+  // 🔥 SAFETY CHECK (ADD HERE)
+  if (!order || !order.id) {
+    alert("Invalid Razorpay order");
+    console.error("❌ Invalid order object:", order);
+    return;
+  }
+
+  // 🔥 DEBUG LOG (ADD HERE)
+  console.log("💳 Opening Razorpay with:", order);
+
   const options = {
     key: "rzp_test_SPry8xdmipoUN8",
     amount: order.amount,
