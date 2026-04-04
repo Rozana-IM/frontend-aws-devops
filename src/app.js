@@ -14,7 +14,7 @@ function getUser() {
 }
 
 function getToken() {
-  return localStorage.getItem("token");
+  return window.currentToken || localStorage.getItem("token");
 }
 
 function getRefreshToken() {
@@ -140,13 +140,12 @@ function hideLoader() {
 /* =====================================================
    API REQUEST (AUTO TOKEN HANDLING)
 ===================================================== */
-
 let isRefreshing = false;
 let refreshPromise = null;
 
 async function apiRequest(url, options = {}) {
 
-  showLoader();
+  if (!options.skipLoader) showLoader();
 
   try {
 
@@ -159,10 +158,11 @@ async function apiRequest(url, options = {}) {
     };
 
     let res = await fetch(url, options);
+    
+    /* ================= TOKEN EXPIRED ================= */
 
     if (res.status === 401 && getRefreshToken()) {
 
-      // 🔐 Prevent multiple refresh calls
       if (!isRefreshing) {
 
         isRefreshing = true;
@@ -175,28 +175,30 @@ async function apiRequest(url, options = {}) {
           })
         })
         .then(async (r) => {
-  if (!r.ok) {
-    console.log("❌ Refresh token expired");
-    logout();
-    return null;
-  }
+          if (!r.ok) {
+            logout();
+            return null;
+          }
+          return r.json();
+        })
+        .then(data => {
+  if (data?.token) {
 
-  try {
-    return await r.json();
-  } catch {
+    // ✅ STORE TOKEN (PERSIST)
+    localStorage.setItem("token", data.token);
+
+    // ✅ STORE TOKEN (IN MEMORY - INSTANT USE)
+    window.currentToken = data.token;
+
+    console.log("🔄 Token refreshed");
+
+    return data.token;
+
+  } else {
     logout();
     return null;
   }
 })
-        .then(data => {
-          if (data.token) {
-            localStorage.setItem("token", data.token);
-            return data.token;
-          } else {
-            logout();
-            return null;
-          }
-        })
         .finally(() => {
           isRefreshing = false;
         });
@@ -204,29 +206,36 @@ async function apiRequest(url, options = {}) {
 
       const newToken = await refreshPromise;
 
-      if (!newToken) return null;
-
-      // 🔁 retry original request
-      options.headers.Authorization = `Bearer ${newToken}`;
-      res = await fetch(url, options);
-
-if (!res.ok) {
-  console.log("❌ Retry failed");
+      if (!newToken) {
+  console.log("❌ Refresh failed");
   logout();
   return null;
 }
+
+      // 🔁 Retry original request
+      options.headers.Authorization = `Bearer ${newToken}`;
+      res = await fetch(url, options);
     }
+
+    /* ================= FINAL RESPONSE CHECK ================= */
 
     if (!res.ok) {
 
-      if (res.status === 401 || res.status === 403) {
-        logout();
-        return null;
-      }
+  if (res.status === 401) {
+    console.log("❌ Unauthorized → logout");
+    logout();
+    return null;
+  }
 
-      console.error("API ERROR:", res.status);
-      return null;
-    }
+  // ⚠️ DO NOT logout for 403
+  if (res.status === 403) {
+    console.warn("⚠️ Forbidden request");
+    return null;
+  }
+
+  console.error("API ERROR:", res.status);
+  return null;
+}
 
     return await res.json();
 
@@ -238,7 +247,6 @@ if (!res.ok) {
     hideLoader();
   }
 }
-
 /* =====================================================
    SILENT LOGIN (AUTO LOGIN ON PAGE LOAD)
 ===================================================== */
@@ -265,9 +273,14 @@ window.addEventListener("load", async () => {
       const data = await res.json();
 
       if (data.token) {
-        localStorage.setItem("token", data.token);
-        console.log("✅ Silent login success");
-      }
+
+  localStorage.setItem("token", data.token);
+
+  // ✅ ADD THIS
+  window.currentToken = data.token;
+
+  console.log("✅ Silent login success");
+}
 
     } catch (err) {
       console.error("Silent login failed");
