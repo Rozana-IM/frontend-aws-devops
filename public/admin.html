@@ -274,8 +274,10 @@ loadHealth();
 
 function renderTable(data, title){
 
-  if (!data || data.length === 0){
-    responseBox.innerHTML = "No data available";
+  const responseBox = document.getElementById("responseBox");
+
+  if (!data || !Array.isArray(data) || data.length === 0){
+    responseBox.innerHTML = "<p>No data available</p>";
     return;
   }
 
