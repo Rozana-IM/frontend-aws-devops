@@ -121,8 +121,11 @@ document.addEventListener("DOMContentLoaded", async () => {
       <p><b>Total:</b> ₹${order.total_amount}</p>
       <p><b>Status:</b> ${order.status || "Pending"}</p>
       <p><b>Payment:</b> ${order.payment_status || "Pending"}</p>
-      <p><b>Date:</b> ${new Date(order.created_at).toLocaleDateString()}</p>
-
+      <p><b>Date:</b> ${
+      order.created_at 
+      ? new Date(order.created_at).toLocaleDateString() 
+      : "N/A"
+      }</p>
       <button onclick="viewOrder(${order.id})">
         View Details
       </button>
