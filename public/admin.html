@@ -137,10 +137,8 @@ input,select{
 Admin responses appear here
 </div>
 
-<script src="../src/app.js"></script>
-
 <script>
-
+const responseBox = document.getElementById("responseBox");
 const API = "https://api.rozana-projects.online";
 
 /* ================= AUTH ================= */
@@ -161,6 +159,7 @@ if (!user || user.role !== "admin") {
 async function safeFetch(url, options = {}) {
   try {
     const token = localStorage.getItem("token");
+    console.log("🔐 TOKEN:", token);
 
     const res = await fetch(url, {
       method: options.method || "GET",
@@ -168,7 +167,7 @@ async function safeFetch(url, options = {}) {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${token}`
       },
-      body: options.body
+      ...(options.body ? { body: options.body } : {}) // ✅ FIX
     });
 
     if (res.status === 401) {
