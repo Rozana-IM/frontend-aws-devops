@@ -28,8 +28,43 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
 
 const API = "https://api.rozana-projects.online";
 
-/* ================= LOAD NAVBAR ================= */
+/* ================= ADD THIS HERE ================= */
+async function safeFetch(url, options = {}) {
+  try {
+    const token = localStorage.getItem("token");
 
+    const res = await fetch(url, {
+      method: options.method || "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      },
+      body: options.body
+    });
+
+    if (res.status === 401) {
+      alert("Session expired. Login again.");
+      localStorage.clear();
+      window.location = "profile.html";
+      return null;
+    }
+
+    if (!res.ok) {
+      console.error("❌ API error:", res.status);
+      return null;
+    }
+
+    return await res.json();
+
+  } catch (err) {
+    console.error("❌ Fetch error:", err);
+    return null;
+  }
+}
+/* ================= END ================= */
+
+
+/* ================= LOAD NAVBAR ================= */
 fetch("components/navbar.html")
 .then(res => res.text())
 .then(data => {
@@ -38,8 +73,6 @@ fetch("components/navbar.html")
     initNavbar();
   }
 });
-
-
 /* ================= REQUIRE LOGIN ================= */
 
 function requireLogin() {
@@ -69,7 +102,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   if (!requireLogin()) return;
 
   const orders = await fetchUserOrders();
-
+  console.log("📦 Orders:", orders);
   const container = document.getElementById("orders");
   container.innerHTML = "";
 
@@ -87,6 +120,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       <p><b>Order ID:</b> ${order.id}</p>
       <p><b>Total:</b> ₹${order.total_amount}</p>
       <p><b>Status:</b> ${order.status || "Pending"}</p>
+      <p><b>Payment:</b> ${order.payment_status || "Pending"}</p>
       <p><b>Date:</b> ${new Date(order.created_at).toLocaleDateString()}</p>
 
       <button onclick="viewOrder(${order.id})">
