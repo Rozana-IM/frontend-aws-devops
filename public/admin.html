@@ -156,17 +156,34 @@ if (!user || user.role !== "admin") {
 
 async function apiCall(url, options = {}) {
 
-  const token = localStorage.getItem("token");
+  let token = localStorage.getItem("token");
 
-  options.headers = {
-    ...options.headers,
-    "Content-Type": "application/json",
-    "Authorization": `Bearer ${token}`
-  };
+  const res = await fetch(url, {
+    method: options.method || "GET",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${token}`
+    },
+    body: options.body
+  });
 
-  const res = await fetch(url, options);
+  // 🔥 HANDLE UNAUTHORIZED
+  if (res.status === 401) {
+    alert("Session expired. Please login again.");
+    localStorage.clear();
+    window.location = "profile.html";
+    return null;
+  }
 
-  return res.json();
+  // 🔥 HANDLE NON-JSON RESPONSE
+  const text = await res.text();
+
+  try {
+    return JSON.parse(text);
+  } catch {
+    console.error("Invalid JSON:", text);
+    return null;
+  }
 }
 
 /* ================= USERS ================= */
