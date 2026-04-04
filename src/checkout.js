@@ -1,6 +1,38 @@
 const API = "https://api.rozana-projects.online";
 
 /* ===============================
+API REQUEST FUNCTION (ADD HERE)
+=============================== */
+
+async function apiRequest(url, options = {}) {
+
+  const token = localStorage.getItem("token");
+
+  const res = await fetch(url, {
+  ...options,
+  headers: {
+    "Content-Type": "application/json",
+    ...(options.headers || {}),
+    ...(token ? { "Authorization": `Bearer ${token}` } : {})
+  }
+});
+
+if (!res.ok) {
+  const text = await res.text();
+  console.error("❌ API ERROR:", res.status, text);
+  return { error: `API Error ${res.status}` };
+}
+
+const text = await res.text();
+
+  try {
+    return JSON.parse(text);
+  } catch {
+    console.error("❌ Invalid JSON:", text);
+    return { error: "Invalid response from server" };
+  }
+}
+/* ===============================
 LOAD CHECKOUT CART
 =============================== */
 
@@ -73,48 +105,42 @@ function openRazorpay(order, orderId){
 
     handler: async function(response){
 
-      try{
+  console.log("✅ Razorpay response:", response);
 
-        // ✅ VERIFY PAYMENT (apiRequest already returns JSON)
-        let verifyData = await apiRequest(`${API}/payments/verify`,{
-          method:"POST",
-          body: JSON.stringify({
-            orderId: orderId,
-            razorpay_order_id: response.razorpay_order_id,
-            razorpay_payment_id: response.razorpay_payment_id,
-            razorpay_signature: response.razorpay_signature
-          })
-        });
+  try{
 
-        if(verifyData && verifyData.success){
+    let verifyData = await apiRequest(`${API}/payments/verify`,{
+      method:"POST",
+      body: JSON.stringify({
+        orderId: orderId,
+        razorpay_order_id: response.razorpay_order_id,
+        razorpay_payment_id: response.razorpay_payment_id,
+        razorpay_signature: response.razorpay_signature
+      })
+    });
 
-          // ✅ CLEAR CART
-          localStorage.removeItem("cart");
+    console.log("✅ Verify API response:", verifyData);
 
-          // ✅ UPDATE NAVBAR COUNT (if exists)
-          if(typeof updateCartCount === "function"){
-            updateCartCount();
-          }
+    if(verifyData && verifyData.success){
 
-          // ✅ REDIRECT
-          window.location = "order-success.html?id=" + orderId;
+      localStorage.removeItem("cart");
 
-        } else {
-          alert(verifyData?.error || "Payment verification failed");
-        }
-
-      }catch(err){
-        console.error(err);
-        alert("Verification error");
+      if(typeof updateCartCount === "function"){
+        updateCartCount();
       }
-    },
 
-    modal: {
-      ondismiss: function(){
-        alert("Payment cancelled");
-      }
+      window.location = "order-success.html?id=" + orderId;
+
+    } else {
+      console.error("❌ Verify failed:", verifyData);
+      alert(verifyData?.error || "Payment verification failed");
     }
-  };
+
+  }catch(err){
+    console.error("❌ FRONTEND VERIFY ERROR:", err);
+    alert("Verification error");
+  }
+};
 
   const rzp = new Razorpay(options);
   rzp.open();
