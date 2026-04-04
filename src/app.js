@@ -141,6 +141,9 @@ function hideLoader() {
    API REQUEST (AUTO TOKEN HANDLING)
 ===================================================== */
 
+let isRefreshing = false;
+let refreshPromise = null;
+
 async function apiRequest(url, options = {}) {
 
   showLoader();
@@ -149,55 +152,78 @@ async function apiRequest(url, options = {}) {
 
     options.headers = {
       "Content-Type": "application/json",
-...(getToken() && !url.includes("/products") && {
-  Authorization: `Bearer ${getToken()}`
-}),
-       ...(options.headers || {})
+      ...(getToken() && {
+        Authorization: `Bearer ${getToken()}`
+      }),
+      ...(options.headers || {})
     };
 
     let res = await fetch(url, options);
 
-    // 🔁 TOKEN EXPIRED → REFRESH
     if (res.status === 401 && getRefreshToken()) {
 
-      console.log("🔁 Token expired, refreshing...");
+      // 🔐 Prevent multiple refresh calls
+      if (!isRefreshing) {
 
-      // ❗ IMPORTANT: use fetch here (NOT apiRequest)
-      const refreshRes = await fetch(
-        `${API_BASE_URL}/users/refresh-token`,
-        {
+        isRefreshing = true;
+
+        refreshPromise = fetch(`${API_BASE_URL}/users/auth/refresh`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             refreshToken: getRefreshToken()
           })
-        }
-      );
+        })
+        .then(async (r) => {
+  if (!r.ok) {
+    console.log("❌ Refresh token expired");
+    logout();
+    return null;
+  }
 
-      if (!refreshRes.ok) {
-        logout();
-        return null;
+  try {
+    return await r.json();
+  } catch {
+    logout();
+    return null;
+  }
+})
+        .then(data => {
+          if (data.token) {
+            localStorage.setItem("token", data.token);
+            return data.token;
+          } else {
+            logout();
+            return null;
+          }
+        })
+        .finally(() => {
+          isRefreshing = false;
+        });
       }
 
-      const data = await refreshRes.json();
+      const newToken = await refreshPromise;
 
-      if (data.token) {
+      if (!newToken) return null;
 
-        console.log("✅ New token received");
+      // 🔁 retry original request
+      options.headers.Authorization = `Bearer ${newToken}`;
+      res = await fetch(url, options);
 
-        localStorage.setItem("token", data.token);
-
-        // 🔁 RETRY ORIGINAL REQUEST
-        options.headers.Authorization = `Bearer ${data.token}`;
-        res = await fetch(url, options);
-
-      } else {
-        logout();
-        return null;
-      }
+if (!res.ok) {
+  console.log("❌ Retry failed");
+  logout();
+  return null;
+}
     }
 
     if (!res.ok) {
+
+      if (res.status === 401 || res.status === 403) {
+        logout();
+        return null;
+      }
+
       console.error("API ERROR:", res.status);
       return null;
     }
@@ -228,7 +254,7 @@ window.addEventListener("load", async () => {
 
     try {
       const res = await fetch(
-        `${API_BASE_URL}/users/refresh-token`,
+        `${API_BASE_URL}/users/auth/refresh`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
