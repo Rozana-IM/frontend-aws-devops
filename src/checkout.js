@@ -81,7 +81,6 @@ function openRazorpay(order, orderId){
 
   const options = {
     key: "rzp_test_SPry8xdmipoUN8",
-
     amount: order.amount,
     currency: "INR",
     order_id: order.id,
@@ -105,43 +104,40 @@ function openRazorpay(order, orderId){
 
     handler: async function(response){
 
-  console.log("✅ Razorpay response:", response);
+      console.log("✅ Razorpay response:", response);
 
-  try{
+      try{
 
-    let verifyData = await apiRequest(`${API}/payments/verify`,{
-      method:"POST",
-      body: JSON.stringify({
-        orderId: orderId,
-        razorpay_order_id: response.razorpay_order_id,
-        razorpay_payment_id: response.razorpay_payment_id,
-        razorpay_signature: response.razorpay_signature
-      })
-    });
+        let verifyData = await apiRequest(`${API}/payments/verify`,{
+          method:"POST",
+          body: JSON.stringify({
+            orderId: orderId,
+            razorpay_order_id: response.razorpay_order_id,
+            razorpay_payment_id: response.razorpay_payment_id,
+            razorpay_signature: response.razorpay_signature
+          })
+        });
 
-    console.log("✅ Verify API response:", verifyData);
+        if(verifyData && verifyData.success){
+          localStorage.removeItem("cart");
 
-    if(verifyData && verifyData.success){
+          if(typeof updateCartCount === "function"){
+            updateCartCount();
+          }
 
-      localStorage.removeItem("cart");
+          window.location = "order-success.html?id=" + orderId;
+        } else {
+          alert(verifyData?.error || "Payment verification failed");
+        }
 
-      if(typeof updateCartCount === "function"){
-        updateCartCount();
+      }catch(err){
+        console.error(err);
+        alert("Verification error");
       }
+    } // ✅ handler ends here
+  };
 
-      window.location = "order-success.html?id=" + orderId;
-
-    } else {
-      console.error("❌ Verify failed:", verifyData);
-      alert(verifyData?.error || "Payment verification failed");
-    }
-
-  }catch(err){
-    console.error("❌ FRONTEND VERIFY ERROR:", err);
-    alert("Verification error");
-  }
-};
-
+  // ✅ THIS MUST BE OUTSIDE handler
   const rzp = new Razorpay(options);
   rzp.open();
 }
