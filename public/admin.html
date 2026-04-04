@@ -210,9 +210,10 @@ async function updateOrder(){
   const res = await apiCall(`${API}/orders/update-status`, {
     method:"PUT",
     body: JSON.stringify({
-      orderId:id,
-      status:status
-    })
+  orderId:id,
+  status:status,
+  paymentId:null
+})
   });
 
   responseBox.innerHTML = "✅ Order Updated";
