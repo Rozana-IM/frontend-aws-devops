@@ -3,27 +3,25 @@ const API = "https://api.rozana-projects.online";
 /* ===============================
 API REQUEST FUNCTION (ADD HERE)
 =============================== */
-
-async function apiRequest(url, options = {}) {
+ async function apiRequest(url, options = {}) {
 
   const token = localStorage.getItem("token");
 
   const res = await fetch(url, {
-  ...options,
-  headers: {
-    "Content-Type": "application/json",
-    ...(options.headers || {}),
-    ...(token ? { "Authorization": `Bearer ${token}` } : {})
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...(options.headers || {}),
+      ...(token ? { "Authorization": `Bearer ${token}` } : {})
+    }
+  });
+
+  const text = await res.text(); // ✅ ONLY ONCE
+
+  if (!res.ok) {
+    console.error("❌ API ERROR:", res.status, text);
+    return { error: `API Error ${res.status}` };
   }
-});
-
-if (!res.ok) {
-  const text = await res.text();
-  console.error("❌ API ERROR:", res.status, text);
-  return { error: `API Error ${res.status}` };
-}
-
-const text = await res.text();
 
   try {
     return JSON.parse(text);
@@ -32,6 +30,7 @@ const text = await res.text();
     return { error: "Invalid response from server" };
   }
 }
+
 /* ===============================
 LOAD CHECKOUT CART
 =============================== */
