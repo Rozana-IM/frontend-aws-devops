@@ -145,7 +145,11 @@ const API = "https://api.rozana-projects.online";
 
 /* ================= AUTH ================= */
 
-const user = JSON.parse(localStorage.getItem("user"));
+function getUser(){
+  return JSON.parse(localStorage.getItem("user"));
+}
+
+const user = getUser();
 
 if (!user || user.role !== "admin") {
   alert("Admin access only");
@@ -154,57 +158,71 @@ if (!user || user.role !== "admin") {
 
 /* ================= SAFE FETCH ================= */
 
-async function apiCall(url, options = {}) {
-
-  let token = localStorage.getItem("token");
-
-  const res = await fetch(url, {
-    method: options.method || "GET",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": `Bearer ${token}`
-    },
-    body: options.body
-  });
-
-  // 🔥 HANDLE 401
-  if (res.status === 401) {
-    alert("Session expired. Please login again.");
-    localStorage.clear();
-    window.location = "profile.html";
-    return null;
-  }
-
-  // 🔥 HANDLE 404
-  if (res.status === 404) {
-    alert("API route not found: " + url);
-    return null;
-  }
-
-  // 🔥 SAFE JSON PARSE
-  const text = await res.text();
-
+async function safeFetch(url, options = {}) {
   try {
-    return JSON.parse(text);
-  } catch {
-    console.error("Invalid JSON:", text);
+    const token = localStorage.getItem("token");
+
+    const res = await fetch(url, {
+      method: options.method || "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      },
+      body: options.body
+    });
+
+    if (res.status === 401) {
+      alert("Session expired. Login again.");
+      localStorage.clear();
+      window.location = "profile.html";
+      return null;
+    }
+
+    if (res.status === 404) {
+      console.error("❌ API not found:", url);
+      return null;
+    }
+
+    if (!res.ok) {
+      console.error("❌ API error:", res.status);
+      return null;
+    }
+
+    return await res.json();
+
+  } catch (err) {
+    console.error("❌ Fetch error:", err);
     return null;
   }
 }
+
 /* ================= USERS ================= */
 
-async function loadUsers(){
-  const data = await apiCall(`${API}/users`);
-  renderTable(data, "Users");
-  console.log("Users API called");
+async function loadUsers() {
+
+  // 🔥 FIXED (try both if needed)
+  const data = await safeFetch(`${API}/users/all`);
+
+  if (!data) {
+    responseBox.innerHTML = "❌ Failed to load users";
+    return;
+  }
+
+  renderTable(data, "Users List");
 }
 
 /* ================= ORDERS ================= */
 
-async function loadOrders(){
-  const data = await apiCall(`${API}/orders/admin/all`);
-  renderTable(data, "Orders");
-  console.log("Orders API called");
+async function loadOrders() {
+
+  const data = await safeFetch(`${API}/orders/admin/all`);
+
+  if (!data) {
+    responseBox.innerHTML = "❌ Failed to load orders";
+    return;
+  }
+
+  renderTable(data, "Orders List");
 }
 
 /* ================= UPDATE ORDER ================= */
@@ -214,22 +232,30 @@ async function updateOrder(){
   const id = document.getElementById("orderId").value;
   const status = document.getElementById("orderStatus").value;
 
-  const res = await apiCall(`${API}/orders/update-status`, {
+  const res = await safeFetch(`${API}/orders/update-status`, {
     method:"PUT",
     body: JSON.stringify({
-  orderId:id,
-  status:status,
-  paymentId:null
-})
+      orderId:id,
+      status:status,
+      paymentId:null
+    })
   });
 
-document.getElementById("responseBox").innerHTML = "✅ Order Updated";
+  responseBox.innerHTML = "✅ Order Updated";
 }
 
 /* ================= PRODUCTS ================= */
 
 async function loadProducts(){
-  const data = await apiCall(`${API}/products`);
+
+  // 🔥 IMPORTANT FIX
+  const data = await safeFetch(`${API}/products/`);
+
+  if (!data) {
+    responseBox.innerHTML = "❌ Failed to load products";
+    return;
+  }
+
   renderTable(data, "Products");
 }
 
@@ -244,12 +270,12 @@ async function addProduct(){
     category: pcategory.value
   };
 
-  const res = await apiCall(`${API}/products`, {
+  const res = await safeFetch(`${API}/products/`, {
     method:"POST",
     body: JSON.stringify(product)
   });
 
-document.getElementById("responseBox").innerHTML = "✅ Product Added";
+  responseBox.innerHTML = "✅ Product Added";
 }
 
 /* ================= HEALTH ================= */
@@ -259,7 +285,8 @@ async function loadHealth(){
   const services = [
     { name:"User Service", url:`${API}/health` },
     { name:"Order Service", url:`${API}/orders/health` },
-    { name:"Product Service", url:`${API}/products/health` }
+    { name:"Product Service", url:`${API}/products/health` },
+    { name:"Payment Service", url:`${API}/payments/health` }
   ];
 
   let html = "<h3>Service Health</h3>";
@@ -281,8 +308,6 @@ loadHealth();
 /* ================= TABLE ================= */
 
 function renderTable(data, title){
-
-  const responseBox = document.getElementById("responseBox");
 
   if (!data || !Array.isArray(data) || data.length === 0){
     responseBox.innerHTML = "<p>No data available</p>";
