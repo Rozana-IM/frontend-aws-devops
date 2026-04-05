@@ -369,7 +369,7 @@ if (payment.gateway === "razorpay") {
   async function deleteAddress(id) {
   if (!confirm("Delete this address?")) return;
 
-  const res = await apiRequest(`${API}/users/addresses/${id}`, {
+  const res = await apiRequest(`${API}/users/address/${id}`, {
     method: "DELETE"
   });
 
