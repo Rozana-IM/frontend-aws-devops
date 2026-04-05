@@ -1056,130 +1056,10 @@ ORDERS PAGE
 /* ===============================
 MOBILE RESPONSIVE
 =============================== */
+/* ================= CHECKOUT LAYOUT ================= */
 
-@media (max-width: 600px) {
-  .order-preview {
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-  }
-
-  .order-img {
-    width: 100px;
-    height: 100px;
-  }
-}
-.product-actions {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-}
-
-/* SAME SIZE BUTTONS */
-.product-actions{
-  display:flex;
-  align-items:center;
-  gap:15px;
-  margin-top:20px;
-}
-
-.product-actions button{
-  height:45px;
-  padding:0 20px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  border-radius:6px;
-}
-
-/* SAME SIZE BUTTONS */
-.add-cart,
-.buy-now{
-  min-width:160px;
-  font-size:14px;
-}
-
-/* WISHLIST BUTTON */
-.wishlist{
-  width:45px;
-  height:45px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  border:1px solid #ddd;
-  background:white;  
-}
-
-.add-cart{
-  background:black;
-  color:white;
-}
-
-.buy-now{
-  background:#111;
-  color:white;
-}
-
-#toast {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  background: black;
-  color: white;
-  padding: 12px 20px;
-  border-radius: 8px;
-  opacity: 0;
-  transition: 0.3s;
-  z-index: 9999;
-}
-
-#toast.show {
-  opacity: 1;
-}
-
-
-/*    ADDRESS ACTIONS */
-.checkout-container{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:40px;
-}
-
-.address-actions{
-  margin-top:15px;
-  display:flex;
-  gap:10px;
-}
-
-.address-actions button{
-  padding:8px 12px;
-  border:1px solid #000;
-  background:white;
-  cursor:pointer;
-}
-
-#placeOrderBtn{
-  grid-column: span 2;
-  margin:30px auto;
-  display:block;
-  width:300px;
-}
-
-.address-card{
-  border:1px solid #ddd;
-  padding:12px;
-  margin-bottom:10px;
-  border-radius:6px;
-  cursor:pointer;
-}
-
-.address-card:hover{
-  border-color:black;
-}
-
-.address-card.selected{
-  border:2px solid black;
-  background:#f9f9f9;
+.checkout-page {
+  padding: 40px 80px;
 }
 
 .checkout-container {
@@ -1199,7 +1079,8 @@ MOBILE RESPONSIVE
   gap: 20px;
 }
 
-/* Cards */
+/* ================= CARDS ================= */
+
 .checkout-cart,
 .checkout-address,
 .payment-method {
@@ -1209,20 +1090,38 @@ MOBILE RESPONSIVE
   background: #fff;
 }
 
-/* Address card */
+/* ================= ORDER ITEMS ================= */
+
+.checkout-item {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 15px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+}
+
+/* ================= ADDRESS ================= */
+
 .address-card {
   border: 1px solid #ccc;
-  padding: 10px;
+  padding: 12px;
   border-radius: 8px;
   margin-bottom: 10px;
   cursor: pointer;
+  transition: 0.2s;
+}
+
+.address-card:hover {
+  border-color: black;
 }
 
 .address-card.selected {
   border: 2px solid black;
+  background: #f9f9f9;
 }
 
-/* Buttons */
+/* ACTION BUTTONS */
+
 .address-actions {
   display: flex;
   gap: 10px;
@@ -1230,21 +1129,99 @@ MOBILE RESPONSIVE
 }
 
 .address-actions button {
-  padding: 8px 12px;
+  padding: 8px 14px;
   border: none;
   background: black;
   color: white;
   cursor: pointer;
-  border-radius: 5px;
+  border-radius: 6px;
+  font-size: 13px;
 }
 
-/* Place order button */
+/* ADDRESS FORM */
+
+.checkout-address input {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+}
+
+/* ================= PAYMENT ================= */
+
+.payment-method label {
+  display: block;
+  margin-top: 10px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+/* ================= PLACE ORDER ================= */
+
 .place-order-btn {
-  padding: 12px;
+  width: 100%;
+  padding: 14px;
   background: black;
   color: white;
   border: none;
   border-radius: 8px;
   font-size: 16px;
   cursor: pointer;
+  transition: 0.2s;
+}
+
+.place-order-btn:hover {
+  background: #333;
+}
+
+/* ================= PRODUCT BUTTON FIX ================= */
+
+.product-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+/* SAME HEIGHT BUTTONS */
+
+.product-actions button {
+  height: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 18px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* ADD TO CART */
+
+.add-cart {
+  background: black;
+  color: white;
+  min-width: 140px;
+}
+
+/* BUY NOW */
+
+.buy-now {
+  background: #111;
+  color: white;
+  min-width: 140px;
+}
+
+/* WISHLIST */
+
+.wishlist {
+  width: 45px;
+  height: 45px;
+  border: 1px solid #ddd;
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
