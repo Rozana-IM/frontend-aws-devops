@@ -776,21 +776,6 @@ margin-bottom:12px;
 border:1px solid #ddd;
 }
 
-.checkout-address button{
-  position: fixed;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 300px;
-  padding: 14px;
-  background: black;
-  color: white;
-  border: none;
-  cursor: pointer;
-  border-radius: 8px;
-  z-index: 1000;
-}
-
 /* ORDERS CSS */
 .orders-page{
 padding:40px;
