@@ -75,11 +75,17 @@ async function loadAddresses(){
 
   container.innerHTML = "";
 
-  addresses.forEach(addr => {
+  addresses.forEach((addr, index) => {
 
     container.innerHTML += `
-      <div class="address-card">
-        <input type="radio" name="selectedAddress" value="${addr.id}">
+      <div class="address-card ${index === 0 ? 'selected' : ''}">
+        <input 
+          type="radio" 
+          name="selectedAddress" 
+          value="${addr.id}" 
+          ${index === 0 ? "checked" : ""}
+        >
+
         <p><b>${addr.full_name}</b></p>
         <p>${addr.address_line1}, ${addr.city}</p>
         <p>${addr.state} - ${addr.pincode}</p>
@@ -87,6 +93,17 @@ async function loadAddresses(){
       </div>
     `;
   });
+
+  // ✅ Default behavior → show only first address
+  const cards = document.querySelectorAll(".address-card");
+
+  cards.forEach((card, index) => {
+    if(index !== 0){
+      card.style.display = "none";
+    }
+  });
+
+}
 
   // ✅ AUTO SELECT FIRST ADDRESS
   const first = document.querySelector('input[name="selectedAddress"]');
@@ -346,6 +363,20 @@ document.getElementById("placeOrderBtn")
     btn.disabled = false;
   }
 });
+
+/* ===============================
+    TOGGLE ADDRESS
+=============================== */
+
+function toggleAddressList(){
+  const container = document.getElementById("savedAddresses");
+
+  if(container.style.display === "none"){
+    container.style.display = "block";
+  } else {
+    container.style.display = "none";
+  }
+}
 
 /* ===============================
 INIT
