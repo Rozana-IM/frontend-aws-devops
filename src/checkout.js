@@ -3,6 +3,17 @@ const API = "https://api.rozana-projects.online";
 let isPlacingOrder = false;
 let isPaymentStarted = false;
 
+const params = new URLSearchParams(window.location.search);
+const type = params.get("type");
+
+let cart = [];
+
+if(type === "buyNow"){
+  const item = JSON.parse(localStorage.getItem("buyNowItem"));
+  cart = item ? [item] : [];
+} else {
+  cart = JSON.parse(localStorage.getItem("cart")) || [];
+}
 /* ===============================
 LOAD CHECKOUT CART
 =============================== */
