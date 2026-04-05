@@ -19,6 +19,12 @@ if (type === "buyNow") {
   cart = JSON.parse(localStorage.getItem("cart")) || [];
 }
 
+
+function showAddressForm(){
+  document.getElementById("placeOrderBtn")
+.addEventListener("click", async function (e) {
+}
+
 /* ===============================
 LOAD CHECKOUT CART
 =============================== */
@@ -213,7 +219,15 @@ document.getElementById("addressForm")
     return sum + (Number(item.price) * item.quantity);
   }, 0);
 
-  let address = {
+  let selectedAddress = document.querySelector('input[name="selectedAddress"]:checked');
+
+let address;
+
+if(selectedAddress){
+  address = { addressId: selectedAddress.value };
+}
+else{
+  address = {
     full_name: document.getElementById("full_name").value,
     phone: document.getElementById("phone").value,
     address_line1: document.getElementById("address_line1").value,
@@ -223,6 +237,12 @@ document.getElementById("addressForm")
     pincode: document.getElementById("pincode").value,
     country: "India"
   };
+
+  await apiRequest(`${API}/users/addresses`, {
+    method: "POST",
+    body: JSON.stringify(address)
+  });
+}
 
   try {
 
@@ -316,7 +336,40 @@ document.getElementById("addressForm")
 });
 
 /* ===============================
+  LOAD ADDRESS
+=============================== */
+async function loadAddresses(){
+
+  const addresses = await apiRequest(`${API}/users/addresses`);
+
+  const container = document.getElementById("savedAddresses");
+
+  if(!addresses || addresses.length === 0){
+    showAddressForm();
+    return;
+  }
+
+  container.innerHTML = "";
+
+  addresses.forEach(addr => {
+
+    container.innerHTML += `
+      <div class="address-card">
+        <input type="radio" name="selectedAddress" value="${addr.id}">
+
+        <p><b>${addr.full_name}</b></p>
+        <p>${addr.address_line1}, ${addr.city}</p>
+        <p>${addr.state} - ${addr.pincode}</p>
+        <p>${addr.phone}</p>
+      </div>
+    `;
+  });
+
+}
+
+/* ===============================
 INIT
 =============================== */
 
 loadCheckout();
+loadAddresses(); 
