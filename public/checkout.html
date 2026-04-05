@@ -37,19 +37,23 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
 
 <h3>Delivery Address</h3>
 
-<div id="savedAddresses"></div>
+<!-- SELECTED ADDRESS -->
+<div id="selectedAddressBox"></div>
 
 <div class="address-actions">
-  <button type="button" onclick="showAddressForm()">
-    + Add New Address
-  </button>
-
   <button type="button" onclick="toggleAddressList()">
     Change Address
   </button>
+
+  <button type="button" onclick="showAddressForm()">
+    + Add New Address
+  </button>
 </div>
 
-<!-- FORM (hidden initially) -->
+<!-- ALL ADDRESSES LIST -->
+<div id="addressList" style="display:none;"></div>
+
+<!-- ADDRESS FORM -->
 <form id="addressForm" style="display:none;">
 
 <input type="text" id="full_name" placeholder="Full Name" required>
@@ -61,6 +65,8 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
 <input type="text" id="pincode" placeholder="Pincode" required>
 
 </form>
+
+</div>
 
 <!-- PAYMENT METHOD -->
 <div class="payment-method">
