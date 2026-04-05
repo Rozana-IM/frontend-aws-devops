@@ -28,7 +28,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
 
 const API = "https://api.rozana-projects.online";
 
-/* ================= ADD THIS HERE ================= */
+/* ================= SAFE FETCH ================= */
 async function safeFetch(url, options = {}) {
   try {
     const token = localStorage.getItem("token");
@@ -36,9 +36,9 @@ async function safeFetch(url, options = {}) {
     const res = await fetch(url, {
       method: options.method || "GET",
       headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`
-      },
+  "Content-Type": "application/json",
+  ...(token && { "Authorization": `Bearer ${token}` })
+},
       body: options.body
     });
 
@@ -61,8 +61,6 @@ async function safeFetch(url, options = {}) {
     return null;
   }
 }
-/* ================= END ================= */
-
 
 /* ================= LOAD NAVBAR ================= */
 fetch("components/navbar.html")
@@ -73,8 +71,8 @@ fetch("components/navbar.html")
     initNavbar();
   }
 });
-/* ================= REQUIRE LOGIN ================= */
 
+/* ================= REQUIRE LOGIN ================= */
 function requireLogin() {
   const token = localStorage.getItem("token");
 
@@ -83,30 +81,26 @@ function requireLogin() {
     window.location = "profile.html";
     return false;
   }
-
   return true;
 }
 
-
-/* ================= FETCH USER ORDERS ================= */
-
+/* ================= FETCH ORDERS ================= */
 async function fetchUserOrders() {
   return await safeFetch(`${API}/orders`);
 }
 
-
 /* ================= LOAD ORDERS ================= */
-
 document.addEventListener("DOMContentLoaded", async () => {
 
   if (!requireLogin()) return;
 
   const orders = await fetchUserOrders();
   console.log("📦 Orders:", orders);
+
   const container = document.getElementById("orders");
   container.innerHTML = "";
 
-  if (!orders || orders.length === 0) {
+  if (!orders || !Array.isArray(orders) || orders.length === 0) {
     container.innerHTML = "<p>No orders found.</p>";
     return;
   }
@@ -117,18 +111,46 @@ document.addEventListener("DOMContentLoaded", async () => {
     div.className = "order-card";
 
     div.innerHTML = `
-      <p><b>Order ID:</b> ${order.id}</p>
-      <p><b>Total:</b> ₹${order.total_amount}</p>
-      <p><b>Status:</b> ${order.status || "Pending"}</p>
-      <p><b>Payment:</b> ${order.payment_status || "Pending"}</p>
-      <p><b>Date:</b> ${
-      order.created_at 
-      ? new Date(order.created_at).toLocaleDateString() 
-      : "N/A"
-      }</p>
-      <button onclick="viewOrder(${order.id})">
-        View Details
-      </button>
+      <div class="order-preview">
+
+        <img 
+          src="${order.image_url || 'https://cdn.rozana-projects.online/placeholder.png'}"
+          class="order-img"
+          onerror="this.src='https://cdn.rozana-projects.online/placeholder.png'"
+        >
+
+        <div class="order-info">
+          <p><b>${order.product_name || "Product"}</b></p>
+
+          <p>
+            Qty: ${order.quantity || 1}
+          </p>
+
+          <p>Total: ₹${order.total_amount}</p>
+          <p>Status: ${order.status}</p>
+
+          <p>
+            Payment: 
+            <span class="${order.payment_status === 'PAID' ? 'paid' : 'pending'}">
+              ${order.payment_status}
+            </span>
+          </p>
+
+          <p>
+            Date: ${
+              order.created_at 
+              ? new Date(order.created_at).toLocaleDateString() 
+              : "N/A"
+            }
+          </p>
+
+          <button onclick="viewOrder(${order.id})">
+            View Details
+          </button>
+
+        </div>
+
+      </div>
     `;
 
     container.appendChild(div);
@@ -136,9 +158,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 });
 
-
 /* ================= VIEW ORDER ================= */
-
 function viewOrder(id){
   window.location = "order-details.html?id=" + id;
 }
