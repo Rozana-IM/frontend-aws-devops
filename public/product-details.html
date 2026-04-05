@@ -34,18 +34,22 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
 
 <p id="productDescription"></p>
 
-<button class="add-cart" onclick="addToCart()">
-<i class="fa-solid fa-bag-shopping"></i>
-Add To Cart
-</button>
+<div class="product-actions">
 
-<button class="buy-now" onclick="buyNow()">
+  <button class="add-cart" onclick="addToCart()">
+    <i class="fa-solid fa-bag-shopping"></i>
+    Add To Cart
+  </button>
+
+  <button class="buy-now" onclick="buyNow()">
     Buy Now
   </button>
 
-<button class="wishlist" onclick="toggleWishlist()" id="wishlistBtn">
-<i class="fa-regular fa-heart"></i>
-</button>
+  <button class="wishlist" onclick="toggleWishlist()" id="wishlistBtn">
+    <i class="fa-regular fa-heart"></i>
+  </button>
+
+</div>
 
 </div>
 
@@ -83,7 +87,15 @@ GET PRODUCT ID
 const params = new URLSearchParams(window.location.search);
 const id = params.get("id");
 
-
+function getProductData() {
+  return {
+    id: id,
+    name: document.getElementById("productName").innerText,
+    price: Number(document.getElementById("productPrice").innerText.replace("₹","")),
+    image: document.getElementById("productImage").src,
+    quantity: 1
+  };
+}
 /* ================================
 LOAD PRODUCT (PUBLIC → KEEP FETCH)
 ================================ */
@@ -167,45 +179,43 @@ ADD TO CART
 
 function addToCart(){
 
-let cart = JSON.parse(localStorage.getItem("cart")) || [];
+  let cart = JSON.parse(localStorage.getItem("cart")) || [];
+  const product = getProductData();
 
-let priceText = document.getElementById("productPrice").innerText.replace("₹","");
+  let existing = cart.find(p => p.id == product.id);
 
-let product = {
+  if(existing){
+    existing.quantity += 1;
+  } else {
+    cart.push(product);
+  }
 
-id: id,
-name: document.getElementById("productName").innerText,
-price: Number(priceText),
-image: document.getElementById("productImage").src,
-quantity: 1
+  localStorage.setItem("cart", JSON.stringify(cart));
 
-};
+  // ✅ UPDATE NAVBAR COUNT
+  if(typeof updateCartCount === "function"){
+    updateCartCount();
+  }
 
-let existing = cart.find(p => p.id == id);
-
-if(existing){
-
-existing.quantity += 1;
-
-}else{
-
-cart.push(product);
-
+  // ✅ UX IMPROVEMENT
+  if(confirm("Added to Bag 👜\n\nGo to cart?")){
+    window.location = "cart.html";
+  }
 }
+/* ================================
+   BUY NOW
+================================ */
 
-localStorage.setItem("cart", JSON.stringify(cart));
+ function buyNow(){
 
-/* UPDATE NAVBAR COUNT */
+  const product = getProductData();
 
-let countEl = document.getElementById("cartCount");
-if(countEl){
-  countEl.innerText = cart.length;
-}
+  // ✅ Store temp checkout item
+  localStorage.setItem("buyNowItem", JSON.stringify(product));
 
-alert("Added to Bag 👜");
-
-}
-
+  // 👉 Redirect to checkout
+  window.location = "checkout.html?type=buyNow";
+}   
 </script>
 
 </body>
