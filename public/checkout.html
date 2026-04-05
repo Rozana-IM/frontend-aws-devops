@@ -38,7 +38,6 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
   <!-- LEFT SIDE -->
   <div class="checkout-left">
 
-    <!-- ORDER SUMMARY -->
     <div class="checkout-cart">
       <h3>Order Summary</h3>
       <div id="checkoutItems"></div>
@@ -50,24 +49,24 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
   <!-- RIGHT SIDE -->
   <div class="checkout-right">
 
-    <!-- ADDRESS SECTION -->
+    <!-- ADDRESS -->
     <div class="checkout-address">
 
       <h3>Delivery Address</h3>
 
-      <!-- SELECTED ADDRESS -->
+      <!-- SELECTED -->
       <div id="selectedAddressBox"></div>
 
-      <!-- ACTION BUTTONS -->
+      <!-- BUTTONS INSIDE BOX -->
       <div class="address-actions">
-        <button type="button" onclick="showAddressForm()">+ Add Address</button>
-        <button type="button" onclick="toggleAddressList()">Choose Address</button>
+        <button onclick="showAddressForm()">+ Add Address</button>
+        <button onclick="toggleAddressList()">Choose Address</button>
       </div>
 
       <!-- ADDRESS LIST -->
       <div id="addressList" style="display:none;"></div>
 
-      <!-- ADDRESS FORM -->
+      <!-- FORM -->
       <form id="addressForm" style="display:none;">
         <input type="text" id="full_name" placeholder="Full Name" required>
         <input type="tel" id="phone" placeholder="Phone Number" required>
@@ -80,7 +79,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
 
     </div>
 
-    <!-- PAYMENT METHOD -->
+    <!-- PAYMENT -->
     <div class="payment-method">
       <h3>Select Payment Method</h3>
 
@@ -89,7 +88,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
       <label><input type="radio" name="paymentMethod" value="cod"> Cash on Delivery</label>
     </div>
 
-    <!-- PLACE ORDER -->
+    <!-- BUTTON -->
     <button id="placeOrderBtn" class="place-order-btn">
       Place Order
     </button>
