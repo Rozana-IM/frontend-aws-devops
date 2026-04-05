@@ -961,3 +961,104 @@ font-size:12px;
 padding:2px 6px;
 border-radius:50%;
 }
+
+/* order-details.html */
+/* ===============================
+ORDERS PAGE
+=============================== */
+
+.orders-page {
+  padding: 20px;
+}
+
+/* Card container */
+.order-card {
+  margin-bottom: 20px;
+}
+
+/* Layout */
+.order-preview {
+  display: flex;
+  gap: 15px;
+  align-items: flex-start;
+
+  border: 1px solid #eee;
+  padding: 15px;
+  border-radius: 12px;
+
+  background: #fff;
+
+  transition: 0.3s;
+}
+
+/* Hover effect */
+.order-preview:hover {
+  box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+}
+
+/* Product image */
+.order-img {
+  width: 90px;
+  height: 90px;
+  object-fit: cover;
+
+  border-radius: 10px;
+  border: 1px solid #eee;
+}
+
+/* Info section */
+.order-info {
+  flex: 1;
+}
+
+.order-info p {
+  margin: 5px 0;
+  font-size: 14px;
+}
+
+/* Status colors */
+.paid {
+  color: green;
+  font-weight: 600;
+}
+
+.pending {
+  color: orange;
+  font-weight: 600;
+}
+
+/* Button */
+.order-info button {
+  margin-top: 10px;
+
+  padding: 8px 14px;
+  border: none;
+  border-radius: 6px;
+
+  background: black;
+  color: white;
+
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.order-info button:hover {
+  background: #333;
+}
+
+/* ===============================
+MOBILE RESPONSIVE
+=============================== */
+
+@media (max-width: 600px) {
+  .order-preview {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .order-img {
+    width: 100px;
+    height: 100px;
+  }
+}
