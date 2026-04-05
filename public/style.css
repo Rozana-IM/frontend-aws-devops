@@ -1155,4 +1155,5 @@ MOBILE RESPONSIVE
 
 .address-card.selected{
   border:2px solid black;
+  background:#f9f9f9;
 }
