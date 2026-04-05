@@ -46,7 +46,12 @@ function loadCheckout() {
 /* ================= LOAD ADDRESSES ================= */
 
 async function loadAddresses() {
-  const addresses = await apiRequest(`${API}/users/addresses`);
+  let addresses = await apiRequest(`${API}/users/addresses`);
+
+if (!addresses) {
+  console.log("Retrying address fetch...");
+  addresses = await apiRequest(`${API}/users/addresses`);
+}
 
   const selectedBox = document.getElementById("selectedAddressBox");
   const listBox = document.getElementById("addressList");
@@ -65,6 +70,11 @@ async function loadAddresses() {
 
   const selected = addresses.find(a => a.id === selectedAddressId);
 
+if (!selected) {
+  console.warn("No selected address found");
+  showAddressForm();
+  return;
+}
   // SELECTED UI
   selectedBox.innerHTML = `
     <div class="address-card selected">
@@ -135,21 +145,31 @@ function openRazorpay(order, orderId) {
 
     handler: async function (response) {
 
-      await apiRequest(`${API}/payments/verify`, {
-        method: "POST",
-        body: JSON.stringify({
-          orderId,
-          razorpay_order_id: response.razorpay_order_id,
-          razorpay_payment_id: response.razorpay_payment_id,
-          razorpay_signature: response.razorpay_signature
-        })
-      });
+      const verifyRes = await apiRequest(`${API}/payments/verify`, {
+  method: "POST",
+  body: JSON.stringify({
+    orderId,
+    razorpay_order_id: response.razorpay_order_id,
+    razorpay_payment_id: response.razorpay_payment_id,
+    razorpay_signature: response.razorpay_signature
+  })
+});
+
+if (!verifyRes || !verifyRes.success) {
+  alert("Payment verification failed");
+  return;
+}
 
       localStorage.removeItem("cart");
       localStorage.removeItem("buyNowItem");
 
       window.location = "order-success.html?id=" + orderId;
+    },
+    modal: {
+    ondismiss: function () {
+      alert("Payment cancelled");
     }
+  }
   };
 
   new Razorpay(options).open();
@@ -160,73 +180,144 @@ function openRazorpay(order, orderId) {
 document.getElementById("placeOrderBtn")
 .addEventListener("click", async () => {
 
+  const btn = document.getElementById("placeOrderBtn");
+
   if (isPlacingOrder) return;
+
   isPlacingOrder = true;
+  btn.disabled = true;
+  btn.innerText = "Processing...";
 
   try {
 
-    let address;
+    /* ================= ADDRESS ================= */
 
-    if (selectedAddressId) {
-  const selected = allAddresses.find(a => a.id === selectedAddressId);
-  address = selected;
-}
-    else {
+    let address;
+    let selected = allAddresses.find(a => a.id === selectedAddressId);
+
+    if (selected) {
+      address = selected;
+    } else {
+
       address = {
-        full_name: full_name.value,
-        phone: phone.value,
-        address_line1: address_line1.value,
-        address_line2: address_line2.value,
-        city: city.value,
-        state: state.value,
-        pincode: pincode.value,
+        full_name: document.getElementById("full_name").value,
+        phone: document.getElementById("phone").value,
+        address_line1: document.getElementById("address_line1").value,
+        address_line2: document.getElementById("address_line2").value,
+        city: document.getElementById("city").value,
+        state: document.getElementById("state").value,
+        pincode: document.getElementById("pincode").value,
         country: "India"
       };
+
+      if (!address.full_name || !address.phone || !address.address_line1) {
+  alert("Please fill complete address");
+
+  isPlacingOrder = false;
+  btn.disabled = false;
+  btn.innerText = "Place Order";
+
+  return;
+}
 
       await apiRequest(`${API}/users/addresses`, {
         method: "POST",
         body: JSON.stringify(address)
       });
+
+      await loadAddresses();
     }
 
-    const items = cart.map(i => ({
-      product_id: Number(i.id),
-      product_name: i.name,
-      price: Number(i.price),
-      quantity: Number(i.quantity),
-      image_url: i.image
-    }));
+    console.log("📍 FINAL ADDRESS:", address);
 
-    const totalAmount = cart.reduce((s, i) => s + i.price * i.quantity, 0);
+    /* ================= ORDER ================= */
+const items = cart.map(i => ({
+  product_id: Number(i.id),
+  product_name: i.name,
+  price: Number(i.price),
+  quantity: Number(i.quantity),
+  image_url: i.image
+}));
+
+const totalAmount = cart.reduce((s, i) => s + i.price * i.quantity, 0);
+
+// ✅ NOW CORRECT
+console.log("🚀 Sending order:", { items, totalAmount, address });
 
     const orderRes = await apiRequest(`${API}/orders/create`, {
       method: "POST",
       body: JSON.stringify({ items, totalAmount, address })
     });
 
+    if (!orderRes || !orderRes.orderId) {
+      console.error("Order failed:", orderRes);
+      alert("Order creation failed");
+      return;
+    }
+
     const orderId = orderRes.orderId;
 
+    /* ================= PAYMENT ================= */
+const methodEl = document.querySelector('input[name="paymentMethod"]:checked');
+
+if (!methodEl) {
+  alert("Please select payment method");
+  return;
+}
+
+const method = methodEl.value;
+    
     const payment = await apiRequest(`${API}/payments/create`, {
-      method: "POST",
-      body: JSON.stringify({
-        orderId,
-        amount: totalAmount,
-        method: document.querySelector('input[name="paymentMethod"]:checked').value
-      })
-    });
+  method: "POST",
+  body: JSON.stringify({
+    orderId,
+    amount: totalAmount,
+    method
+  })
+});
+
+    if (!payment) {
+      alert("Payment initialization failed");
+      return;
+    }
 
     if (payment.gateway === "razorpay") {
-      openRazorpay(payment.order, orderId);
-    } else {
-      window.location = "order-success.html?id=" + orderId;
-    }
+      console.log("Opening Razorpay...");
+  if (!payment.order) {
+  alert("Payment gateway error");
+  return;
+}
+
+openRazorpay(payment.order, orderId);
+
+} else if (payment.gateway === "cod") {
+
+  localStorage.removeItem("cart");
+  localStorage.removeItem("buyNowItem");
+
+  alert("Order placed successfully (Cash on Delivery)");
+  window.location = "order-success.html?id=" + orderId;
+}
+
+ else if (payment.gateway === "paytm") {
+  if (!payment.paymentUrl) {
+  alert("Paytm gateway error");
+  return;
+}
+
+window.location.href = payment.paymentUrl;
+}
 
   } catch (err) {
     console.error(err);
     alert("Order failed");
+  } finally {
+    // ✅ CORRECT PLACE
+    isPlacingOrder = false;
+    btn.disabled = false;
+    btn.innerText = "Place Order";
   }
 
-  isPlacingOrder = false;
 });
 
 /* ================= INIT ================= */
