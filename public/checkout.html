@@ -26,17 +26,12 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
 <!-- ================= CART SUMMARY ================= -->
 
 <div class="checkout-cart">
-
-<h3>Order Summary</h3>
-
-<div id="checkoutItems"></div>
-
-<h3 id="checkoutTotal"></h3>
-
+  <h3>Order Summary</h3>
+  <div id="checkoutItems"></div>
+  <h3 id="checkoutTotal"></h3>
 </div>
 
-
-<!-- ================= ADDRESS FORM ================= -->
+<!-- ================= ADDRESS ================= -->
 
 <div class="checkout-address">
 
@@ -48,47 +43,45 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
   + Add New Address
 </button>
 
+<!-- FORM (hidden initially) -->
 <form id="addressForm" style="display:none;">
 
 <input type="text" id="full_name" placeholder="Full Name" required>
-
 <input type="tel" id="phone" placeholder="Phone Number" required>
-
 <input type="text" id="address_line1" placeholder="Address Line 1" required>
-
 <input type="text" id="address_line2" placeholder="Address Line 2">
-
 <input type="text" id="city" placeholder="City" required>
-
 <input type="text" id="state" placeholder="State" required>
-
 <input type="text" id="pincode" placeholder="Pincode" required>
 
-<!-- ================= PAYMENT METHOD ================= -->
+</form>
 
+<!-- PAYMENT METHOD -->
 <div class="payment-method">
 
 <h3>Select Payment Method</h3>
 
 <label>
 <input type="radio" name="paymentMethod" value="razorpay" checked>
-Razorpay (UPI / Card / Netbanking / PhonePe / GPay)
+Razorpay
 </label>
 
 <label>
 <input type="radio" name="paymentMethod" value="paytm">
-Paytm Wallet
+Paytm
 </label>
+
 <label>
-  <input type="radio" name="paymentMethod" value="cod"> Cash on Delivery
+<input type="radio" name="paymentMethod" value="cod">
+Cash on Delivery
 </label>
+
 </div>
 
-<button type="submit" class="place-order-btn">
-Place Order
+<!-- ✅ BUTTON OUTSIDE FORM -->
+<button id="placeOrderBtn" class="place-order-btn">
+  Place Order
 </button>
-
-</form>
 
 </div>
 
@@ -96,11 +89,9 @@ Place Order
 
 </section>
 
-<!-- ================= SCRIPTS ================= -->
-
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
-<script src="/src/app.js"></script>   <!-- MUST be first -->
+<script src="/src/app.js"></script>
 <script src="/src/navbar.js"></script>
 <script src="/src/checkout.js"></script>
 
@@ -109,10 +100,7 @@ fetch("components/navbar.html")
 .then(res => res.text())
 .then(data => {
   document.getElementById("navbar").innerHTML = data;
-
-  if(typeof initNavbar === "function"){
-    initNavbar();
-  }
+  if(typeof initNavbar === "function") initNavbar();
 });
 </script>
 
