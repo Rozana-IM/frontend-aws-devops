@@ -39,9 +39,15 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
 
 <div id="savedAddresses"></div>
 
-<button type="button" onclick="showAddressForm()">
-  + Add New Address
-</button>
+<div class="address-actions">
+  <button type="button" onclick="showAddressForm()">
+    + Add New Address
+  </button>
+
+  <button type="button" onclick="toggleAddressList()">
+    Change Address
+  </button>
+</div>
 
 <!-- FORM (hidden initially) -->
 <form id="addressForm" style="display:none;">
