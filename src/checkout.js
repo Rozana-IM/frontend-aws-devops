@@ -168,8 +168,10 @@ document.getElementById("placeOrderBtn")
     let address;
 
     if (selectedAddressId) {
-      address = { addressId: selectedAddressId };
-    } else {
+  const selected = allAddresses.find(a => a.id === selectedAddressId);
+  address = selected;
+}
+    else {
       address = {
         full_name: full_name.value,
         phone: phone.value,
