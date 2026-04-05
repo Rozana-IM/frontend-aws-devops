@@ -262,12 +262,12 @@ else{
     /* ================= ITEMS ================= */
 
     let items = cart.map(i => ({
-      product_id: i.id,
-      product_name: i.name,
-      price: i.price,
-      quantity: i.quantity,
-      image_url: i.image
-    }));
+  product_id: Number(i.id),   // 🔥 IMPORTANT FIX
+  product_name: i.name,
+  price: Number(i.price),
+  quantity: Number(i.quantity),
+  image_url: i.image
+}));
 
     let totalAmount = cart.reduce((s, i) => s + i.price * i.quantity, 0);
 
