@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Order Details | LUCCI</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div id="navbar"></div>
+
+<section class="order-details-page">
+  <h2>Order Details</h2>
+  <div id="orderDetails"></div>
+</section>
+
+<script src="src/navbar.js"></script>
+<script src="src/app.js"></script>
+
+<script>
+
+const API = "https://api.rozana-projects.online";
+
+/* ================= GET ORDER ID ================= */
+
+function getOrderId() {
+  const params = new URLSearchParams(window.location.search);
+  return params.get("id");
+}
+
+/* ================= LOAD NAVBAR ================= */
+
+fetch("components/navbar.html")
+.then(res => res.text())
+.then(data => {
+  document.getElementById("navbar").innerHTML = data;
+  if (typeof initNavbar === "function") {
+    initNavbar();
+  }
+});
+
+/* ================= LOAD ORDER DETAILS ================= */
+
+async function loadOrderDetails() {
+
+  const orderId = getOrderId();
+
+  if (!orderId) {
+    document.getElementById("orderDetails").innerHTML =
+      "<p>Invalid order ID</p>";
+    return;
+  }
+
+  const data = await apiRequest(`${API}/orders/${orderId}`);
+
+  console.log("📦 Order details:", data);
+
+  if (!data || data.error) {
+    document.getElementById("orderDetails").innerHTML =
+      "<p>Failed to load order</p>";
+    return;
+  }
+
+  let itemsHTML = "";
+
+  if (data.items && data.items.length > 0) {
+    data.items.forEach(item => {
+      itemsHTML += `
+        <div class="order-item">
+          <img src="${item.image_url}" width="80">
+          <div>
+            <p>${item.product_name}</p>
+            <p>₹${item.price} x ${item.quantity}</p>
+          </div>
+        </div>
+      `;
+    });
+  }
+
+  document.getElementById("orderDetails").innerHTML = `
+    <p><b>Order ID:</b> ${data.id}</p>
+    <p><b>Total:</b> ₹${data.total_amount}</p>
+    <p><b>Status:</b> ${data.status}</p>
+    <p><b>Payment:</b> ${data.payment_status}</p>
+    <p><b>Date:</b> ${new Date(data.created_at).toLocaleDateString()}</p>
+
+    <h3>Items</h3>
+    <div class="order-items">
+      ${itemsHTML || "<p>No items found</p>"}
+    </div>
+  `;
+}
+
+/* ================= INIT ================= */
+
+document.addEventListener("DOMContentLoaded", loadOrderDetails);
+
+</script>
+
+</body>
+</html>
