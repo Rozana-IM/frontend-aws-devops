@@ -123,8 +123,6 @@ function openRazorpay(order, orderId) {
   } catch {}
 
   // ✅ GET ADDRESS DATA FOR PREFILL
-  let selectedAddress = document.querySelector('input[name="selectedAddress"]:checked');
-
   let name = "";
   let phone = "";
 
@@ -371,9 +369,6 @@ function selectAddress(id){
   document.getElementById("addressList").style.display = "none";
 }
 
-function showAddressForm(){
-  document.getElementById("addressForm").style.display = "block";
-}
 
 /* ===============================
 INIT
