@@ -33,72 +33,70 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
 
 <!-- ================= ADDRESS ================= -->
 
-<div class="checkout-address">
+<div class="checkout-container">
 
-<h3>Delivery Address</h3>
+  <!-- LEFT SIDE -->
+  <div class="checkout-left">
 
-<!-- SELECTED ADDRESS -->
-<div id="selectedAddressBox"></div>
+    <!-- ORDER SUMMARY -->
+    <div class="checkout-cart">
+      <h3>Order Summary</h3>
+      <div id="checkoutItems"></div>
+      <h3 id="checkoutTotal"></h3>
+    </div>
 
-<div class="address-actions">
-  <button type="button" onclick="toggleAddressList()">
-    Change Address
-  </button>
+  </div>
 
-  <button type="button" onclick="showAddressForm()">
-    + Add New Address
-  </button>
+  <!-- RIGHT SIDE -->
+  <div class="checkout-right">
+
+    <!-- ADDRESS SECTION -->
+    <div class="checkout-address">
+
+      <h3>Delivery Address</h3>
+
+      <!-- SELECTED ADDRESS -->
+      <div id="selectedAddressBox"></div>
+
+      <!-- ACTION BUTTONS -->
+      <div class="address-actions">
+        <button type="button" onclick="showAddressForm()">+ Add Address</button>
+        <button type="button" onclick="toggleAddressList()">Choose Address</button>
+      </div>
+
+      <!-- ADDRESS LIST -->
+      <div id="addressList" style="display:none;"></div>
+
+      <!-- ADDRESS FORM -->
+      <form id="addressForm" style="display:none;">
+        <input type="text" id="full_name" placeholder="Full Name" required>
+        <input type="tel" id="phone" placeholder="Phone Number" required>
+        <input type="text" id="address_line1" placeholder="Address Line 1" required>
+        <input type="text" id="address_line2" placeholder="Address Line 2">
+        <input type="text" id="city" placeholder="City" required>
+        <input type="text" id="state" placeholder="State" required>
+        <input type="text" id="pincode" placeholder="Pincode" required>
+      </form>
+
+    </div>
+
+    <!-- PAYMENT METHOD -->
+    <div class="payment-method">
+      <h3>Select Payment Method</h3>
+
+      <label><input type="radio" name="paymentMethod" value="razorpay" checked> Razorpay</label>
+      <label><input type="radio" name="paymentMethod" value="paytm"> Paytm</label>
+      <label><input type="radio" name="paymentMethod" value="cod"> Cash on Delivery</label>
+    </div>
+
+    <!-- PLACE ORDER -->
+    <button id="placeOrderBtn" class="place-order-btn">
+      Place Order
+    </button>
+
+  </div>
+
 </div>
-
-<!-- ALL ADDRESSES LIST -->
-<div id="addressList" style="display:none;"></div>
-
-<!-- ADDRESS FORM -->
-<form id="addressForm" style="display:none;">
-
-<input type="text" id="full_name" placeholder="Full Name" required>
-<input type="tel" id="phone" placeholder="Phone Number" required>
-<input type="text" id="address_line1" placeholder="Address Line 1" required>
-<input type="text" id="address_line2" placeholder="Address Line 2">
-<input type="text" id="city" placeholder="City" required>
-<input type="text" id="state" placeholder="State" required>
-<input type="text" id="pincode" placeholder="Pincode" required>
-
-</form>
-
-</div>
-
-<!-- PAYMENT METHOD -->
-<div class="payment-method">
-
-<h3>Select Payment Method</h3>
-
-<label>
-<input type="radio" name="paymentMethod" value="razorpay" checked>
-Razorpay
-</label>
-
-<label>
-<input type="radio" name="paymentMethod" value="paytm">
-Paytm
-</label>
-
-<label>
-<input type="radio" name="paymentMethod" value="cod">
-Cash on Delivery
-</label>
-
-</div>
-
-<!-- ✅ BUTTON OUTSIDE FORM -->
-<button id="placeOrderBtn" class="place-order-btn">
-  Place Order
-</button>
-
-</div>
-
-</div>
-
 </section>
 
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
