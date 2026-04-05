@@ -1063,3 +1063,36 @@ MOBILE RESPONSIVE
     height: 100px;
   }
 }
+.product-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.add-cart {
+  flex: 1;
+  padding: 10px;
+  background: black;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.buy-now {
+  flex: 1;
+  padding: 10px;
+  background: orange;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.wishlist {
+  width: 45px;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  cursor: pointer;
+}
