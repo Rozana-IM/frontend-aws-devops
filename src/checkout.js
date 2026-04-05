@@ -366,10 +366,10 @@ if (payment.gateway === "razorpay") {
 
 /*   DELETE FUNTION   */
 
-  async function deleteAddress(id) {
+async function deleteAddress(id) {
   if (!confirm("Delete this address?")) return;
 
-  const res = await apiRequest(`${API}/users/address/${id}`, {
+  const res = await apiRequest(`${API}/users/addresses/${id}`, { // ✅ FIXED
     method: "DELETE"
   });
 
@@ -378,7 +378,7 @@ if (payment.gateway === "razorpay") {
     return;
   }
 
-  // ✅ close list
+  // close list
   document.getElementById("addressList").style.display = "none";
 
   if (selectedAddressId === id) {
@@ -386,10 +386,11 @@ if (payment.gateway === "razorpay") {
   }
 
   document.getElementById("addressForm").style.display = "none";
-    await loadAddresses();
+
+  await loadAddresses();
+
   if (allAddresses.length > 0 && !selectedAddressId) {
     selectedAddressId = allAddresses[0].id;
-    
   }
 }
 
