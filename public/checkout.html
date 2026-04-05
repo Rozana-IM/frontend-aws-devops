@@ -23,72 +23,47 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
 
 <div class="checkout-container">
 
-<!-- ================= CART SUMMARY ================= -->
-
-<div class="checkout-cart">
-  <h3>Order Summary</h3>
-  <div id="checkoutItems"></div>
-  <h3 id="checkoutTotal"></h3>
-</div>
-
-<!-- ================= ADDRESS ================= -->
-
-<div class="checkout-container">
-
-  <!-- LEFT SIDE -->
+  <!-- LEFT -->
   <div class="checkout-left">
-
     <div class="checkout-cart">
       <h3>Order Summary</h3>
       <div id="checkoutItems"></div>
       <h3 id="checkoutTotal"></h3>
     </div>
-
   </div>
 
-  <!-- RIGHT SIDE -->
+  <!-- RIGHT -->
   <div class="checkout-right">
 
-    <!-- ADDRESS -->
     <div class="checkout-address">
-
       <h3>Delivery Address</h3>
 
-      <!-- SELECTED -->
       <div id="selectedAddressBox"></div>
 
-      <!-- BUTTONS INSIDE BOX -->
       <div class="address-actions">
         <button onclick="showAddressForm()">+ Add Address</button>
         <button onclick="toggleAddressList()">Choose Address</button>
       </div>
 
-      <!-- ADDRESS LIST -->
       <div id="addressList" style="display:none;"></div>
 
-      <!-- FORM -->
       <form id="addressForm" style="display:none;">
-        <input type="text" id="full_name" placeholder="Full Name" required>
-        <input type="tel" id="phone" placeholder="Phone Number" required>
-        <input type="text" id="address_line1" placeholder="Address Line 1" required>
-        <input type="text" id="address_line2" placeholder="Address Line 2">
-        <input type="text" id="city" placeholder="City" required>
-        <input type="text" id="state" placeholder="State" required>
-        <input type="text" id="pincode" placeholder="Pincode" required>
+        <input type="text" id="full_name" placeholder="Full Name">
+        <input type="tel" id="phone" placeholder="Phone">
+        <input type="text" id="address_line1" placeholder="Address">
+        <input type="text" id="city" placeholder="City">
+        <input type="text" id="state" placeholder="State">
+        <input type="text" id="pincode" placeholder="Pincode">
       </form>
-
     </div>
 
-    <!-- PAYMENT -->
     <div class="payment-method">
       <h3>Select Payment Method</h3>
-
       <label><input type="radio" name="paymentMethod" value="razorpay" checked> Razorpay</label>
       <label><input type="radio" name="paymentMethod" value="paytm"> Paytm</label>
-      <label><input type="radio" name="paymentMethod" value="cod"> Cash on Delivery</label>
+      <label><input type="radio" name="paymentMethod" value="cod"> COD</label>
     </div>
 
-    <!-- BUTTON -->
     <button id="placeOrderBtn" class="place-order-btn">
       Place Order
     </button>
