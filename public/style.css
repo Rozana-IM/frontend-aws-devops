@@ -1051,13 +1051,15 @@ MOBILE RESPONSIVE
 
 .checkout-container {
   display: flex;
-  gap: 50px;
+  gap: 30px;
+  align-items: flex-start;
   width: 100%;
 }
 
 .checkout-left,
 .checkout-right {
   flex: 1;
+  max-width: 500px;
 }
 
 /* Bigger cards */
