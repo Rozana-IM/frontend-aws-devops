@@ -750,7 +750,9 @@ background:#777;
 
 /* CHECKOUT CSS */
 .checkout-page {
-  padding-bottom: 100px;
+  padding: 20px;
+  max-width: 1200px;   /* ✅ LIMIT WIDTH */
+  margin: auto;        /* ✅ CENTER */
 }
 
 .checkout-container{
