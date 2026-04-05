@@ -1125,3 +1125,34 @@ MOBILE RESPONSIVE
 #toast.show {
   opacity: 1;
 }
+
+
+/*    ADDRESS ACTIONS */
+.address-actions{
+  display:flex;
+  gap:10px;
+  margin:10px 0;
+}
+
+.address-actions button{
+  padding:8px 12px;
+  border:1px solid black;
+  background:white;
+  cursor:pointer;
+}
+
+.address-card{
+  border:1px solid #ddd;
+  padding:12px;
+  margin-bottom:10px;
+  border-radius:6px;
+  cursor:pointer;
+}
+
+.address-card:hover{
+  border-color:black;
+}
+
+.address-card.selected{
+  border:2px solid black;
+}
