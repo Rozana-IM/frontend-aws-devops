@@ -17,7 +17,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
 
 <!-- NAVBAR -->
 <div id="navbar"></div>
-
+<div id="toast"></div>
 <section class="product-details">
 
 <div class="product-container">
@@ -176,7 +176,6 @@ btn.innerHTML = '<i class="fa-regular fa-heart"></i>';
 /* ================================
 ADD TO CART
 ================================ */
-
 function addToCart(){
 
   let cart = JSON.parse(localStorage.getItem("cart")) || [];
@@ -192,15 +191,17 @@ function addToCart(){
 
   localStorage.setItem("cart", JSON.stringify(cart));
 
-  // ✅ UPDATE NAVBAR COUNT
   if(typeof updateCartCount === "function"){
     updateCartCount();
   }
 
-  // ✅ UX IMPROVEMENT
-  if(confirm("Added to Bag 👜\n\nGo to cart?")){
-    window.location = "cart.html";
-  }
+  // ✅ CHANGE BUTTON TO "VIEW CART"
+  const btn = document.querySelector(".add-cart");
+  btn.innerText = "View Cart";
+  btn.onclick = () => window.location = "cart.html";
+
+  // ✅ SHOW TOAST MESSAGE
+  showToast("Added to Bag 👜");
 }
 /* ================================
    BUY NOW
@@ -215,7 +216,22 @@ function addToCart(){
 
   // 👉 Redirect to checkout
   window.location = "checkout.html?type=buyNow";
-}   
+}  
+
+/* ================================
+      TOAST BUTTON
+================================ */
+
+ function showToast(message){
+  let toast = document.getElementById("toast");
+
+  toast.innerText = message;
+  toast.classList.add("show");
+
+  setTimeout(() => {
+    toast.classList.remove("show");
+  }, 2000);
+} 
 </script>
 
 </body>
