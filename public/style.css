@@ -1096,3 +1096,20 @@ MOBILE RESPONSIVE
   border-radius: 6px;
   cursor: pointer;
 }
+
+#toast {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: black;
+  color: white;
+  padding: 12px 20px;
+  border-radius: 8px;
+  opacity: 0;
+  transition: 0.3s;
+  z-index: 9999;
+}
+
+#toast.show {
+  opacity: 1;
+}
