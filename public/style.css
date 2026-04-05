@@ -1139,17 +1139,30 @@ MOBILE RESPONSIVE
 
 
 /*    ADDRESS ACTIONS */
+.checkout-container{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:40px;
+}
+
 .address-actions{
+  margin-top:15px;
   display:flex;
   gap:10px;
-  margin:10px 0;
 }
 
 .address-actions button{
   padding:8px 12px;
-  border:1px solid black;
+  border:1px solid #000;
   background:white;
   cursor:pointer;
+}
+
+#placeOrderBtn{
+  grid-column: span 2;
+  margin:30px auto;
+  display:block;
+  width:300px;
 }
 
 .address-card{
