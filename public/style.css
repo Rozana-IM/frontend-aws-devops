@@ -521,12 +521,12 @@ margin:15px 0;
 }
 
 .add-cart{
-background:black;
-color:white;
-padding:12px 25px;
-border:none;
-margin-top:15px;
-cursor:pointer;
+  background:black;
+  color:white;
+  padding:12px 25px;
+  border:none;
+  margin-right: 6px;  
+  cursor:pointer;
 }
 
 .wishlist{
