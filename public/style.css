@@ -1106,6 +1106,18 @@ MOBILE RESPONSIVE
   display:flex;
   align-items:center;
   justify-content:center;
+  border:1px solid #ddd;
+  background:white;  
+}
+
+.add-cart{
+  background:black;
+  color:white;
+}
+
+.buy-now{
+  background:#111;
+  color:white;
 }
 
 #toast {
