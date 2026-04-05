@@ -664,6 +664,7 @@ transition:0.3s;
 
 .product-actions button:hover{
 background:#444;
+transform: translateY(-2px);
 }
 
 /* BAG Sytles */
