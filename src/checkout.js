@@ -3,27 +3,30 @@ const API = "https://api.rozana-projects.online";
 let isPlacingOrder = false;
 let isPaymentStarted = false;
 
+/* ===============================
+BUY NOW / CART HANDLING
+=============================== */
+
 const params = new URLSearchParams(window.location.search);
 const type = params.get("type");
 
 let cart = [];
 
-if(type === "buyNow"){
+if (type === "buyNow") {
   const item = JSON.parse(localStorage.getItem("buyNowItem"));
   cart = item ? [item] : [];
 } else {
   cart = JSON.parse(localStorage.getItem("cart")) || [];
 }
+
 /* ===============================
 LOAD CHECKOUT CART
 =============================== */
 
 function loadCheckout() {
 
-  let cart = JSON.parse(localStorage.getItem("cart")) || [];
-
-  if (cart.length === 0) {
-    alert("Your cart is empty");
+  if (!cart.length) {
+    alert("Cart is empty");
     window.location = "products.html";
     return;
   }
@@ -66,8 +69,6 @@ function openRazorpay(order, orderId) {
     console.error("❌ Invalid order object:", order);
     return;
   }
-
-  console.log("💳 Opening Razorpay with:", order);
 
   let user = null;
   try {
@@ -121,8 +122,6 @@ function openRazorpay(order, orderId) {
 
     handler: async function (response) {
 
-      console.log("✅ Razorpay response:", response);
-
       try {
 
         let verifyData = await apiRequest(`${API}/payments/verify`, {
@@ -141,14 +140,14 @@ function openRazorpay(order, orderId) {
           isPaymentStarted = false;
           window.onbeforeunload = null;
 
-          // ✅ CLEAR CART FIRST
+          // ✅ CLEAR BOTH
           localStorage.removeItem("cart");
+          localStorage.removeItem("buyNowItem");
 
           if (typeof updateCartCount === "function") {
             updateCartCount();
           }
 
-          // ✅ SINGLE REDIRECT
           window.location.replace("order-success.html?id=" + orderId);
 
         } else {
@@ -193,8 +192,6 @@ document.getElementById("addressForm")
     window.location = "profile.html";
     return;
   }
-
-  let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
   if (!cart.length) {
     alert("Cart is empty");
@@ -279,19 +276,14 @@ document.getElementById("addressForm")
     if (paymentData.gateway === "razorpay") {
 
       if (!paymentData.order) {
-        console.error("❌ Missing Razorpay order:", paymentData);
         alert("Payment initialization failed");
         throw new Error("Razorpay init failed");
       }
 
-      if (isPaymentStarted) {
-        console.warn("⚠️ Payment already in progress");
-        return;
-      }
+      if (isPaymentStarted) return;
 
       isPaymentStarted = true;
 
-      // ✅ SET LEAVE WARNING HERE
       window.onbeforeunload = () => "Payment in progress...";
 
       openRazorpay(paymentData.order, orderId);
@@ -303,6 +295,7 @@ document.getElementById("addressForm")
     } else if (paymentData.gateway === "cod") {
 
       localStorage.removeItem("cart");
+      localStorage.removeItem("buyNowItem");
 
       if (typeof updateCartCount === "function") {
         updateCartCount();
