@@ -63,29 +63,41 @@ function loadCheckout(){
 LOAD ADDRESSES
 =============================== */
 
+let selectedAddressId = null;
+
 async function loadAddresses(){
 
   const addresses = await apiRequest(`${API}/users/addresses`);
-  const container = document.getElementById("savedAddresses");
 
+  const selectedBox = document.getElementById("selectedAddressBox");
+  const listBox = document.getElementById("addressList");
+
+  // 👉 FIRST TIME USER
   if(!addresses || addresses.length === 0){
     showAddressForm();
     return;
   }
 
-  container.innerHTML = "";
+  // 👉 AUTO SELECT FIRST ADDRESS
+  const first = addresses[0];
+  selectedAddressId = first.id;
 
-  addresses.forEach((addr, index) => {
+  // ================= SELECTED ADDRESS =================
+  selectedBox.innerHTML = `
+    <div class="address-card selected">
+      <p><b>${first.full_name}</b></p>
+      <p>${first.address_line1}, ${first.city}</p>
+      <p>${first.state} - ${first.pincode}</p>
+      <p>${first.phone}</p>
+    </div>
+  `;
 
-    container.innerHTML += `
-      <div class="address-card ${index === 0 ? 'selected' : ''}">
-        <input 
-          type="radio" 
-          name="selectedAddress" 
-          value="${addr.id}" 
-          ${index === 0 ? "checked" : ""}
-        >
+  // ================= ALL ADDRESSES =================
+  listBox.innerHTML = "";
 
+  addresses.forEach(addr => {
+    listBox.innerHTML += `
+      <div class="address-card" onclick="selectAddress(${addr.id})">
         <p><b>${addr.full_name}</b></p>
         <p>${addr.address_line1}, ${addr.city}</p>
         <p>${addr.state} - ${addr.pincode}</p>
@@ -93,23 +105,7 @@ async function loadAddresses(){
       </div>
     `;
   });
-
-  // ✅ Default behavior → show only first address
-  const cards = document.querySelectorAll(".address-card");
-
-  cards.forEach((card, index) => {
-    if(index !== 0){
-      card.style.display = "none";
-    }
-  });
-
 }
-
-  // ✅ AUTO SELECT FIRST ADDRESS
-  const first = document.querySelector('input[name="selectedAddress"]');
-  if(first) first.checked = true;
-}
-
 /* ===============================
 RAZORPAY POPUP
 =============================== */
@@ -243,36 +239,28 @@ document.getElementById("placeOrderBtn")
 
     /* ================= ADDRESS ================= */
 
-    let selectedAddress = document.querySelector('input[name="selectedAddress"]:checked');
     let address;
 
-    if (selectedAddress) {
-      address = { addressId: selectedAddress.value };
-    } else {
+if(selectedAddressId){
+  address = { addressId: selectedAddressId };
+}
+else{
+  address = {
+    full_name: document.getElementById("full_name").value,
+    phone: document.getElementById("phone").value,
+    address_line1: document.getElementById("address_line1").value,
+    address_line2: document.getElementById("address_line2").value,
+    city: document.getElementById("city").value,
+    state: document.getElementById("state").value,
+    pincode: document.getElementById("pincode").value,
+    country: "India"
+  };
 
-      address = {
-        full_name: document.getElementById("full_name").value,
-        phone: document.getElementById("phone").value,
-        address_line1: document.getElementById("address_line1").value,
-        address_line2: document.getElementById("address_line2").value,
-        city: document.getElementById("city").value,
-        state: document.getElementById("state").value,
-        pincode: document.getElementById("pincode").value,
-        country: "India"
-      };
-
-      // ✅ VALIDATION
-      if(!address.full_name || !address.phone || !address.address_line1){
-        alert("Please fill address details");
-        return;
-      }
-
-      await apiRequest(`${API}/users/addresses`, {
-        method: "POST",
-        body: JSON.stringify(address)
-      });
-    }
-
+  await apiRequest(`${API}/users/addresses`, {
+    method: "POST",
+    body: JSON.stringify(address)
+  });
+}
     /* ================= ITEMS ================= */
 
     let items = cart.map(i => ({
@@ -369,13 +357,22 @@ document.getElementById("placeOrderBtn")
 =============================== */
 
 function toggleAddressList(){
-  const container = document.getElementById("savedAddresses");
+  const box = document.getElementById("addressList");
+  box.style.display = box.style.display === "none" ? "block" : "none";
+}
 
-  if(container.style.display === "none"){
-    container.style.display = "block";
-  } else {
-    container.style.display = "none";
-  }
+function selectAddress(id){
+  selectedAddressId = id;
+
+  // Reload UI
+  loadAddresses();
+
+  // Hide list after selection
+  document.getElementById("addressList").style.display = "none";
+}
+
+function showAddressForm(){
+  document.getElementById("addressForm").style.display = "block";
 }
 
 /* ===============================
