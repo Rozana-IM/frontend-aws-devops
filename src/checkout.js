@@ -19,42 +19,37 @@ if (type === "buyNow") {
   cart = JSON.parse(localStorage.getItem("cart")) || [];
 }
 
-
 function showAddressForm(){
-  document.getElementById("placeOrderBtn")
-.addEventListener("click", async function (e) {
+  document.getElementById("addressForm").style.display = "block";
 }
 
 /* ===============================
 LOAD CHECKOUT CART
 =============================== */
 
-function loadCheckout() {
+function loadCheckout(){
 
-  if (!cart.length) {
+  if(!cart.length){
     alert("Cart is empty");
     window.location = "products.html";
     return;
   }
 
-  let container = document.getElementById("checkoutItems");
-  container.innerHTML = "";
-
   let total = 0;
+  const container = document.getElementById("checkoutItems");
+
+  container.innerHTML = "";
 
   cart.forEach(item => {
 
-    let price = Number(item.price);
-    let qty = Number(item.quantity);
-
-    total += price * qty;
+    total += item.price * item.quantity;
 
     container.innerHTML += `
       <div class="checkout-item">
         <img src="${item.image}" width="80">
         <div>
           <p>${item.name}</p>
-          <p>₹${price} x ${qty}</p>
+          <p>₹${item.price} x ${item.quantity}</p>
         </div>
       </div>
     `;
@@ -65,6 +60,40 @@ function loadCheckout() {
 }
 
 /* ===============================
+LOAD ADDRESSES
+=============================== */
+
+async function loadAddresses(){
+
+  const addresses = await apiRequest(`${API}/users/addresses`);
+  const container = document.getElementById("savedAddresses");
+
+  if(!addresses || addresses.length === 0){
+    showAddressForm();
+    return;
+  }
+
+  container.innerHTML = "";
+
+  addresses.forEach(addr => {
+
+    container.innerHTML += `
+      <div class="address-card">
+        <input type="radio" name="selectedAddress" value="${addr.id}">
+        <p><b>${addr.full_name}</b></p>
+        <p>${addr.address_line1}, ${addr.city}</p>
+        <p>${addr.state} - ${addr.pincode}</p>
+        <p>${addr.phone}</p>
+      </div>
+    `;
+  });
+
+  // ✅ AUTO SELECT FIRST ADDRESS
+  const first = document.querySelector('input[name="selectedAddress"]');
+  if(first) first.checked = true;
+}
+
+/* ===============================
 RAZORPAY POPUP
 =============================== */
 
@@ -72,7 +101,6 @@ function openRazorpay(order, orderId) {
 
   if (!order || !order.id) {
     alert("Invalid Razorpay order");
-    console.error("❌ Invalid order object:", order);
     return;
   }
 
@@ -80,6 +108,21 @@ function openRazorpay(order, orderId) {
   try {
     user = JSON.parse(localStorage.getItem("user"));
   } catch {}
+
+  // ✅ GET ADDRESS DATA FOR PREFILL
+  let selectedAddress = document.querySelector('input[name="selectedAddress"]:checked');
+
+  let name = "";
+  let phone = "";
+
+  if(selectedAddress){
+    const card = selectedAddress.closest(".address-card");
+    name = card.querySelector("p b").innerText;
+    phone = card.querySelectorAll("p")[3].innerText;
+  } else {
+    name = document.getElementById("full_name").value;
+    phone = document.getElementById("phone").value;
+  }
 
   const options = {
     key: "rzp_test_SPry8xdmipoUN8",
@@ -92,8 +135,6 @@ function openRazorpay(order, orderId) {
 
     modal: {
       ondismiss: async function () {
-        console.log("❌ Payment cancelled");
-
         isPaymentStarted = false;
         window.onbeforeunload = null;
 
@@ -103,18 +144,15 @@ function openRazorpay(order, orderId) {
             body: JSON.stringify({
               orderId,
               status: "FAILED"
-            }),
-            skipLoader: true
+            })
           });
-        } catch (err) {
-          console.error("Cancel update failed");
-        }
+        } catch {}
       }
     },
 
     prefill: {
-      name: document.getElementById("full_name").value,
-      contact: document.getElementById("phone").value,
+      name,
+      contact: phone,
       email: user?.email || "test@example.com"
     },
 
@@ -137,8 +175,7 @@ function openRazorpay(order, orderId) {
             razorpay_order_id: response.razorpay_order_id,
             razorpay_payment_id: response.razorpay_payment_id,
             razorpay_signature: response.razorpay_signature
-          }),
-          skipLoader: true
+          })
         });
 
         if (verifyData && verifyData.success) {
@@ -146,7 +183,6 @@ function openRazorpay(order, orderId) {
           isPaymentStarted = false;
           window.onbeforeunload = null;
 
-          // ✅ CLEAR BOTH
           localStorage.removeItem("cart");
           localStorage.removeItem("buyNowItem");
 
@@ -158,13 +194,12 @@ function openRazorpay(order, orderId) {
 
         } else {
           isPaymentStarted = false;
-          alert(verifyData?.error || "Payment verification failed");
+          alert("Payment verification failed");
         }
 
       } catch (err) {
         isPaymentStarted = false;
         window.onbeforeunload = null;
-        console.error(err);
         alert("Verification error");
       }
     }
@@ -178,73 +213,60 @@ function openRazorpay(order, orderId) {
 PLACE ORDER
 =============================== */
 
-document.getElementById("addressForm")
-.addEventListener("submit", async function (e) {
-
-  e.preventDefault();
+document.getElementById("placeOrderBtn")
+.addEventListener("click", async () => {
 
   if (isPlacingOrder) return;
   isPlacingOrder = true;
 
-  const btn = e.submitter;
-  if (btn) btn.disabled = true;
-
-  const token = localStorage.getItem("token");
-
-  if (!token && !localStorage.getItem("refreshToken")) {
-    alert("Please login first");
-    isPlacingOrder = false;
-    if (btn) btn.disabled = false;
-    window.location = "profile.html";
-    return;
-  }
-
-  if (!cart.length) {
-    alert("Cart is empty");
-    isPlacingOrder = false;
-    if (btn) btn.disabled = false;
-    window.location = "products.html";
-    return;
-  }
-
-  let items = cart.map(item => ({
-    product_id: item.id,
-    product_name: item.name,
-    price: Number(item.price),
-    quantity: item.quantity,
-    image_url: item.image
-  }));
-
-  let totalAmount = cart.reduce((sum, item) => {
-    return sum + (Number(item.price) * item.quantity);
-  }, 0);
-
-  let selectedAddress = document.querySelector('input[name="selectedAddress"]:checked');
-
-let address;
-
-if(selectedAddress){
-  address = { addressId: selectedAddress.value };
-}
-else{
-  address = {
-    full_name: document.getElementById("full_name").value,
-    phone: document.getElementById("phone").value,
-    address_line1: document.getElementById("address_line1").value,
-    address_line2: document.getElementById("address_line2").value,
-    city: document.getElementById("city").value,
-    state: document.getElementById("state").value,
-    pincode: document.getElementById("pincode").value,
-    country: "India"
-  };
-
-  await apiRequest(`${API}/users/addresses`, {
-    method: "POST",
-    body: JSON.stringify(address)
-  });
-}
+  const btn = document.getElementById("placeOrderBtn");
+  btn.disabled = true;
 
   try {
+
+    /* ================= ADDRESS ================= */
+
+    let selectedAddress = document.querySelector('input[name="selectedAddress"]:checked');
+    let address;
+
+    if (selectedAddress) {
+      address = { addressId: selectedAddress.value };
+    } else {
+
+      address = {
+        full_name: document.getElementById("full_name").value,
+        phone: document.getElementById("phone").value,
+        address_line1: document.getElementById("address_line1").value,
+        address_line2: document.getElementById("address_line2").value,
+        city: document.getElementById("city").value,
+        state: document.getElementById("state").value,
+        pincode: document.getElementById("pincode").value,
+        country: "India"
+      };
+
+      // ✅ VALIDATION
+      if(!address.full_name || !address.phone || !address.address_line1){
+        alert("Please fill address details");
+        return;
+      }
+
+      await apiRequest(`${API}/users/addresses`, {
+        method: "POST",
+        body: JSON.stringify(address)
+      });
+    }
+
+    /* ================= ITEMS ================= */
+
+    let items = cart.map(i => ({
+      product_id: i.id,
+      product_name: i.name,
+      price: i.price,
+      quantity: i.quantity,
+      image_url: i.image
+    }));
+
+    let totalAmount = cart.reduce((s, i) => s + i.price * i.quantity, 0);
 
     /* ================= CREATE ORDER ================= */
 
@@ -258,24 +280,15 @@ else{
     });
 
     if (!data || data.error) {
-      alert(data?.error || "Order failed");
-      throw new Error("Order failed");
+      alert("Order failed");
+      return;
     }
 
     const orderId = data.orderId;
 
-    /* ================= PAYMENT METHOD ================= */
+    /* ================= PAYMENT ================= */
 
-    let selected = document.querySelector('input[name="paymentMethod"]:checked');
-
-    if (!selected) {
-      alert("Please select a payment method");
-      throw new Error("No payment method selected");
-    }
-
-    let method = selected.value.toLowerCase();
-
-    /* ================= CREATE PAYMENT ================= */
+    let method = document.querySelector('input[name="paymentMethod"]:checked').value;
 
     let paymentData = await apiRequest(`${API}/payments/create`, {
       method: "POST",
@@ -287,8 +300,8 @@ else{
     });
 
     if (!paymentData || paymentData.error) {
-      alert(paymentData?.error || "Payment failed");
-      throw new Error("Payment failed");
+      alert("Payment failed");
+      return;
     }
 
     /* ================= HANDLE PAYMENT ================= */
@@ -297,22 +310,23 @@ else{
 
       if (!paymentData.order) {
         alert("Payment initialization failed");
-        throw new Error("Razorpay init failed");
+        return;
       }
 
       if (isPaymentStarted) return;
 
       isPaymentStarted = true;
-
       window.onbeforeunload = () => "Payment in progress...";
 
       openRazorpay(paymentData.order, orderId);
 
-    } else if (paymentData.gateway === "paytm") {
+    } 
+    else if (paymentData.gateway === "paytm") {
 
       window.location = paymentData.paymentUrl;
 
-    } else if (paymentData.gateway === "cod") {
+    } 
+    else {
 
       localStorage.removeItem("cart");
       localStorage.removeItem("buyNowItem");
@@ -321,55 +335,21 @@ else{
         updateCartCount();
       }
 
-      window.location.replace("order-success.html?id=" + orderId);
-
-    } else {
-      alert("Invalid payment gateway");
+      window.location = "order-success.html?id=" + orderId;
     }
 
   } catch (err) {
     console.error(err);
+    alert("Something went wrong");
   } finally {
     isPlacingOrder = false;
-    if (btn) btn.disabled = false;
+    btn.disabled = false;
   }
 });
-
-/* ===============================
-  LOAD ADDRESS
-=============================== */
-async function loadAddresses(){
-
-  const addresses = await apiRequest(`${API}/users/addresses`);
-
-  const container = document.getElementById("savedAddresses");
-
-  if(!addresses || addresses.length === 0){
-    showAddressForm();
-    return;
-  }
-
-  container.innerHTML = "";
-
-  addresses.forEach(addr => {
-
-    container.innerHTML += `
-      <div class="address-card">
-        <input type="radio" name="selectedAddress" value="${addr.id}">
-
-        <p><b>${addr.full_name}</b></p>
-        <p>${addr.address_line1}, ${addr.city}</p>
-        <p>${addr.state} - ${addr.pincode}</p>
-        <p>${addr.phone}</p>
-      </div>
-    `;
-  });
-
-}
 
 /* ===============================
 INIT
 =============================== */
 
 loadCheckout();
-loadAddresses(); 
+loadAddresses();
