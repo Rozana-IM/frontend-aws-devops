@@ -1065,36 +1065,42 @@ MOBILE RESPONSIVE
 }
 .product-actions {
   display: flex;
-  gap: 10px;
-  margin-top: 20px;
+  gap: 12px;
+  align-items: center;
 }
 
+/* SAME SIZE BUTTONS */
+.product-actions button {
+  height: 50px;
+  padding: 0 20px;
+  font-size: 16px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+/* ADD TO CART */
 .add-cart {
-  flex: 1;
-  padding: 10px;
   background: black;
   color: white;
   border: none;
-  border-radius: 6px;
-  cursor: pointer;
+  flex: 1;
 }
 
+/* BUY NOW */
 .buy-now {
-  flex: 1;
-  padding: 10px;
-  background: orange;
+  background: #ff3f6c;
   color: white;
   border: none;
-  border-radius: 6px;
-  cursor: pointer;
+  flex: 1;
 }
 
+/* WISHLIST */
 .wishlist {
-  width: 45px;
-  background: white;
+  width: 50px;
+  height: 50px;
   border: 1px solid #ddd;
-  border-radius: 6px;
-  cursor: pointer;
+  background: white;
+  border-radius: 8px;
 }
 
 #toast {
