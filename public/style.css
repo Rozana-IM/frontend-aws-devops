@@ -1076,37 +1076,36 @@ MOBILE RESPONSIVE
 }
 
 /* SAME SIZE BUTTONS */
-.product-actions button {
-  height: 50px;
-  padding: 0 20px;
-  font-size: 16px;
-  border-radius: 8px;
-  cursor: pointer;
+.product-actions{
+  display:flex;
+  align-items:center;
+  gap:15px;
+  margin-top:20px;
 }
 
-/* ADD TO CART */
-.add-cart {
-  background: black;
-  color: white;
-  border: none;
-  flex: 1;
+.product-actions button{
+  height:45px;
+  padding:0 20px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:6px;
 }
 
-/* BUY NOW */
-.buy-now {
-  background: #ff3f6c;
-  color: white;
-  border: none;
-  flex: 1;
+/* SAME SIZE BUTTONS */
+.add-cart,
+.buy-now{
+  min-width:160px;
+  font-size:14px;
 }
 
-/* WISHLIST */
-.wishlist {
-  width: 50px;
-  height: 50px;
-  border: 1px solid #ddd;
-  background: white;
-  border-radius: 8px;
+/* WISHLIST BUTTON */
+.wishlist{
+  width:45px;
+  height:45px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
 }
 
 #toast {
