@@ -42,7 +42,13 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
 
 <h3>Delivery Address</h3>
 
-<form id="addressForm">
+<div id="savedAddresses"></div>
+
+<button type="button" onclick="showAddressForm()">
+  + Add New Address
+</button>
+
+<form id="addressForm" style="display:none;">
 
 <input type="text" id="full_name" placeholder="Full Name" required>
 
