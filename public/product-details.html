@@ -197,7 +197,10 @@ function addToCart(){
 
   // ✅ CHANGE BUTTON TO "VIEW CART"
   const btn = document.querySelector(".add-cart");
-  btn.innerText = "View Cart";
+  btn.innerHTML = `
+  <i class="fa-solid fa-bag-shopping"></i>
+  View Cart
+`;
   btn.onclick = () => window.location = "cart.html";
 
   // ✅ SHOW TOAST MESSAGE
