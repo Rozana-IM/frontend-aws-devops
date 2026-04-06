@@ -166,15 +166,14 @@ function goToCheckout(){
 let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
 if(cart.length === 0){
-
 alert("Your bag is empty");
-
 return;
-
 }
 
-window.location.href = "checkout.html";
+/* ✅ ADD THIS LINE */
+localStorage.setItem("lastPage", window.location.href);
 
+window.location.href = "checkout.html";
 }
 
 
