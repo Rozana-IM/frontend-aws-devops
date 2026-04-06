@@ -75,19 +75,19 @@ function initNavbar() {
 
   /* ===== BACK BUTTON (SMART) ===== */
 
-  if(backBtn){
-    backBtn.onclick = () => {
+ if(backBtn){
+  backBtn.onclick = () => {
 
-      const referrer = document.referrer;
+    const lastPage = localStorage.getItem("lastPage");
 
-      if(referrer && referrer.includes(window.location.origin)){
-        window.history.back();
-      } else {
-        window.location = "index.html";
-      }
+    if(lastPage){
+      window.location = lastPage;
+    } else {
+      window.location = "products.html"; // fallback
+    }
 
-    };
-  }
+  };
+}
 
   /* ===== PROFILE DROPDOWN ===== */
 
