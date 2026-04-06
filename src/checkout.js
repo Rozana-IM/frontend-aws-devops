@@ -216,6 +216,12 @@ if (!verifyRes || !verifyRes.success) {
 document.getElementById("placeOrderBtn")
 .addEventListener("click", async () => {
 
+  if (!cart.length) {
+    alert("Cart expired or already ordered");
+    window.location = "products.html";
+    return;
+  }
+
   const btn = document.getElementById("placeOrderBtn");
 
   if (isPlacingOrder) return;
@@ -384,7 +390,7 @@ if (payment.gateway === "razorpay") {
 async function deleteAddress(id) {
   if (!confirm("Delete this address?")) return;
 
-  const res = await apiRequest(`${API}/users/addresses/${id}`, { // ✅ FIXED
+  const res = await apiRequest(`${API}/users/addresses/${id}`, { 
     method: "DELETE"
   });
 
