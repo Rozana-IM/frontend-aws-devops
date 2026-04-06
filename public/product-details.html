@@ -210,17 +210,16 @@ function addToCart(){
    BUY NOW
 ================================ */
 
- function buyNow(){
+function buyNow(){
 
   const product = getProductData();
 
-  // ✅ Store temp checkout item
+  localStorage.setItem("lastPage", window.location.href);
+
   localStorage.setItem("buyNowItem", JSON.stringify(product));
 
-  // 👉 Redirect to checkout
   window.location = "checkout.html?type=buyNow";
-}  
-
+}
 /* ================================
       TOAST BUTTON
 ================================ */
