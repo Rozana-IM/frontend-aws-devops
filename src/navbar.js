@@ -78,14 +78,20 @@ function initNavbar() {
  if(backBtn){
   backBtn.onclick = () => {
 
+    // ✅ BLOCK SUCCESS PAGE LOOP
+    if(localStorage.getItem("orderCompleted")){
+      localStorage.removeItem("orderCompleted");
+      window.location = "products.html";
+      return;
+    }
+
     const lastPage = localStorage.getItem("lastPage");
 
     if(lastPage){
       window.location = lastPage;
     } else {
-      window.location = "products.html"; // fallback
+      window.location = "products.html";
     }
-
   };
 }
 
