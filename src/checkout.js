@@ -121,13 +121,18 @@ if (!selected) {
 
 function toggleAddressList() {
   const box = document.getElementById("addressList");
-  box.style.display = box.style.display === "none" ? "block" : "none";
+  const form = document.getElementById("addressForm");
+
+  form.style.display = "none";
+
+  box.style.display =
+    box.style.display === "none" ? "block" : "none";
 }
 
 function selectAddress(id) {
   selectedAddressId = id;
 
-  document.getElementById("addressForm").style.display = "none"; // ✅ ADD
+  document.getElementById("addressForm").style.display = "none"; 
 
   loadAddresses();
 
@@ -135,7 +140,17 @@ function selectAddress(id) {
 }
 
 function showAddressForm() {
-  document.getElementById("addressForm").style.display = "block";
+  const form = document.getElementById("addressForm");
+  const list = document.getElementById("addressList");
+
+  // close list
+  list.style.display = "none";
+
+  // toggle form
+  form.style.display =
+    form.style.display === "none" || form.style.display === ""
+      ? "block"
+      : "none";
 }
 
 /* ================= RAZORPAY ================= */
