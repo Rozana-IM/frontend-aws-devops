@@ -70,15 +70,18 @@ document.getElementById("orderId").innerText =
 /* NAVIGATION FUNCTIONS */
 
 function goOrders(){
-window.location = "orders.html"
+  window.location.replace("orders.html"); 
 }
 
 function goShopping(){
-window.location = "products.html"
+  window.location.replace("products.html"); 
 }
 
   localStorage.removeItem("cart");
-  localStorage.removeItem("lastPage"); // ✅ ADD THIS
+window.history.replaceState(null, "", "order-success.html");
+  localStorage.setItem("orderCompleted", "true");
+  localStorage.removeItem("lastPage"); 
+  
 
 </script>
 
