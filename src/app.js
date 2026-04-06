@@ -176,9 +176,9 @@ async function apiRequest(url, options = {}) {
     })
     .then(async (r) => {
       if (!r.ok) {
-        logout();
-        return null;
-      }
+  console.warn("⚠️ Refresh failed");
+  return null; 
+}
       return r.json();
     })
     .then(data => {
@@ -200,9 +200,9 @@ async function apiRequest(url, options = {}) {
   const newToken = await refreshPromise;
 
   if (!newToken) {
-    logout();
-    return null;
-  }
+  console.warn("⚠️ No new token, skipping logout");
+  return null;
+}
 
   // 🔁 SINGLE retry
   options.headers.Authorization = `Bearer ${newToken}`;
@@ -210,17 +210,22 @@ res = await fetch(url, options);
 
 // ✅ ADD THIS
 if (res.status === 401) {
-  console.log("❌ Retry failed → logout");
-  logout();
-  return null;
-}}
+  console.warn("⚠️ Retry failed");
+  return null; // ❌ DON'T logout
+}
+    }
     /* ================= FINAL RESPONSE CHECK ================= */
 
-    if (!res.ok) {
+   if (!res.ok) {
+
+  if (res.status === 401 && !getRefreshToken()) {
+    console.log("❌ No refresh token → logout");
+    logout();
+    return null;
+  }
 
   if (res.status === 401) {
-    console.log("❌ Unauthorized → logout");
-    logout();
+    console.warn("⚠️ 401 but refresh exists → skip logout");
     return null;
   }
 
