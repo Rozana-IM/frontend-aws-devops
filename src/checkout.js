@@ -199,7 +199,7 @@ if (!verifyRes || !verifyRes.success) {
       localStorage.removeItem("cart");
       localStorage.removeItem("buyNowItem");
 
-      window.location = "order-success.html?id=" + orderId;
+      window.location.replace("order-success.html?id=" + orderId);
     },
     modal: {
     ondismiss: function () {
