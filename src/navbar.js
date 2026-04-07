@@ -85,13 +85,11 @@ function initNavbar() {
       return;
     }
 
-    const lastPage = localStorage.getItem("lastPage");
-
-    if(lastPage){
-      window.location = lastPage;
-    } else {
-      window.location = "products.html";
-    }
+if (document.referrer && document.referrer.includes(window.location.origin)) {
+  window.history.back();
+} else {
+  window.location = "products.html";
+}
   };
 }
 
