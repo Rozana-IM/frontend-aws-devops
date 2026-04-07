@@ -1237,3 +1237,22 @@ MOBILE RESPONSIVE
   align-items: center;
   justify-content: center;
 }
+
+.toast {
+  position: fixed;
+  top: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: black;
+  color: white;
+  padding: 12px 20px;
+  border-radius: 5px;
+  font-size: 14px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 9999;
+}
+
+.toast.show {
+  opacity: 1;
+}
