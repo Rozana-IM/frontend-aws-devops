@@ -693,6 +693,19 @@ border-bottom:1px solid #ddd;
 padding-bottom:15px;
 }
 
+.cart-page {
+  padding: 30px 20px;
+}
+
+.cart-page h2 {
+  margin-bottom: 25px;
+  font-size: 26px;
+}
+
+.cart-item {
+  margin-bottom: 20px;
+}
+
 .qty-box{
 display:flex;
 gap:10px;
